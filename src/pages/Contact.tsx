@@ -1,0 +1,340 @@
+import React from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { Mail, Phone, MapPin, Send, Github, Linkedin } from "lucide-react";
+import { toast } from "react-toastify";
+import { motion } from "framer-motion";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import XIcon from "../components/XIcon";
+import { supabase } from "../lib/supabase";
+
+const contactSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  subject: z.string().min(5, "Subject must be at least 5 characters"),
+  message: z.string().min(10, "Message must be at least 10 characters"),
+});
+
+type ContactFormData = z.infer<typeof contactSchema>;
+
+export default function Contact() {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormData>({
+    resolver: zodResolver(contactSchema),
+  });
+
+  const onSubmit = async (data: ContactFormData) => {
+    try {
+      // Insert contact form data into Supabase
+      const { error } = await supabase.from("contact_messages").insert([
+        {
+          name: data.name,
+          email: data.email,
+          subject: data.subject,
+          message: data.message,
+          created_at: new Date().toISOString(),
+        },
+      ]);
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+
+      toast.success("Message sent successfully! I'll get back to you soon.");
+      reset();
+    } catch (error) {
+      console.error("Failed to send message:", error);
+      toast.error("Failed to send message. Please try again.");
+    }
+  };
+
+  const contactInfo = [
+    {
+      icon: Mail,
+      label: "Email",
+      value: "devhavertz@gmail.com",
+      href: "mailto:devhavertz@gmail.com",
+    },
+    {
+      icon: Phone,
+      label: "Phone",
+      value: "+254 (741) 699-435",
+      href: "tel:+254741699435",
+    },
+    {
+      icon: MapPin,
+      label: "Location",
+      value: "Nairobi, Kenya",
+      href: null,
+    },
+  ];
+
+  const socialLinks = [
+    {
+      icon: Github,
+      label: "GitHub",
+      href: "https://github.com/willy-havertz",
+    },
+    {
+      icon: Linkedin,
+      label: "LinkedIn",
+      href: "https://www.linkedin.com/in/wiltord-ichingwa-5927aa292",
+    },
+    {
+      icon: XIcon,
+      label: "X (Twitter)",
+      href: "https://twitter.com",
+    },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors"
+    >
+      <Header />
+
+      <main className="py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
+              Get In Touch
+            </h1>
+            <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+              Ready to discuss your cybersecurity needs? Let's connect and
+              explore how we can strengthen your security posture together.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            {/* Contact Form */}
+            <motion.div
+              initial={{ x: -50, opacity: 0 }}
+              whileInView={{ x: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8"
+            >
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                Send a Message
+              </h2>
+
+              <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                  >
+                    Full Name
+                  </label>
+                  <input
+                    {...register("name")}
+                    type="text"
+                    id="name"
+                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                    placeholder="Your full name"
+                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    {...register("email")}
+                    type="email"
+                    id="email"
+                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                    placeholder="your.email@example.com"
+                  />
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.email.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="subject"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                  >
+                    Subject
+                  </label>
+                  <input
+                    {...register("subject")}
+                    type="text"
+                    id="subject"
+                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-colors bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                    placeholder="What's this about?"
+                  />
+                  {errors.subject && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.subject.message}
+                    </p>
+                  )}
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="message"
+                    className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    {...register("message")}
+                    id="message"
+                    rows={6}
+                    className="w-full px-4 py-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-gray-500 focus:border-gray-500 transition-colors resize-none bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                    placeholder="Tell me about your project or security needs..."
+                  />
+                  {errors.message && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.message.message}
+                    </p>
+                  )}
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full flex items-center justify-center px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium rounded-lg hover:bg-black dark:hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    "Sending..."
+                  ) : (
+                    <>
+                      <Send className="mr-2 h-5 w-5" />
+                      Send Message
+                    </>
+                  )}
+                </button>
+              </form>
+            </motion.div>
+
+            {/* Contact Information */}
+            <div className="space-y-8">
+              <motion.div
+                initial={{ x: 50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.6 }}
+                viewport={{ once: true }}
+                className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8"
+              >
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                  Contact Information
+                </h2>
+
+                <div className="space-y-6">
+                  {contactInfo.map((item, index) => (
+                    <div key={index} className="flex items-center">
+                      {item.href ? (
+                        <a
+                          href={item.href}
+                          className="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 rounded-lg flex items-center justify-center hover:bg-gray-900 dark:hover:bg-white hover:text-white dark:hover:text-gray-900 transition-colors cursor-pointer"
+                          aria-label={item.label}
+                        >
+                          <item.icon className="h-6 w-6" />
+                        </a>
+                      ) : (
+                        <div className="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 rounded-lg flex items-center justify-center">
+                          <item.icon className="h-6 w-6" />
+                        </div>
+                      )}
+                      <div className="ml-4">
+                        <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                          {item.label}
+                        </p>
+                        {item.href ? (
+                          <a
+                            href={item.href}
+                            className="text-lg text-slate-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                          >
+                            {item.value}
+                          </a>
+                        ) : (
+                          <p className="text-lg text-slate-900 dark:text-white">
+                            {item.value}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ x: 50, opacity: 0 }}
+                whileInView={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                viewport={{ once: true }}
+                className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8"
+              >
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
+                  Follow Me
+                </h2>
+
+                <div className="flex space-x-4">
+                  {socialLinks.map((social, index) => (
+                    <a
+                      key={index}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-gray-900 dark:hover:bg-white hover:text-white dark:hover:text-gray-900 transition-colors"
+                      aria-label={social.label}
+                    >
+                      <social.icon className="h-6 w-6" />
+                    </a>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                viewport={{ once: true }}
+                className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-8"
+              >
+                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
+                  Response Time
+                </h3>
+                <p className="text-blue-700 dark:text-blue-300">
+                  I typically respond to all inquiries within 24 hours during
+                  business days. For urgent security matters, please call
+                  directly.
+                </p>
+              </motion.div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
+    </motion.div>
+  );
+}
