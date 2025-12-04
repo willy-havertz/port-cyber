@@ -25,12 +25,45 @@ A modern, responsive portfolio website showcasing ethical hacking, penetration t
 
 ## 📋 Prerequisites
 
+### Option 1: Docker (Recommended)
+- Docker and Docker Compose installed
+
+### Option 2: Manual Setup
 - Node.js 18+
 - npm or yarn
 - Supabase account
 - Resend API key (for email functionality)
 
 ## 🔧 Installation
+
+### Using Docker (Quick Start)
+
+1. Clone the repository:
+```bash
+git clone https://github.com/willy-havertz/port-cyber.git
+cd port-cyber
+```
+
+2. Create a `.env` file in the root directory:
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+VITE_RESEND_API_KEY=your_resend_api_key
+```
+
+3. Build and run with Docker Compose:
+```bash
+docker-compose up -d
+```
+
+4. Access the application at `http://localhost:3000`
+
+To stop the container:
+```bash
+docker-compose down
+```
+
+### Manual Installation
 
 1. Clone the repository:
 
