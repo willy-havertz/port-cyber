@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Printer } from "lucide-react";
+import { X } from "lucide-react";
 import { motion } from "framer-motion";
 import Resume from "./Resume";
 
@@ -9,10 +9,6 @@ interface ResumeModalProps {
 }
 
 const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => {
-  const handlePrint = () => {
-    window.print();
-  };
-
   if (!isOpen) return null;
 
   return (
@@ -28,21 +24,12 @@ const ResumeModal: React.FC<ResumeModalProps> = ({ isOpen, onClose }) => {
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             Resume - Wiltord Ichingwa
           </h2>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrint}
-              className="p-2 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-              title="Print Resume"
-            >
-              <Printer className="h-5 w-5" />
-            </button>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         {/* Resume Content */}
