@@ -1,5 +1,5 @@
 import React from "react";
-import { X, Printer } from "lucide-react";
+import { X } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface WriteupContentModalProps {
@@ -27,10 +27,6 @@ const WriteupContentModal: React.FC<WriteupContentModalProps> = ({
   tags,
   pdfUrl,
 }) => {
-  const handlePrint = () => {
-    window.print();
-  };
-
   if (!isOpen) return null;
 
   const getDifficultyColor = (difficulty: string) => {
@@ -61,21 +57,12 @@ const WriteupContentModal: React.FC<WriteupContentModalProps> = ({
           <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
             CTF Writeup
           </h2>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handlePrint}
-              className="p-2 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-              title="Print Writeup"
-            >
-              <Printer className="h-5 w-5" />
-            </button>
-            <button
-              onClick={onClose}
-              className="p-2 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-            >
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-md text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </div>
 
         {/* Content */}
