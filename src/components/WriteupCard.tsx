@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { ExternalLink, Trophy, Clock, Target } from "lucide-react";
 import { motion } from "framer-motion";
-import WriteupContentModal from "./WriteupContentModal";
+import { Link } from "react-router-dom";
 
 interface WriteupCardProps {
+  id: string;
   title: string;
   platform: "Hack The Box" | "Try Hack Me";
   difficulty: "Easy" | "Medium" | "Hard" | "Insane";
@@ -15,6 +16,7 @@ interface WriteupCardProps {
 }
 
 const WriteupCard: React.FC<WriteupCardProps> = ({
+  id,
   title,
   platform,
   difficulty,
@@ -24,7 +26,6 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
   writeupUrl,
   tags,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -99,28 +100,14 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
           ))}
         </div>
 
-        <button
-          onClick={() => setIsModalOpen(true)}
+        <Link
+          to={`/writeups/${id}`}
           className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-md hover:bg-black dark:hover:bg-gray-100 transition-colors"
         >
           <ExternalLink className="h-4 w-4 mr-1" />
           Read Writeup
-        </button>
+        </Link>
       </motion.article>
-
-      {/* Writeup Content Modal */}
-      <WriteupContentModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        title={title}
-        platform={platform}
-        difficulty={difficulty}
-        category={category}
-        date={date}
-        timeSpent={timeSpent}
-        tags={tags}
-        pdfUrl={writeupUrl}
-      />
     </>
   );
 };

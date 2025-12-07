@@ -8,6 +8,7 @@ export default function Writeups() {
 
   const writeups = [
     {
+      id: "fowsniff",
       title: "Fowsniff - Linux Privilege Escalation via Misconfigured MOTD",
       platform: "Try Hack Me" as const,
       difficulty: "Easy" as const,
@@ -23,6 +24,7 @@ export default function Writeups() {
       ],
     },
     {
+      id: "lame",
       title: "Lame - Classic Linux Privilege Escalation",
       platform: "Hack The Box" as const,
       difficulty: "Easy" as const,
@@ -33,6 +35,7 @@ export default function Writeups() {
       tags: ["linux", "samba", "exploit", "privesc"],
     },
     {
+      id: "cybernetics",
       title: "Cybernetics - Advanced Web Exploitation",
       platform: "Hack The Box" as const,
       difficulty: "Hard" as const,
@@ -43,6 +46,7 @@ export default function Writeups() {
       tags: ["web", "sql-injection", "xxe", "deserialization"],
     },
     {
+      id: "advent-day1",
       title: "Advent of Cyber - Day 1: Web Exploitation",
       platform: "Try Hack Me" as const,
       difficulty: "Easy" as const,
@@ -53,6 +57,7 @@ export default function Writeups() {
       tags: ["web", "xss", "command-injection", "advent-of-cyber"],
     },
     {
+      id: "advent-day7",
       title: "Advent of Cyber - Day 7: Cryptography Challenge",
       platform: "Try Hack Me" as const,
       difficulty: "Medium" as const,
@@ -63,6 +68,7 @@ export default function Writeups() {
       tags: ["crypto", "rsa", "advent-of-cyber", "decryption"],
     },
     {
+      id: "hackpark",
       title: "HackPark - Windows Exploitation Walkthrough",
       platform: "Try Hack Me" as const,
       difficulty: "Easy" as const,
@@ -73,6 +79,7 @@ export default function Writeups() {
       tags: ["windows", "web", "upload-vuln", "privesc"],
     },
     {
+      id: "vulnnet-roasted",
       title: "VulnNet: Roasted - Advanced Linux Exploitation",
       platform: "Try Hack Me" as const,
       difficulty: "Hard" as const,
@@ -83,6 +90,7 @@ export default function Writeups() {
       tags: ["linux", "web", "api", "privesc", "suid"],
     },
     {
+      id: "resolute",
       title: "Resolute - Windows Domain Controller Attack",
       platform: "Hack The Box" as const,
       difficulty: "Medium" as const,
@@ -93,6 +101,7 @@ export default function Writeups() {
       tags: ["windows", "domain-controller", "kerberos", "bloodhound"],
     },
     {
+      id: "brainfuck",
       title: "Brainfuck - Binary Exploitation Challenge",
       platform: "Hack The Box" as const,
       difficulty: "Insane" as const,
