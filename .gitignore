@@ -41,3 +41,4 @@ pnpm-debug.log*
 
 .vercel
 .env*.local
+public/writeups/fowsniff_images/
