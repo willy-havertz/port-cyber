@@ -26,7 +26,12 @@ export const fowsniffWriteup: WriteupDetail = {
   category: "Linux",
   date: "Nov 20, 2025",
   timeSpent: "1hr 30min",
-  tags: ["port scanning", "email service exploitation", "password cracking", "privilege escalation"],
+  tags: [
+    "port scanning",
+    "email service exploitation",
+    "password cracking",
+    "privilege escalation",
+  ],
   writeupUrl: "/writeups/Fowsniff_ctf.pdf",
   overview:
     "Fowsniff is an easy-level Linux privilege escalation challenge that demonstrates the dangers of misconfigured Message of the Day (MOTD) scripts. The challenge involves port scanning to discover services, exploiting an email service vulnerability to extract credentials, and leveraging a custom MOTD script to achieve privilege escalation.",

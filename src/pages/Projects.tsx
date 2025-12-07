@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProjectCard from "../components/ProjectCard";
+import FilterBar from "../components/FilterBar";
 
 export default function Projects() {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>(
+    []
+  );
   const projects = [
     {
       title: "Enterprise Network Security Assessment",
@@ -87,6 +92,45 @@ export default function Projects() {
     },
   ];
 
+  // Extract unique categories and technologies
+  const allCategories = [...new Set(projects.map((p) => p.category))];
+  const allTechnologies = [...new Set(projects.flatMap((p) => p.technologies))];
+
+  // Filter logic
+  const filteredProjects = useMemo(() => {
+    return projects.filter((project) => {
+      const categoryMatch =
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(project.category);
+      const techMatch =
+        selectedTechnologies.length === 0 ||
+        selectedTechnologies.some((tech) =>
+          project.technologies.includes(tech)
+        );
+
+      return categoryMatch && techMatch;
+    });
+  }, [selectedCategories, selectedTechnologies]);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleTechnologyChange = (tech: string) => {
+    setSelectedTechnologies((prev) =>
+      prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
+    );
+  };
+
+  const handleReset = () => {
+    setSelectedCategories([]);
+    setSelectedTechnologies([]);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -114,23 +158,52 @@ export default function Projects() {
             </p>
           </motion.div>
 
+          {/* Advanced Filters */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <FilterBar
+              categories={allCategories}
+              technologies={allTechnologies}
+              selectedCategories={selectedCategories}
+              selectedTechnologies={selectedTechnologies}
+              onCategoryChange={handleCategoryChange}
+              onTechnologyChange={handleTechnologyChange}
+              onReset={handleReset}
+            />
+          </motion.div>
+
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {projects.map((project, index) => (
+            {filteredProjects.length > 0 ? (
+              filteredProjects.map((project, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ y: 50, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                >
+                  <ProjectCard {...project} />
+                </motion.div>
+              ))
+            ) : (
               <motion.div
-                key={index}
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                viewport={{ once: true }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="col-span-full text-center py-12"
               >
-                <ProjectCard {...project} />
+                <p className="text-lg text-slate-600 dark:text-slate-400">
+                  No projects match your filters. Try adjusting your selection.
+                </p>
               </motion.div>
-            ))}
+            )}
           </motion.div>
         </div>
       </main>

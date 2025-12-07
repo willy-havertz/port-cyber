@@ -12,10 +12,49 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ResumeModal from "../components/ResumeModal";
+import FeaturedCarousel from "../components/FeaturedCarousel";
 import { Link } from "react-router-dom";
 
 export default function Home() {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
+
+  const featuredWriteups = [
+    {
+      id: "fowsniff",
+      title: "Fowsniff - Linux Privilege Escalation via Misconfigured MOTD",
+      platform: "Try Hack Me" as const,
+      difficulty: "Easy" as const,
+      category: "Linux",
+      date: "Nov 20, 2025",
+      timeSpent: "1hr 30min",
+      tags: [
+        "port scanning",
+        "email service exploitation",
+        "password cracking",
+        "privilege escalation",
+      ],
+    },
+    {
+      id: "lame",
+      title: "Lame - Classic Linux Privilege Escalation",
+      platform: "Hack The Box" as const,
+      difficulty: "Easy" as const,
+      category: "Linux",
+      date: "Jan 18, 2025",
+      timeSpent: "1.5 hours",
+      tags: ["linux", "samba", "exploit", "privesc"],
+    },
+    {
+      id: "cybernetics",
+      title: "Cybernetics - Advanced Web Exploitation",
+      platform: "Hack The Box" as const,
+      difficulty: "Hard" as const,
+      category: "Web Security",
+      date: "Jan 15, 2025",
+      timeSpent: "8 hours",
+      tags: ["web", "sql-injection", "xxe", "deserialization"],
+    },
+  ];
 
   const skills = [
     { name: "Penetration Testing", level: 95 },
@@ -229,6 +268,53 @@ export default function Home() {
                 />
               </motion.div>
             </div>
+          </div>
+        </section>
+
+        {/* Featured Writeups Carousel */}
+        <section className="py-20 bg-slate-50 dark:bg-slate-900 transition-colors">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+                Featured Writeups
+              </h2>
+              <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+                Explore my latest CTF challenges, security research, and
+                exploitation techniques from platforms like Hack The Box and Try
+                Hack Me.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.1 }}
+              viewport={{ once: true }}
+            >
+              <FeaturedCarousel writeups={featuredWriteups} />
+            </motion.div>
+
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="text-center mt-12"
+            >
+              <Link
+                to="/writeups"
+                className="inline-flex items-center px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors"
+              >
+                View All Writeups
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </motion.div>
           </div>
         </section>
 

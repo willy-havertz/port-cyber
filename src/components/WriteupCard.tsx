@@ -23,10 +23,8 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
   category,
   date,
   timeSpent,
-  writeupUrl,
   tags,
 }) => {
-
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Insane":

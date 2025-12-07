@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Clock, Trophy } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import WriteupComments from "../components/WriteupComments";
 import { getWriteupDetail } from "../data/writeups";
 import { Link } from "react-router-dom";
 
@@ -259,6 +260,9 @@ export default function WriteupDetail() {
             Open PDF Writeup
           </a>
         </motion.div>
+
+        {/* Comments Section */}
+        <WriteupComments writeupId={writeup.id} />
       </main>
 
       <Footer />
