@@ -7,11 +7,11 @@ import {
   ArrowRight,
   Download,
   Eye,
-  X,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import ResumeModal from "../components/ResumeModal";
 import { Link } from "react-router-dom";
 
 export default function Home() {
@@ -259,36 +259,11 @@ export default function Home() {
         </section>
       </main>
 
-      {/* CV Modal */}
-      {isCVModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow-lg max-w-4xl w-full max-h-[90vh] overflow-hidden"
-          >
-            <div className="flex justify-between items-center p-4 border-b border-slate-200 dark:border-slate-700">
-              <h2 className="text-lg font-semibold text-slate-900 dark:text-white">
-                CV - Cybersecurity Professional
-              </h2>
-              <button
-                onClick={() => setIsCVModalOpen(false)}
-                className="p-1 rounded-md text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <div className="p-4">
-              <iframe
-                src="/cv.pdf" // Placeholder PDF path
-                className="w-full h-[70vh] border-0"
-                title="CV"
-              />
-            </div>
-          </motion.div>
-        </div>
-      )}
+      {/* Resume Modal */}
+      <ResumeModal
+        isOpen={isCVModalOpen}
+        onClose={() => setIsCVModalOpen(false)}
+      />
 
       <Footer />
     </motion.div>
