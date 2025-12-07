@@ -1,10 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import WriteupCard from "../components/WriteupCard";
+import FilterBar from "../components/FilterBar";
 
 export default function Writeups() {
   const [selectedPlatform, setSelectedPlatform] = useState("All");
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
 
   const writeups = [
     {
@@ -115,10 +118,45 @@ export default function Writeups() {
 
   const platforms = ["All", "Hack The Box", "Try Hack Me"];
 
-  const filteredWriteups =
-    selectedPlatform === "All"
-      ? writeups
-      : writeups.filter((writeup) => writeup.platform === selectedPlatform);
+  // Extract unique categories and tags
+  const allCategories = [...new Set(writeups.map((w) => w.category))];
+  const allTags = [...new Set(writeups.flatMap((w) => w.tags))];
+
+  // Filter logic
+  const filteredWriteups = useMemo(() => {
+    return writeups.filter((writeup) => {
+      const platformMatch =
+        selectedPlatform === "All" || writeup.platform === selectedPlatform;
+      const categoryMatch =
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(writeup.category);
+      const tagMatch =
+        selectedTags.length === 0 ||
+        selectedTags.some((tag) => writeup.tags.includes(tag));
+
+      return platformMatch && categoryMatch && tagMatch;
+    });
+  }, [selectedPlatform, selectedCategories, selectedTags]);
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategories((prev) =>
+      prev.includes(category)
+        ? prev.filter((c) => c !== category)
+        : [...prev, category]
+    );
+  };
+
+  const handleTagChange = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
+    );
+  };
+
+  const handleReset = () => {
+    setSelectedPlatform("All");
+    setSelectedCategories([]);
+    setSelectedTags([]);
+  };
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
@@ -156,10 +194,29 @@ export default function Writeups() {
             </div>
           </div>
 
+          {/* Advanced Filters */}
+          <FilterBar
+            categories={allCategories}
+            technologies={allTags}
+            selectedCategories={selectedCategories}
+            selectedTechnologies={selectedTags}
+            onCategoryChange={handleCategoryChange}
+            onTechnologyChange={handleTagChange}
+            onReset={handleReset}
+          />
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredWriteups.map((writeup, index) => (
-              <WriteupCard key={index} {...writeup} />
-            ))}
+            {filteredWriteups.length > 0 ? (
+              filteredWriteups.map((writeup, index) => (
+                <WriteupCard key={index} {...writeup} />
+              ))
+            ) : (
+              <div className="col-span-full text-center py-12">
+                <p className="text-lg text-slate-600 dark:text-slate-400">
+                  No writeups match your filters. Try adjusting your selection.
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Load More Button */}

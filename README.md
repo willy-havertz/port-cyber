@@ -231,22 +231,11 @@ export const newWriteup: WriteupDetail = {
   methodology: [
     "Step 1: Description",
     "Step 2: Description",
-    "Step 3: Description"
+    "Step 3: Description",
   ],
-  keyFindings: [
-    "Finding 1",
-    "Finding 2",
-    "Finding 3"
-  ],
-  toolsUsed: [
-    "Tool Name - Description",
-    "Tool Name - Description"
-  ],
-  lessonsLearned: [
-    "Lesson 1",
-    "Lesson 2",
-    "Lesson 3"
-  ]
+  keyFindings: ["Finding 1", "Finding 2", "Finding 3"],
+  toolsUsed: ["Tool Name - Description", "Tool Name - Description"],
+  lessonsLearned: ["Lesson 1", "Lesson 2", "Lesson 3"],
 };
 ```
 
@@ -278,6 +267,7 @@ export const writeupDetailsMap: Record<string, WriteupDetail> = {
 4. **Upload PDF** to `public/writeups/` directory
 
 Each writeup will automatically get:
+
 - A dedicated detail page at `/writeups/:id`
 - A card on the writeups listing page
 - Structured content display (overview, methodology, findings, tools, lessons)
@@ -313,6 +303,7 @@ docker push your-registry/port-cyber:latest
 ### Other Platforms
 
 The application is a static React build and can be deployed to:
+
 - Netlify
 - GitHub Pages
 - AWS S3 + CloudFront
@@ -345,6 +336,7 @@ npm run lint
 ## 📄 Features Detail
 
 ### CTF Writeup Pages
+
 - Dedicated page for each writeup at `/writeups/:id`
 - Sections: Overview, Methodology, Key Findings, Tools Used, Lessons Learned
 - Direct link to PDF with custom viewer
@@ -352,6 +344,7 @@ npm run lint
 - Dark mode support
 
 ### PDF Viewer
+
 - Custom page navigation controls
 - Support for large PDFs
 - Mobile-friendly interface
@@ -359,6 +352,7 @@ npm run lint
 - Uses pdfjs-dist for reliable PDF rendering
 
 ### Professional Resume
+
 - Interactive resume modal
 - Professional formatting
 - Contact information with working links
@@ -368,6 +362,7 @@ npm run lint
 ## 📞 Contact & Support
 
 For questions or issues:
+
 1. Open an issue on GitHub
 2. Use the contact form on the website
 3. Email through the contact page
