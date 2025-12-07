@@ -11,6 +11,7 @@ import Projects from "./src/pages/Projects";
 import Experience from "./src/pages/Experience";
 import Analyses from "./src/pages/Analyses";
 import Writeups from "./src/pages/Writeups";
+import WriteupDetail from "./src/pages/WriteupDetail";
 import Contact from "./src/pages/Contact";
 import NotFound from "./src/pages/NotFound";
 
@@ -26,6 +27,7 @@ const App: React.FC = () => {
               <Route path="/experience" element={<Experience />} />
               <Route path="/analyses" element={<Analyses />} />
               <Route path="/writeups" element={<Writeups />} />
+              <Route path="/writeups/:id" element={<WriteupDetail />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
