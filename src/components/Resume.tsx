@@ -96,9 +96,7 @@ const Resume: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Senior Security Analyst
               </h3>
-              <p className="text-gray-600">
-                Cybersecurity Firm | Kenya
-              </p>
+              <p className="text-gray-600">Cybersecurity Firm | Kenya</p>
             </div>
             <span className="text-gray-600">2024 - Present</span>
           </div>
@@ -108,8 +106,8 @@ const Resume: React.FC = () => {
               assessments for enterprise clients
             </li>
             <li>
-              Develop and execute security testing strategies aligned with
-              OWASP and NIST frameworks
+              Develop and execute security testing strategies aligned with OWASP
+              and NIST frameworks
             </li>
             <li>
               Lead security architecture reviews and provide hardening
@@ -128,9 +126,7 @@ const Resume: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Security Researcher
               </h3>
-              <p className="text-gray-600">
-                Independent | Kenya
-              </p>
+              <p className="text-gray-600">Independent | Kenya</p>
             </div>
             <span className="text-gray-600">2023 - 2024</span>
           </div>
@@ -155,9 +151,7 @@ const Resume: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 IT Support Specialist
               </h3>
-              <p className="text-gray-600">
-                Tech Solutions Ltd | Kenya
-              </p>
+              <p className="text-gray-600">Tech Solutions Ltd | Kenya</p>
             </div>
             <span className="text-gray-600">2022 - 2023</span>
           </div>
@@ -170,8 +164,7 @@ const Resume: React.FC = () => {
               Implemented security patches and user access management systems
             </li>
             <li>
-              Developed basic security policies and documentation for
-              compliance
+              Developed basic security policies and documentation for compliance
             </li>
           </ul>
         </div>
@@ -188,33 +181,27 @@ const Resume: React.FC = () => {
               Tools & Frameworks:
             </h4>
             <p>
-              Burp Suite, Metasploit, Nmap, Wireshark, Kali Linux, OWASP Top
-              10, Maltego
+              Burp Suite, Metasploit, Nmap, Wireshark, Kali Linux, OWASP Top 10,
+              Maltego
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">
               Programming Languages:
             </h4>
-            <p>
-              Python, Bash, JavaScript, SQL, PowerShell
-            </p>
+            <p>Python, Bash, JavaScript, SQL, PowerShell</p>
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">
               Platforms & Systems:
             </h4>
-            <p>
-              Linux, Windows, macOS, AWS, Azure, Docker, Kubernetes
-            </p>
+            <p>Linux, Windows, macOS, AWS, Azure, Docker, Kubernetes</p>
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">
               Certifications (In Progress):
             </h4>
-            <p>
-              OSCP, CEH, Security+
-            </p>
+            <p>OSCP, CEH, Security+</p>
           </div>
         </div>
       </section>
@@ -257,15 +244,14 @@ const Resume: React.FC = () => {
             Completed 50+ cybersecurity challenges on HackTheBox and TryHackMe
           </li>
           <li>
-            Identified and reported critical vulnerabilities affecting 100+ users
+            Identified and reported critical vulnerabilities affecting 100+
+            users
           </li>
           <li>
             Developed automated security scanning tools reducing assessment time
             by 40%
           </li>
-          <li>
-            Successfully led incident response on active security breach
-          </li>
+          <li>Successfully led incident response on active security breach</li>
           <li>Created comprehensive security documentation and runbooks</li>
         </ul>
       </section>
