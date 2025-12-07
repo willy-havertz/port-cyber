@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { ExternalLink, Trophy, Clock, Target, X } from "lucide-react";
+import { ExternalLink, Trophy, Clock, Target } from "lucide-react";
 import { motion } from "framer-motion";
-import PDFViewerModal from "./PDFViewerModal";
+import WriteupContentModal from "./WriteupContentModal";
 
 interface WriteupCardProps {
   title: string;
@@ -108,12 +108,18 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
         </button>
       </motion.article>
 
-      {/* PDF Viewer Modal */}
-      <PDFViewerModal
+      {/* Writeup Content Modal */}
+      <WriteupContentModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        pdfUrl={writeupUrl}
         title={title}
+        platform={platform}
+        difficulty={difficulty}
+        category={category}
+        date={date}
+        timeSpent={timeSpent}
+        tags={tags}
+        pdfUrl={writeupUrl}
       />
     </>
   );
