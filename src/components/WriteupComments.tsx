@@ -161,7 +161,7 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
           whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={submitting}
-          className="mt-4 inline-flex items-center gap-2 px-6 py-2 bg-blue-600 text-white font-medium rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="mt-4 inline-flex items-center gap-2 px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium rounded-md hover:bg-black dark:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <Send className="h-4 w-4" />
           {submitting ? "Posting..." : "Post Comment"}
