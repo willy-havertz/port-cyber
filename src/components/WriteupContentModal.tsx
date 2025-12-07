@@ -124,13 +124,81 @@ const WriteupContentModal: React.FC<WriteupContentModalProps> = ({
               </div>
             </div>
 
-            {/* Embedded PDF using iframe */}
-            <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-4">
-              <iframe
-                src={pdfUrl}
-                className="w-full h-[600px] border-0 rounded"
-                title={title}
-              />
+            {/* Writeup Details */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                  Writeup Details
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
+                    <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                      Challenge Type
+                    </h3>
+                    <p className="text-slate-700 dark:text-slate-300">
+                      {category}
+                    </p>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
+                    <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                      Difficulty Level
+                    </h3>
+                    <p
+                      className={`font-medium ${getDifficultyColor(
+                        difficulty
+                      )}`}
+                    >
+                      {difficulty}
+                    </p>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
+                    <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                      Platform
+                    </h3>
+                    <p className="text-slate-700 dark:text-slate-300">
+                      {platform}
+                    </p>
+                  </div>
+                  <div className="bg-slate-50 dark:bg-slate-700 p-4 rounded-lg">
+                    <h3 className="font-semibold text-slate-900 dark:text-white mb-2">
+                      Time to Complete
+                    </h3>
+                    <p className="text-slate-700 dark:text-slate-300">
+                      {timeSpent}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                  Key Topics Covered
+                </h2>
+                <div className="flex flex-wrap gap-2">
+                  {tags.map((tag) => (
+                    <div
+                      key={tag}
+                      className="px-3 py-2 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                    >
+                      {tag}
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
+                <h2 className="text-xl font-bold text-slate-900 dark:text-white mb-3">
+                  Full Writeup
+                </h2>
+                <a
+                  href={pdfUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors"
+                >
+                  📄 Open Complete PDF Writeup
+                </a>
+              </div>
             </div>
           </div>
         </div>
