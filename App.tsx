@@ -19,7 +19,7 @@ const App: React.FC = () => {
     <ThemeProvider>
       <Theme appearance="inherit" radius="large" scaling="100%">
         <Router>
-          <main className="min-h-screen font-inter">
+          <main className="min-h-screen font-inter overflow-x-hidden">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/projects" element={<Projects />} />
