@@ -9,4 +9,14 @@
   body {
     @apply overflow-x-hidden;
   }
+
+  /* Smooth theme transition */
+  html.theme-transition,
+  html.theme-transition *,
+  html.theme-transition *:before,
+  html.theme-transition *:after {
+    transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out,
+      border-color 0.3s ease-in-out !important;
+    transition-delay: 0s !important;
+  }
 }

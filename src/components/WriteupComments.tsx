@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Send, MessageCircle } from "lucide-react";
 import { supabase } from "../lib/supabase";
@@ -24,12 +24,7 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
     comment_text: "",
   });
 
-  // Fetch comments on mount
-  useEffect(() => {
-    fetchComments();
-  }, [writeupId]);
-
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     try {
       setLoading(true);
       const { data, error } = await supabase
@@ -45,7 +40,12 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [writeupId]);
+
+  // Fetch comments on mount
+  useEffect(() => {
+    fetchComments();
+  }, [fetchComments]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
