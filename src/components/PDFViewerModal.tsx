@@ -4,9 +4,10 @@ import { ChevronLeft, ChevronRight, X, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
+import * as pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs";
 
 // Set up the PDF worker
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
 
 interface PDFViewerModalProps {
   isOpen: boolean;
