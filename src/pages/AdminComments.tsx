@@ -133,8 +133,8 @@ export default function AdminComments() {
               onClick={() => setFilter(f)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${
                 filter === f
-                  ? "bg-blue-600 text-white"
-                  : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+                  ? "bg-black dark:bg-slate-800 text-white"
+                  : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
               }`}
             >
               {f}

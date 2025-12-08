@@ -19,11 +19,11 @@ import Writeups from "./src/pages/Writeups";
 import WriteupDetail from "./src/pages/WriteupDetail";
 import Contact from "./src/pages/Contact";
 import NotFound from "./src/pages/NotFound";
-import AdminLogin from "./src/pages/AdminLogin";
-import AdminDashboard from "./src/pages/AdminDashboard";
-import AdminWriteups from "./src/pages/AdminWriteups";
-import AdminComments from "./src/pages/AdminComments";
-import ProtectedRoute from "./src/components/ProtectedRoute";
+import AdminLogin from "./src/pages/AdminLogin.tsx";
+import AdminDashboard from "./src/pages/AdminDashboard.tsx";
+import AdminWriteups from "./src/pages/AdminWriteups.tsx";
+import AdminComments from "./src/pages/AdminComments.tsx";
+import ProtectedRoute from "./src/components/ProtectedRoute.tsx";
 
 const App: React.FC = () => {
   return (
