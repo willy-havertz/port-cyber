@@ -142,6 +142,34 @@ export const updateWriteup = async (
   return data as Writeup;
 };
 
+export const updateWriteupWithFile = async (
+  id: number,
+  payload: UpdateWriteupPayload,
+  file: File,
+  onProgress?: (progress: number) => void
+) => {
+  const formData = new FormData();
+  if (payload.title) formData.append("title", payload.title);
+  if (payload.platform) formData.append("platform", payload.platform);
+  if (payload.difficulty) formData.append("difficulty", payload.difficulty);
+  if (payload.category) formData.append("category", payload.category);
+  if (payload.date) formData.append("date", payload.date);
+  if (payload.time_spent) formData.append("time_spent", payload.time_spent);
+  if (payload.summary) formData.append("summary", payload.summary);
+  formData.append("file", file);
+
+  const { data } = await api.put(`/writeups/${id}/upload`, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    onUploadProgress: (event) => {
+      if (onProgress) {
+        const progress = Math.round((event.loaded / (event.total || 1)) * 100);
+        onProgress(progress);
+      }
+    },
+  });
+  return data as Writeup;
+};
+
 export const deleteWriteup = async (id: number) => {
   await api.delete(`/writeups/${id}`);
 };

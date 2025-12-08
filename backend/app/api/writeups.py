@@ -42,6 +42,9 @@ async def get_writeups(
     if search:
         query = query.filter(Writeup.title.ilike(f"%{search}%"))
     
+    # Order by creation date descending (newest first)
+    query = query.order_by(Writeup.created_at.desc())
+    
     total = query.count()
     items = query.offset(skip).limit(limit).all()
     
@@ -160,6 +163,99 @@ async def update_writeup(
     
     for field, value in update_data.items():
         setattr(writeup, field, value)
+    
+    db.commit()
+    db.refresh(writeup)
+    return writeup
+
+@router.put("/{writeup_id}/upload", response_model=WriteupSchema)
+async def update_writeup_with_file(
+    writeup_id: int,
+    title: Optional[str] = Form(None),
+    platform: Optional[str] = Form(None),
+    difficulty: Optional[str] = Form(None),
+    category: Optional[str] = Form(None),
+    date: Optional[str] = Form(None),
+    time_spent: Optional[str] = Form(None),
+    summary: Optional[str] = Form(None),
+    tags: Optional[str] = Form(None),
+    file: Optional[UploadFile] = File(None),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user)
+):
+    """Update a writeup with optional new file upload (Admin only)"""
+    writeup = db.query(Writeup).filter(Writeup.id == writeup_id).first()
+    if not writeup:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Writeup not found"
+        )
+    
+    # If new file uploaded, validate and save it
+    if file and file.filename:
+        # Validate file type
+        if not file.filename.endswith('.pdf'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only PDF files are allowed"
+            )
+        
+        # Delete old file if it exists
+        old_file_path = os.path.join(os.getcwd(), writeup.writeup_url.lstrip('/'))
+        if os.path.exists(old_file_path):
+            try:
+                os.remove(old_file_path)
+            except:
+                pass  # Continue even if deletion fails
+        
+        # Generate unique filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"{timestamp}_{file.filename}"
+        file_path = os.path.join(settings.UPLOAD_DIR, filename)
+        
+        # Save file
+        with open(file_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+        
+        # Update writeup URL
+        writeup.writeup_url = f"/uploads/writeups/{filename}"
+        
+        # Extract metadata and suggest tags if not provided
+        if not tags:
+            pdf_metadata = extract_metadata_from_pdf(file_path)
+            suggested_tags = suggest_tags(file_path)
+            tags = ",".join(suggested_tags)
+    
+    # Update other fields
+    if title is not None:
+        writeup.title = title
+    if platform is not None:
+        writeup.platform = platform
+    if difficulty is not None:
+        writeup.difficulty = difficulty
+    if category is not None:
+        writeup.category = category
+    if date is not None:
+        writeup.date = date
+    if time_spent is not None:
+        writeup.time_spent = time_spent
+    if summary is not None:
+        writeup.summary = summary
+    
+    # Handle tags
+    if tags is not None:
+        tag_names = [t.strip() for t in tags.split(',') if t.strip()]
+        tag_objects = []
+        for tag_name in tag_names:
+            tag = db.query(Tag).filter(Tag.name == tag_name).first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                db.add(tag)
+            tag_objects.append(tag)
+        writeup.tags = tag_objects
+    
+    # Update timestamp to track edits, but don't affect ordering
+    writeup.updated_at = datetime.now()
     
     db.commit()
     db.refresh(writeup)
