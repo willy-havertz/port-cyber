@@ -118,7 +118,9 @@ export default function AdminWriteups() {
           window.location.href = "/admin/login";
         }, 2000);
       } else {
-        setError(err.response?.data?.detail || err.message || "Failed to save writeup");
+        setError(
+          err.response?.data?.detail || err.message || "Failed to save writeup"
+        );
       }
     } finally {
       setIsUploading(false);

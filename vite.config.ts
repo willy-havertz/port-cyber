@@ -13,7 +13,23 @@ export default defineConfig({
   },
   logLevel: "info",
   build: {
+    target: "esnext",
+    minify: "terser",
+    terserOptions: {
+      compress: {
+        drop_console: true,
+      },
+    },
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
+      output: {
+        manualChunks: {
+          // Vendor code splitting
+          "vendor-react": ["react", "react-dom", "react-router-dom"],
+          "vendor-ui": ["framer-motion", "lucide-react"],
+          "vendor-http": ["axios"],
+        },
+      },
       onwarn(warning, warn) {
         // ignore certain harmless warnings
         if (
