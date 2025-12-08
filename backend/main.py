@@ -16,19 +16,12 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS Configuration - allow Vercel domains and fall back to any origin when needed
+# CORS Configuration - allow all origins (permissive for development/deployment)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        settings.FRONTEND_URL,
-        "http://localhost:5173",
-        "https://wiltordichingwa.vercel.app",
-        "https://port-cyber.vercel.app",
-        "https://*.vercel.app",
-    ],
-    allow_origin_regex=r".*",  # allow all origins (helps when frontends deploy on preview URLs)
-    allow_credentials=False,  # must be False when using wildcard origins
-    allow_methods=["*"],
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
 )
 
