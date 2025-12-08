@@ -16,19 +16,20 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS Configuration - Allow Vercel deployments
+# CORS Configuration - allow Vercel domains and fall back to any origin when needed
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        settings.FRONTEND_URL, 
+        settings.FRONTEND_URL,
         "http://localhost:5173",
         "https://wiltordichingwa.vercel.app",
         "https://port-cyber.vercel.app",
+        "https://*.vercel.app",
     ],
-    allow_credentials=True,
+    allow_origin_regex=r".*",  # allow all origins (helps when frontends deploy on preview URLs)
+    allow_credentials=False,  # must be False when using wildcard origins
     allow_methods=["*"],
     allow_headers=["*"],
-    allow_origin_regex=r"https://.*\.vercel\.app",
 )
 
 # Create upload directory if it doesn't exist
