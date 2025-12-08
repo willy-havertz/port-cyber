@@ -14,9 +14,9 @@ import requests
 from pathlib import Path
 
 # Configuration
-HTB_USERNAME = os.getenv("HTB_USERNAME", "")  # Set your HTB username
-HTB_API_TOKEN = os.getenv("HTB_API_TOKEN", "")  # Set your HTB API token
-THM_USERNAME = os.getenv("THM_USERNAME", "")  # Set your THM username
+HTB_USERNAME = os.getenv("HTB_USERNAME", "")  # Set your HTB username or hardcode here
+HTB_API_TOKEN = os.getenv("HTB_API_TOKEN", "")  # Set your HTB API token or hardcode here
+THM_USERNAME = os.getenv("THM_USERNAME", "Hackertz")  # Your THM username
 
 # Output path
 OUTPUT_DIR = Path(__file__).parent.parent / "src" / "data"
@@ -92,10 +92,21 @@ class CTFStatsScraper:
             return {}
 
         try:
+            # Try with Accept header for JSON
+            headers = {"Accept": "application/json"}
             response = requests.get(
                 f"https://tryhackme.com/api/user/public-profile?username={THM_USERNAME}",
+                headers=headers,
                 timeout=10,
             )
+
+            # Check content type - THM API may be returning HTML
+            content_type = response.headers.get("content-type", "")
+            if "application/json" not in content_type:
+                print(f"⚠️  THM API returned {content_type} instead of JSON")
+                print(f"    💡 Manual Update: Edit src/data/ctf-stats.json directly")
+                print(f"    💡 Or visit: https://tryhackme.com/profile/{THM_USERNAME}")
+                return {}
 
             if response.status_code == 200:
                 data = response.json()
@@ -122,6 +133,12 @@ class CTFStatsScraper:
                 print(f"❌ THM API error: {response.status_code}")
                 return {}
 
+        except json.JSONDecodeError as e:
+            print(f"❌ Error parsing THM JSON: {str(e)}")
+            print(f"    💡 The API may have changed format. Try manual update:")
+            print(f"    💡 Edit src/data/ctf-stats.json with your stats from:")
+            print(f"    💡 https://tryhackme.com/profile/{THM_USERNAME}")
+            return {}
         except Exception as e:
             print(f"❌ Error fetching THM stats: {str(e)}")
             return {}
