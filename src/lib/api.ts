@@ -1,8 +1,64 @@
 import axios from "axios";
 
+// Cache configuration
+const CACHE_KEY = "writeups_cache";
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+
+interface CacheEntry<T> {
+  data: T;
+  timestamp: number;
+}
+
+const cache = new Map<string, CacheEntry<any>>();
+
+const getCachedData = <T>(key: string): T | null => {
+  // Try memory cache first
+  if (cache.has(key)) {
+    const entry = cache.get(key)!;
+    if (Date.now() - entry.timestamp < CACHE_DURATION) {
+      return entry.data;
+    }
+    cache.delete(key);
+  }
+
+  // Try localStorage
+  try {
+    const stored = localStorage.getItem(key);
+    if (stored) {
+      const entry = JSON.parse(stored) as CacheEntry<T>;
+      if (Date.now() - entry.timestamp < CACHE_DURATION) {
+        // Restore to memory cache
+        cache.set(key, entry);
+        return entry.data;
+      }
+      localStorage.removeItem(key);
+    }
+  } catch (e) {
+    // Ignore cache read errors
+  }
+
+  return null;
+};
+
+const setCachedData = <T>(key: string, data: T): void => {
+  const entry: CacheEntry<T> = {
+    data,
+    timestamp: Date.now(),
+  };
+
+  // Store in both memory and localStorage
+  cache.set(key, entry);
+  try {
+    localStorage.setItem(key, JSON.stringify(entry));
+  } catch (e) {
+    // Ignore cache write errors
+  }
+};
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
   withCredentials: false,
+  timeout: 10000, // 10 second timeout
 });
 
 api.interceptors.request.use((config) => {
@@ -21,8 +77,10 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       // Token expired or invalid - redirect to login
       localStorage.removeItem("auth_token");
-      if (window.location.pathname.startsWith("/admin") && 
-          window.location.pathname !== "/admin/login") {
+      if (
+        window.location.pathname.startsWith("/admin") &&
+        window.location.pathname !== "/admin/login"
+      ) {
         window.location.href = "/admin/login";
       }
     }
@@ -67,19 +125,59 @@ export interface CreateCommentPayload {
 }
 
 export const fetchWriteups = async () => {
+  const cacheKey = "writeups_list";
+
+  // Check cache first
+  const cached = getCachedData<Writeup[]>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  // Fetch from API
   const { data } = await api.get("/writeups", {
     params: { skip: 0, limit: 50 },
   });
-  return data.items || data;
+  const writeups = data.items || data;
+
+  // Cache the result
+  setCachedData(cacheKey, writeups);
+
+  return writeups;
 };
 
 export const fetchWriteup = async (id: string | number) => {
+  const cacheKey = `writeup_${id}`;
+
+  // Check cache first
+  const cached = getCachedData<Writeup>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  // Fetch from API
   const { data } = await api.get(`/writeups/${id}`);
+
+  // Cache the result
+  setCachedData(cacheKey, data);
+
   return data as Writeup;
 };
 
 export const fetchComments = async (writeupId: string | number) => {
+  const cacheKey = `comments_${writeupId}`;
+
+  // Check cache first
+  const cached = getCachedData<Comment[]>(cacheKey);
+  if (cached) {
+    return cached;
+  }
+
+  // Fetch from API
   const { data } = await api.get(`/comments/${writeupId}`);
+
+  // Cache the result
+  setCachedData(cacheKey, data);
+
   return data as Comment[];
 };
 
