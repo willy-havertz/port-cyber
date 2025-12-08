@@ -96,11 +96,7 @@ export default function AdminWriteups() {
       await load();
     } catch (err) {
       console.error(err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Failed to save writeup"
-      );
+      setError(err instanceof Error ? err.message : "Failed to save writeup");
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
@@ -186,7 +182,7 @@ export default function AdminWriteups() {
                 setShowForm(true);
                 setEditingId(null);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors"
             >
               <Plus className="h-5 w-5" />
               New Writeup
@@ -397,7 +393,7 @@ export default function AdminWriteups() {
                 <button
                   type="submit"
                   disabled={isUploading}
-                  className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isUploading
                     ? "Uploading..."

@@ -67,6 +67,7 @@ writeup_tags table (many-to-many)
 When user visits `/writeups/fowsniff`:
 
 #### 3.1 Header Section
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │  Fowsniff - Linux Privilege Escalation via Misconfigured MOTD
@@ -80,6 +81,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.2 Overview Section
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ OVERVIEW
@@ -94,6 +96,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.3 Methodology Section (AUTO-GENERATED)
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ METHODOLOGY
@@ -114,6 +117,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.4 Key Findings Section (AUTO-GENERATED)
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ KEY FINDINGS
@@ -134,6 +138,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.5 Tools Used Section (AUTO-GENERATED)
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ TOOLS USED
@@ -152,6 +157,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.6 Lessons Learned Section (AUTO-GENERATED)
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ LESSONS LEARNED
@@ -173,6 +179,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.7 Technologies/Tags Section
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ SKILLS & TECHNIQUES
@@ -186,6 +193,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.8 PDF Viewer
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ FULL WRITEUP WITH SCREENSHOTS
@@ -199,6 +207,7 @@ When user visits `/writeups/fowsniff`:
 ```
 
 #### 3.9 Comments Section
+
 ```
 ┌─────────────────────────────────────────────────────────┐
 │ COMMENTS (0)
@@ -296,6 +305,7 @@ When user visits `/writeups/fowsniff`:
 ## Example: Creating "Fowsniff" Writeup
 
 ### Step 1: Admin fills form
+
 ```
 Title:     "Fowsniff - Linux Privilege Escalation via Misconfigured MOTD"
 Platform:  "Try Hack Me"
@@ -303,23 +313,25 @@ Difficulty: "Easy"
 Category:  "Linux"
 Date:      "2025-11-20"
 Time Spent: "1hr 30min"
-Summary:   "Fowsniff is an easy-level Linux privilege escalation challenge 
-            that demonstrates the dangers of misconfigured Message of the Day 
+Summary:   "Fowsniff is an easy-level Linux privilege escalation challenge
+            that demonstrates the dangers of misconfigured Message of the Day
             (MOTD) scripts..."
 📁 PDF:    fowsniff.pdf (100KB)
 ```
 
 ### Step 2: Backend processes
+
 ```
 ✓ Validates: .pdf file ✓
 ✓ Saves to: /backend/uploads/writeups/20251208_143022_fowsniff.pdf
 ✓ Extracts: summary, author metadata from PDF
-✓ Suggests tags: ["linux", "privilege escalation", "enumeration", 
+✓ Suggests tags: ["linux", "privilege escalation", "enumeration",
                    "email service", "ssh", "bash scripting", ...]
 ✓ Creates DB record with all fields
 ```
 
 ### Step 3: User visits writeup page
+
 ```
 GET /api/writeups/1 → Returns:
 {
@@ -341,6 +353,7 @@ GET /api/writeups/1 → Returns:
 ```
 
 ### Step 4: Frontend generates content
+
 ```
 WriteupDetail.tsx component:
 
@@ -367,17 +380,20 @@ WriteupDetail.tsx component:
 ## Why This Approach?
 
 ### 📊 Data Stored in DB
+
 - **Fixed/Admin-Entered**: title, platform, difficulty, category, date, time_spent, summary, writeup_url
 - **Auto-Extracted**: summary (from PDF if not provided)
 - **Auto-Suggested**: tags (from PDF analysis)
 
 ### 🔄 Generated on Frontend
+
 - **Methodology**: Category-aware steps (Linux has port scanning, Web has OWASP testing, etc.)
 - **Key Findings**: Difficulty + category → realistic vulnerabilities
 - **Tools Used**: Category → specific security tools for that domain
 - **Lessons Learned**: Generic lessons enhanced by challenge data
 
 ### ✅ Benefits
+
 1. **Consistency**: All Linux challenges show Linux-specific methodology
 2. **Realism**: Tools match the domain (Burp for Web, Metasploit for Exploits, etc.)
 3. **Flexibility**: Easy to adjust generation logic per category
@@ -388,21 +404,21 @@ WriteupDetail.tsx component:
 
 ## Admin Form → Writeup Display Mapping Table
 
-| Admin Form Field | DB Column | WriteupDetail Display | Generated? |
-|------------------|-----------|----------------------|------------|
-| Title | title | Header (H1) | ❌ No |
-| Platform | platform | Header badge | ❌ No |
-| Difficulty | difficulty | Header badge + color | ❌ No |
-| Category | category | Header badge + Methodology basis | ❌ No |
-| Date | date | Header (with trophy icon) | ❌ No |
-| Time Spent | time_spent | Header (with clock icon) | ❌ No |
-| Summary | summary | Overview section | ❌ No |
-| PDF Upload | writeup_url | PDF Viewer section | ❌ No |
-| - | tags | Skills & Techniques | ✅ Auto-suggested |
-| - | - | Methodology section | ✅ Generated from category |
-| - | - | Key Findings section | ✅ Generated from category + difficulty |
-| - | - | Tools Used section | ✅ Generated from category |
-| - | - | Lessons Learned section | ✅ Generated from difficulty + category |
+| Admin Form Field | DB Column   | WriteupDetail Display            | Generated?                              |
+| ---------------- | ----------- | -------------------------------- | --------------------------------------- |
+| Title            | title       | Header (H1)                      | ❌ No                                   |
+| Platform         | platform    | Header badge                     | ❌ No                                   |
+| Difficulty       | difficulty  | Header badge + color             | ❌ No                                   |
+| Category         | category    | Header badge + Methodology basis | ❌ No                                   |
+| Date             | date        | Header (with trophy icon)        | ❌ No                                   |
+| Time Spent       | time_spent  | Header (with clock icon)         | ❌ No                                   |
+| Summary          | summary     | Overview section                 | ❌ No                                   |
+| PDF Upload       | writeup_url | PDF Viewer section               | ❌ No                                   |
+| -                | tags        | Skills & Techniques              | ✅ Auto-suggested                       |
+| -                | -           | Methodology section              | ✅ Generated from category              |
+| -                | -           | Key Findings section             | ✅ Generated from category + difficulty |
+| -                | -           | Tools Used section               | ✅ Generated from category              |
+| -                | -           | Lessons Learned section          | ✅ Generated from difficulty + category |
 
 ---
 

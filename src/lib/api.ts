@@ -121,9 +121,7 @@ export const uploadWriteupFile = async (
     headers: { "Content-Type": "multipart/form-data" },
     onUploadProgress: (event) => {
       if (onProgress) {
-        const progress = Math.round(
-          (event.loaded / (event.total || 1)) * 100
-        );
+        const progress = Math.round((event.loaded / (event.total || 1)) * 100);
         onProgress(progress);
       }
     },

@@ -36,7 +36,7 @@ export default function AdminLogin() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800 flex items-center justify-center px-4"
+      className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center px-4 transition-colors"
     >
       <motion.div
         initial={{ scale: 0.95, opacity: 0 }}
@@ -44,20 +44,18 @@ export default function AdminLogin() {
         transition={{ delay: 0.1 }}
         className="w-full max-w-md"
       >
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-2xl p-8">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8">
           <div className="flex justify-center mb-6">
-            <div className="bg-blue-600 p-3 rounded-full">
+            <div className="bg-black dark:bg-slate-800 p-3 rounded-full">
               <Lock className="h-6 w-6 text-white" />
             </div>
-          </div>
-
-          <h1 className="text-2xl font-bold text-center text-slate-900 dark:text-white mb-2">
+          </div>{" "}
+          <h1 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-2">
             Admin Dashboard
           </h1>
-          <p className="text-center text-slate-600 dark:text-slate-400 mb-6">
+          <p className="text-center text-slate-600 dark:text-slate-400 mb-8">
             Enter your password to access the admin panel
           </p>
-
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
@@ -94,7 +92,7 @@ export default function AdminLogin() {
               whileTap={{ scale: 0.98 }}
               type="submit"
               disabled={loading}
-              className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="w-full px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {loading ? "Logging in..." : "Log In"}
             </motion.button>
