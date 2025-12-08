@@ -69,6 +69,7 @@ def seed_database():
             "time_spent": "2 hours",
             "writeup_url": "/uploads/writeups/fowsniff.pdf",
             "summary": "Exploiting email enumeration and weak credentials for privilege escalation on Fowsniff machine",
+            "tags": ["Linux", "Privilege Escalation", "Email Enumeration"],
         },
         {
             "title": "Lame - Classic Linux Privilege Escalation",
@@ -79,6 +80,7 @@ def seed_database():
             "time_spent": "1.5 hours",
             "writeup_url": "",
             "summary": "Samba vulnerability exploitation leading to root access on Lame machine",
+            "tags": ["Linux", "Samba", "RCE"],
         },
         {
             "title": "Cybernetics - Advanced Web",
@@ -89,6 +91,7 @@ def seed_database():
             "time_spent": "3 hours",
             "writeup_url": "",
             "summary": "Advanced web exploitation techniques including SSRF and template injection",
+            "tags": ["Web Security", "SSRF", "Template Injection"],
         },
         {
             "title": "HackPark - Windows Web Exploitation",
@@ -99,6 +102,7 @@ def seed_database():
             "time_spent": "2.5 hours",
             "writeup_url": "",
             "summary": "Exploiting BlogEngine vulnerability for RCE on Windows target",
+            "tags": ["Windows", "Web Security", "RCE"],
         },
         {
             "title": "Advent of Cyber - Day 1",
@@ -109,6 +113,7 @@ def seed_database():
             "time_spent": "1 hour",
             "writeup_url": "",
             "summary": "First challenge from Advent of Cyber event covering basic web vulnerabilities",
+            "tags": ["Web Security", "OWASP"],
         },
         {
             "title": "Resolute - Active Directory",
@@ -119,6 +124,7 @@ def seed_database():
             "time_spent": "3.5 hours",
             "writeup_url": "",
             "summary": "Active Directory enumeration and exploitation using BloodHound and PowerView",
+            "tags": ["Active Directory", "Enumeration", "Windows"],
         },
         {
             "title": "Brainfuck - Binary Exploitation",
@@ -129,6 +135,7 @@ def seed_database():
             "time_spent": "5 hours",
             "writeup_url": "",
             "summary": "Complex binary exploitation with ROP chains and heap overflow techniques",
+            "tags": ["Binary Exploitation", "ROP", "Heap Overflow"],
         },
     ]
     
@@ -153,10 +160,22 @@ def seed_database():
             created_at=created_time,
             updated_at=created_time,
         )
+        
+        # Add tags to writeup
+        if "tags" in data:
+            for tag_name in data["tags"]:
+                # Check if tag already exists
+                tag = db.query(Tag).filter(Tag.name == tag_name).first()
+                if not tag:
+                    tag = Tag(name=tag_name)
+                    db.add(tag)
+                    db.flush()  # Ensure tag is persisted before associating
+                writeup.tags.append(tag)
+        
         db.add(writeup)
     
     db.commit()
-    print(f"✅ Successfully seeded {len(writeups_data)} writeups!")
+    print(f"✅ Successfully seeded {len(writeups_data)} writeups with tags!")
     
     # Verify
     total = db.query(Writeup).count()
