@@ -17,11 +17,11 @@ class Settings(BaseSettings):
     SUPABASE_URL: str
     SUPABASE_KEY: str
     
-    # Redis
-    REDIS_URL: str
+    # Redis (optional for production)
+    REDIS_URL: str = "redis://localhost:6379/0"
     
     # CORS
-    FRONTEND_URL: str
+    FRONTEND_URL: str = "http://localhost:5173"
     
     # File Upload
     UPLOAD_DIR: str = "uploads/writeups"
