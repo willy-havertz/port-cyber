@@ -25,11 +25,13 @@ db = SessionLocal()
 def seed_database():
     print("Starting database seeding...")
     
-    # Check if writeups already exist
+    # Clear existing writeups to ensure we have the latest data
     existing_count = db.query(Writeup).count()
     if existing_count > 0:
-        print(f"Database already has {existing_count} writeups. Skipping seed.")
-        return
+        print(f"Clearing {existing_count} existing writeups...")
+        db.query(Writeup).delete()
+        db.commit()
+        print("✅ Existing writeups cleared.")
     
     # Create sample writeups
     writeups_data = [
