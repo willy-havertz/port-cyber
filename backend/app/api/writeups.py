@@ -72,7 +72,7 @@ async def create_writeup(
     date: str = Form(...),
     time_spent: str = Form(...),
     summary: Optional[str] = Form(None),
-    tags: str = Form(...),  # Comma-separated tags
+    tags: str = Form(""),  # Optional, comma-separated tags
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_admin_user)
