@@ -6,16 +6,16 @@ class Settings(BaseSettings):
     DATABASE_URL: str
     
     # JWT
-    SECRET_KEY: str
+    SECRET_KEY: str = "your-secret-key-change-in-production"
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Admin
     ADMIN_PASSWORD: str = "admin123"
     
-    # Supabase
-    SUPABASE_URL: str
-    SUPABASE_KEY: str
+    # Supabase (optional for now)
+    SUPABASE_URL: str = "https://example.supabase.co"
+    SUPABASE_KEY: str = "example-key"
     
     # Redis (optional for production)
     REDIS_URL: str = "redis://localhost:6379/0"
