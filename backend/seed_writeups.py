@@ -63,7 +63,7 @@ def seed_database():
             "category": "Linux",
             "date": "2024-01-15",
             "time_spent": "2 hours",
-            "writeup_url": "/writeups/fowsniff.pdf",
+            "writeup_url": "/uploads/writeups/fowsniff.pdf",
             "summary": "Exploiting email enumeration and weak credentials for privilege escalation on Fowsniff machine",
         },
         {
@@ -73,7 +73,7 @@ def seed_database():
             "category": "Linux",
             "date": "2024-01-20",
             "time_spent": "1.5 hours",
-            "writeup_url": "/writeups/lame.pdf",
+            "writeup_url": "/uploads/writeups/lame.pdf",
             "summary": "Samba vulnerability exploitation leading to root access on Lame machine",
         },
         {
@@ -83,7 +83,7 @@ def seed_database():
             "category": "Web",
             "date": "2024-02-05",
             "time_spent": "3 hours",
-            "writeup_url": "/writeups/cybernetics.pdf",
+            "writeup_url": "/uploads/writeups/cybernetics.pdf",
             "summary": "Advanced web exploitation techniques including SSRF and template injection",
         },
         {
@@ -93,7 +93,7 @@ def seed_database():
             "category": "Windows",
             "date": "2024-02-10",
             "time_spent": "2.5 hours",
-            "writeup_url": "/writeups/hackpark.pdf",
+            "writeup_url": "/uploads/writeups/hackpark.pdf",
             "summary": "Exploiting BlogEngine vulnerability for RCE on Windows target",
         },
         {
@@ -103,7 +103,7 @@ def seed_database():
             "category": "Web",
             "date": "2024-03-01",
             "time_spent": "1 hour",
-            "writeup_url": "/writeups/advent-day1.pdf",
+            "writeup_url": "/uploads/writeups/advent-day1.pdf",
             "summary": "First challenge from Advent of Cyber event covering basic web vulnerabilities",
         },
         {
@@ -113,7 +113,7 @@ def seed_database():
             "category": "Active Directory",
             "date": "2024-03-15",
             "time_spent": "3.5 hours",
-            "writeup_url": "/writeups/resolute.pdf",
+            "writeup_url": "/uploads/writeups/resolute.pdf",
             "summary": "Active Directory enumeration and exploitation using BloodHound and PowerView",
         },
         {
@@ -123,7 +123,7 @@ def seed_database():
             "category": "Binary Exploitation",
             "date": "2024-04-01",
             "time_spent": "5 hours",
-            "writeup_url": "/writeups/brainfuck.pdf",
+            "writeup_url": "/uploads/writeups/brainfuck.pdf",
             "summary": "Complex binary exploitation with ROP chains and heap overflow techniques",
         },
     ]
