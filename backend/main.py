@@ -17,12 +17,23 @@ app = FastAPI(
 )
 
 # CORS Configuration
+allowed_origins = [
+    settings.FRONTEND_URL, 
+    "http://localhost:5173",
+    "https://port-cyber.vercel.app",
+]
+
+# Allow all Vercel preview URLs in production
+if os.getenv("ENVIRONMENT") == "production":
+    allowed_origins.append("https://*.vercel.app")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:5173"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    allow_origin_regex=r"https://.*\.vercel\.app",
 )
 
 # Create upload directory if it doesn't exist
