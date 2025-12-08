@@ -1,5 +1,5 @@
 import React from "react";
-import { Calendar, Clock, Shield } from "lucide-react";
+import { Calendar, Clock, Shield, ExternalLink } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface AnalysisCardProps {
@@ -10,6 +10,7 @@ interface AnalysisCardProps {
   readTime: string;
   severity?: "Low" | "Medium" | "High" | "Critical";
   tags: string[];
+  resourceLink?: string;
 }
 
 const AnalysisCard: React.FC<AnalysisCardProps> = ({
@@ -20,6 +21,7 @@ const AnalysisCard: React.FC<AnalysisCardProps> = ({
   readTime,
   severity,
   tags,
+  resourceLink,
 }) => {
   const getSeverityColor = (severity?: string) => {
     switch (severity) {
@@ -79,7 +81,7 @@ const AnalysisCard: React.FC<AnalysisCardProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 mb-4">
         {tags.map((tag) => (
           <span
             key={tag}
@@ -89,6 +91,18 @@ const AnalysisCard: React.FC<AnalysisCardProps> = ({
           </span>
         ))}
       </div>
+
+      {resourceLink && (
+        <a
+          href={resourceLink}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-all duration-300 shadow-md hover:shadow-lg"
+        >
+          <ExternalLink className="h-4 w-4 mr-1" />
+          View Research
+        </a>
+      )}
     </motion.article>
   );
 };

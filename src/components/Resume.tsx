@@ -217,19 +217,18 @@ const Resume: React.FC = () => {
               <h3 className="text-lg font-semibold text-gray-900">
                 Bachelor of Science in Computer Science
               </h3>
-              <p className="text-gray-600">University of Nairobi</p>
+              <p className="text-gray-600">University of Embu</p>
             </div>
-            <span className="text-gray-600">2020 - 2024</span>
+            <span className="text-gray-600">2023 - 2027</span>
           </div>
         </div>
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
-            Continuous Learning
+            Additional Training
           </h3>
           <ul className="list-disc list-inside text-gray-700 space-y-1">
-            <li>HackTheBox & TryHackMe - Advanced Security Challenges</li>
-            <li>Coursera - Cybersecurity Specialization</li>
-            <li>SANS Cybersecurity Training Programs</li>
+            <li>Ethical Hacker in Cisco Academy (12 weeks)</li>
+            <li>Software Engineering in Power Learn Project (14 weeks)</li>
           </ul>
         </div>
       </section>

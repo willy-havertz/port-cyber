@@ -8,6 +8,7 @@ export default function Writeups() {
   const [selectedPlatform, setSelectedPlatform] = useState("All");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [visibleCount, setVisibleCount] = useState(6);
 
   const writeups = [
     {
@@ -207,9 +208,11 @@ export default function Writeups() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredWriteups.length > 0 ? (
-              filteredWriteups.map((writeup, index) => (
-                <WriteupCard key={index} {...writeup} />
-              ))
+              filteredWriteups
+                .slice(0, visibleCount)
+                .map((writeup, index) => (
+                  <WriteupCard key={index} {...writeup} />
+                ))
             ) : (
               <div className="col-span-full text-center py-12">
                 <p className="text-lg text-slate-600 dark:text-slate-400">
@@ -219,12 +222,16 @@ export default function Writeups() {
             )}
           </div>
 
-          {/* Load More Button */}
-          <div className="text-center mt-12">
-            <button className="px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors">
-              Load More Writeups
-            </button>
-          </div>
+          {visibleCount < filteredWriteups.length && (
+            <div className="text-center mt-12">
+              <button
+                onClick={() => setVisibleCount(visibleCount + 6)}
+                className="px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors"
+              >
+                Load More Writeups
+              </button>
+            </div>
+          )}
         </div>
       </main>
 

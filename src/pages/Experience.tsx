@@ -103,14 +103,19 @@ export default function Experience() {
 
   const education = [
     {
-      degree: "Master of Science in Cybersecurity",
-      school: "University of California, Berkeley",
-      year: "2016",
+      degree: "Bachelor of Science in Computer Science",
+      school: "University of Embu",
+      year: "2023 - 2027",
     },
     {
-      degree: "Bachelor of Science in Computer Science",
-      school: "Arizona State University",
-      year: "2014",
+      degree: "Ethical Hacker (Cisco Academy)",
+      school: "Cisco Academy",
+      year: "12 weeks",
+    },
+    {
+      degree: "Software Engineering (Power Learn Project)",
+      school: "Power Learn Project",
+      year: "14 weeks",
     },
   ];
 
