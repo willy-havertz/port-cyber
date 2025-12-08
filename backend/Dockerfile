@@ -22,5 +22,5 @@ RUN mkdir -p uploads/writeups
 # Expose port
 EXPOSE 8000
 
-# Run the application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+# Run migrations and seed on startup, then start the app
+CMD alembic upgrade head && python seed_writeups.py && uvicorn main:app --host 0.0.0.0 --port 8000
