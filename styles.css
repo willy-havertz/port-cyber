@@ -5,9 +5,13 @@
 @tailwind utilities;
 
 @layer base {
-  html,
-  body {
+  html {
     @apply overflow-x-hidden;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    @apply overflow-x-hidden w-screen;
   }
 
   /* Smooth theme transition */
