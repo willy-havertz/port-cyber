@@ -8,6 +8,7 @@ import {
   createWriteup,
   updateWriteup,
   uploadWriteupFile,
+  updateWriteupWithFile,
   type Writeup,
   type CreateWriteupPayload,
   type UpdateWriteupPayload,
@@ -59,8 +60,8 @@ export default function AdminWriteups() {
       return;
     }
 
-    // If creating and file is selected, validate it's a PDF
-    if (!editingId && selectedFile) {
+    // Validate file if selected
+    if (selectedFile) {
       if (!selectedFile.name.endsWith(".pdf")) {
         setError("Only PDF files are allowed");
         return;
@@ -77,11 +78,21 @@ export default function AdminWriteups() {
       setIsUploading(true);
 
       if (editingId) {
-        const payload: UpdateWriteupPayload = formData;
-        await updateWriteup(editingId, payload);
-        setSuccess("Writeup updated successfully!");
+        // Update existing writeup
+        if (selectedFile) {
+          // Update with new file
+          await updateWriteupWithFile(editingId, formData, selectedFile, (progress) => {
+            setUploadProgress(progress);
+          });
+          setSuccess("Writeup updated and PDF uploaded successfully!");
+        } else {
+          // Update without file
+          const payload: UpdateWriteupPayload = formData;
+          await updateWriteup(editingId, payload);
+          setSuccess("Writeup updated successfully!");
+        }
       } else if (selectedFile) {
-        // Upload with file
+        // Create with file
         await uploadWriteupFile(formData, selectedFile, (progress) => {
           setUploadProgress(progress);
         });
@@ -294,100 +305,101 @@ export default function AdminWriteups() {
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               />
 
-              {/* File Upload or URL */}
-              {!editingId && (
+              {/* File Upload Section */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                  {editingId ? "Upload New PDF (optional)" : "Upload PDF Writeup"}
+                </label>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileChange}
+                    disabled={isUploading}
+                    className="hidden"
+                    id="pdf-input"
+                  />
+                  <label
+                    htmlFor="pdf-input"
+                    className="flex items-center justify-center w-full px-4 py-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <span className="text-slate-600 dark:text-slate-400">
+                      {selectedFile
+                        ? selectedFile.name
+                        : editingId
+                        ? "Click to upload new PDF"
+                        : "Click to select PDF or drag and drop"}
+                    </span>
+                  </label>
+                </div>
+
+                {/* File info and progress */}
+                {selectedFile && (
+                  <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <div className="text-sm text-slate-700 dark:text-slate-300">
+                      <p className="font-medium">{selectedFile.name}</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                      </p>
+                    </div>
+                    {!isUploading && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setSelectedFile(null);
+                          setError(null);
+                        }}
+                        className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    )}
+                  </div>
+                )}
+
+                {/* Upload progress */}
+                {isUploading && uploadProgress > 0 && (
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-slate-700 dark:text-slate-300">
+                        Uploading...
+                      </span>
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {uploadProgress}%
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Current PDF URL display when editing */}
+              {editingId && (
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                    Upload PDF Writeup (or enter manual URL below)
+                    Current PDF URL
                   </label>
-                  <div className="relative">
-                    <input
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileChange}
-                      disabled={isUploading}
-                      className="hidden"
-                      id="pdf-input"
-                    />
-                    <label
-                      htmlFor="pdf-input"
-                      className="flex items-center justify-center w-full px-4 py-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span className="text-slate-600 dark:text-slate-400">
-                        {selectedFile
-                          ? selectedFile.name
-                          : "Click to select PDF or drag and drop"}
-                      </span>
-                    </label>
-                  </div>
-
-                  {/* File info and progress */}
-                  {selectedFile && (
-                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                      <div className="text-sm text-slate-700 dark:text-slate-300">
-                        <p className="font-medium">{selectedFile.name}</p>
-                        <p className="text-xs text-slate-600 dark:text-slate-400">
-                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
-                        </p>
-                      </div>
-                      {!isUploading && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedFile(null);
-                            setError(null);
-                          }}
-                          className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      )}
-                    </div>
-                  )}
-
-                  {/* Upload progress */}
-                  {isUploading && uploadProgress > 0 && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-slate-700 dark:text-slate-300">
-                          Uploading...
-                        </span>
-                        <span className="text-slate-600 dark:text-slate-400">
-                          {uploadProgress}%
-                        </span>
-                      </div>
-                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                        <div
-                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                          style={{ width: `${uploadProgress}%` }}
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Manual URL input (alternative or when editing) */}
-              {editingId && (
-                <input
-                  type="text"
-                  placeholder="Writeup URL"
-                  value={formData.writeup_url}
-                  onChange={(e) =>
-                    setFormData({ ...formData, writeup_url: e.target.value })
-                  }
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                />
-              )}
-
-              {!editingId && (
-                <div className="text-sm text-slate-600 dark:text-slate-400">
-                  <p>
-                    💡 Uploading a PDF will automatically extract metadata and
-                    suggest tags based on content.
+                  <input
+                    type="text"
+                    value={formData.writeup_url}
+                    onChange={(e) =>
+                      setFormData({ ...formData, writeup_url: e.target.value })
+                    }
+                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                    placeholder="Writeup URL"
+                  />
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    💡 Upload a new PDF above to replace, or edit the URL manually
                   </p>
                 </div>
               )}
+
+
 
               <div className="flex gap-3">
                 <button
