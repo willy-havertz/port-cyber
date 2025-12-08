@@ -129,11 +129,20 @@ const CTFStatsDashboard: React.FC = () => {
             className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6"
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
-                {platform.name}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+                  {platform.name}
+                </h3>
+                {key === "tryhackme" && (
+                  <img
+                    src="https://tryhackme.com/img/favicon.png"
+                    alt="TryHackMe"
+                    className="h-6 w-6"
+                  />
+                )}
+              </div>
               {platform.rank && (
-                <span className="px-3 py-1 text-sm font-medium bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-full">
+                <span className="px-3 py-1 text-sm font-medium bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full">
                   {platform.rank}
                 </span>
               )}
@@ -181,26 +190,10 @@ const CTFStatsDashboard: React.FC = () => {
                   </span>
                 </div>
               )}
-
-              {platform.roomsCompleted !== undefined && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-slate-600 dark:text-slate-400">
-                    Rooms Completed
-                  </span>
-                  <span className="font-medium text-slate-900 dark:text-white">
-                    {platform.roomsCompleted}
-                  </span>
-                </div>
-              )}
             </div>
           </motion.div>
         ))}
       </div>
-
-      {/* Last Updated */}
-      <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-        Last updated: {new Date(stats.lastUpdated).toLocaleString()}
-      </p>
     </div>
   );
 };
