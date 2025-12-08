@@ -9,6 +9,17 @@ node_modules/
 yarn.lock
 pnpm-lock.yaml
 
+# Python
+venv/
+env/
+ENV/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
 # Build output
 dist/
 build/

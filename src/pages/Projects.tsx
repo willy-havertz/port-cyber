@@ -30,7 +30,7 @@ export default function Projects() {
       imageUrl:
         "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
       githubUrl: "https://github.com",
-      liveUrl: "https://demo.example.com",
+      liveUrl: "https://owasp.org/www-community/Vulnerability_Scanning_Tools",
       date: "Nov 2024",
       category: "Tool Development",
     },
