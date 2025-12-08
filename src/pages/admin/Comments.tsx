@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, Trash2, AlertCircle } from "lucide-react";
-import AdminLayout from "../components/AdminLayout";
+import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
   fetchComments,
   approveComment,
   deleteComment,
   type Comment,
-} from "../lib/api";
+} from "../../lib/api";
 
 export default function AdminComments() {
   const [comments, setComments] = useState<

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FileText, MessageSquare, Eye } from "lucide-react";
-import AdminLayout from "../components/AdminLayout";
+import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
   fetchComments,
   type Writeup,
   type Comment,
-} from "../lib/api";
+} from "../../lib/api";
 
 export default function AdminDashboard() {
   const [writeups, setWriteups] = useState<Writeup[]>([]);
