@@ -14,13 +14,18 @@ interface CTFStats {
       totalOwns?: number;
       roomsCompleted?: number;
       badges?: number;
+      owns?: number;
+      respect?: number;
+      ranking?: number;
+      streak?: number;
+      avatar?: string;
     };
   };
   totals: {
     machinesCompleted: number;
     pointsEarned: number;
     hoursSpent: number;
-    platforms: number;
+    rank?: string;
   };
 }
 
@@ -53,6 +58,8 @@ const CTFStatsDashboard: React.FC = () => {
     return null;
   }
 
+  const platformCount = Object.keys(stats.platforms).length;
+
   const statCards = [
     {
       icon: Trophy,
@@ -79,7 +86,7 @@ const CTFStatsDashboard: React.FC = () => {
     {
       icon: TrendingUp,
       label: "Platforms",
-      value: stats.totals.platforms,
+      value: platformCount,
       color: "text-purple-600 dark:text-purple-400",
       bgColor: "bg-purple-100 dark:bg-purple-900",
     },
