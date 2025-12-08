@@ -442,7 +442,11 @@ export default function WriteupDetail() {
               Full Writeup with Screenshots
             </h3>
             <a
-              href={writeup.writeup_url}
+              href={
+                writeup.writeup_url.startsWith("http")
+                  ? writeup.writeup_url
+                  : `${import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:8000"}${writeup.writeup_url}`
+              }
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
