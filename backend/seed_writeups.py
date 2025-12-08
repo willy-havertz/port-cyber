@@ -50,9 +50,13 @@ def seed_database():
     existing_count = db.query(Writeup).count()
     if existing_count > 0:
         print(f"Clearing {existing_count} existing writeups...")
-        db.query(Writeup).delete()
+        # Use raw SQL to disable foreign key checks temporarily
+        from sqlalchemy import text
+        db.execute(text("DELETE FROM writeup_tags"))
+        db.execute(text("DELETE FROM writeups"))
+        db.execute(text("DELETE FROM tags"))
         db.commit()
-        print("✅ Existing writeups cleared.")
+        print("✅ Existing writeups, tags, and associations cleared.")
     
     # Create sample writeups
     writeups_data = [
