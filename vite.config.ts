@@ -10,16 +10,11 @@ export default defineConfig({
     logOverride: {
       "ignored-directive": "silent",
     },
+    drop: ["console"],
   },
   logLevel: "info",
   build: {
     target: "esnext",
-    minify: "terser",
-    terserOptions: {
-      compress: {
-        drop_console: true,
-      },
-    },
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
