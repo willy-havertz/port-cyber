@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Plus, Edit2, Trash2, AlertCircle, X } from "lucide-react";
-import AdminLayout from "../components/AdminLayout";
+import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
   deleteWriteup,
@@ -11,7 +11,7 @@ import {
   type Writeup,
   type CreateWriteupPayload,
   type UpdateWriteupPayload,
-} from "../lib/api";
+} from "../../lib/api";
 
 export default function AdminWriteups() {
   const [writeups, setWriteups] = useState<Writeup[]>([]);

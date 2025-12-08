@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Lock, AlertCircle } from "lucide-react";
-import { loginAdmin } from "../lib/api";
+import { loginAdmin } from "../../lib/api";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -49,13 +49,15 @@ export default function AdminLogin() {
             <div className="bg-black dark:bg-slate-800 p-3 rounded-full">
               <Lock className="h-6 w-6 text-white" />
             </div>
-          </div>{" "}
+          </div>
+
           <h1 className="text-3xl font-bold text-center text-slate-900 dark:text-white mb-2">
             Admin Dashboard
           </h1>
           <p className="text-center text-slate-600 dark:text-slate-400 mb-8">
             Enter your password to access the admin panel
           </p>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
