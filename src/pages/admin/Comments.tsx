@@ -92,13 +92,13 @@ export default function AdminComments() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
             Moderate Comments
           </h1>
-          <p className="text-slate-600 dark:text-slate-400 mt-2">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
             Review and manage comments on your writeups
           </p>
         </div>
@@ -126,12 +126,12 @@ export default function AdminComments() {
         )}
 
         {/* Filters */}
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3">
           {(["all", "pending", "approved"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors capitalize ${
+              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors capitalize text-sm sm:text-base ${
                 filter === f
                   ? "bg-black dark:bg-slate-800 text-white"
                   : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
@@ -160,20 +160,20 @@ export default function AdminComments() {
             </p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3 sm:space-y-4">
             {filteredComments.map((comment) => (
               <motion.div
                 key={comment.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-slate-800 rounded-lg shadow p-6"
+                className="bg-white dark:bg-slate-800 rounded-lg shadow p-4 sm:p-6"
               >
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-slate-900 dark:text-white">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 mb-3 sm:mb-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-sm sm:text-base text-slate-900 dark:text-white truncate">
                       {comment.user_name}
                     </h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1 break-words">
                       {comment.user_email} • On "{comment.writeup_title}"
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">
@@ -181,7 +181,7 @@ export default function AdminComments() {
                     </p>
                   </div>
                   <span
-                    className={`px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap ${
+                    className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium whitespace-nowrap self-start ${
                       comment.is_approved
                         ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
                         : "bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300"
@@ -191,17 +191,17 @@ export default function AdminComments() {
                   </span>
                 </div>
 
-                <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap mb-4">
+                <p className="text-sm sm:text-base text-slate-700 dark:text-slate-300 whitespace-pre-wrap mb-3 sm:mb-4">
                   {comment.content}
                 </p>
 
-                <div className="flex gap-2">
+                <div className="flex flex-col sm:flex-row gap-2">
                   {!comment.is_approved && (
                     <motion.button
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleApprove(comment.id)}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+                      className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base"
                     >
                       <CheckCircle className="h-4 w-4" />
                       Approve
@@ -211,7 +211,7 @@ export default function AdminComments() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleDelete(comment.id)}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors text-sm sm:text-base"
                   >
                     <Trash2 className="h-4 w-4" />
                     Delete
