@@ -16,7 +16,7 @@ from app.models.user import User
 from app.core.database import Base
 from app.core.config import settings
 from app.core.security import get_password_hash
-from datetime import datetime
+from datetime import datetime, timedelta
 
 # Create engine and session
 engine = create_engine(settings.DATABASE_URL)
@@ -130,7 +130,13 @@ def seed_database():
     
     print(f"Creating {len(writeups_data)} sample writeups...")
     
-    for data in writeups_data:
+    # Create writeups with ascending timestamps so fowsniff (last) is newest
+    base_time = datetime.utcnow() - timedelta(days=len(writeups_data))
+    
+    for idx, data in enumerate(writeups_data):
+        # Calculate creation time - each writeup is 1 day apart
+        created_time = base_time + timedelta(days=idx)
+        
         writeup = Writeup(
             title=data["title"],
             platform=data["platform"],
@@ -140,8 +146,8 @@ def seed_database():
             time_spent=data["time_spent"],
             writeup_url=data["writeup_url"],
             summary=data["summary"],
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=created_time,
+            updated_at=created_time,
         )
         db.add(writeup)
     
