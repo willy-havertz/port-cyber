@@ -24,22 +24,21 @@ interface CTFStats {
   };
 }
 
+import ctfStatsData from "../data/ctf-stats.json";
+
 const CTFStatsDashboard: React.FC = () => {
   const [stats, setStats] = useState<CTFStats | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Load stats from JSON file
-    fetch("/src/data/ctf-stats.json")
-      .then((res) => res.json())
-      .then((data) => {
-        setStats(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error loading CTF stats:", error);
-        setLoading(false);
-      });
+    // Load stats from imported JSON
+    try {
+      setStats(ctfStatsData as CTFStats);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error loading CTF stats:", error);
+      setLoading(false);
+    }
   }, []);
 
   if (loading) {
