@@ -445,7 +445,10 @@ export default function WriteupDetail() {
               href={
                 writeup.writeup_url.startsWith("http")
                   ? writeup.writeup_url
-                  : `${import.meta.env.VITE_API_URL?.replace("/api", "") || "http://localhost:8000"}${writeup.writeup_url}`
+                  : `${
+                      import.meta.env.VITE_API_URL?.replace("/api", "") ||
+                      "http://localhost:8000"
+                    }${writeup.writeup_url}`
               }
               target="_blank"
               rel="noopener noreferrer"

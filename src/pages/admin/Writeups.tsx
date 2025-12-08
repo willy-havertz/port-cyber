@@ -81,9 +81,14 @@ export default function AdminWriteups() {
         // Update existing writeup
         if (selectedFile) {
           // Update with new file
-          await updateWriteupWithFile(editingId, formData, selectedFile, (progress) => {
-            setUploadProgress(progress);
-          });
+          await updateWriteupWithFile(
+            editingId,
+            formData,
+            selectedFile,
+            (progress) => {
+              setUploadProgress(progress);
+            }
+          );
           setSuccess("Writeup updated and PDF uploaded successfully!");
         } else {
           // Update without file
@@ -105,9 +110,16 @@ export default function AdminWriteups() {
 
       resetForm();
       await load();
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError(err instanceof Error ? err.message : "Failed to save writeup");
+      if (err.response?.status === 401) {
+        setError("Session expired. Please log in again.");
+        setTimeout(() => {
+          window.location.href = "/admin/login";
+        }, 2000);
+      } else {
+        setError(err.response?.data?.detail || err.message || "Failed to save writeup");
+      }
     } finally {
       setIsUploading(false);
       setUploadProgress(0);
@@ -308,7 +320,9 @@ export default function AdminWriteups() {
               {/* File Upload Section */}
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                  {editingId ? "Upload New PDF (optional)" : "Upload PDF Writeup"}
+                  {editingId
+                    ? "Upload New PDF (optional)"
+                    : "Upload PDF Writeup"}
                 </label>
                 <div className="relative">
                   <input
@@ -394,12 +408,11 @@ export default function AdminWriteups() {
                     placeholder="Writeup URL"
                   />
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    💡 Upload a new PDF above to replace, or edit the URL manually
+                    💡 Upload a new PDF above to replace, or edit the URL
+                    manually
                   </p>
                 </div>
               )}
-
-
 
               <div className="flex gap-3">
                 <button
