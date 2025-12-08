@@ -13,6 +13,7 @@ interface CTFStats {
       points: number;
       totalOwns?: number;
       roomsCompleted?: number;
+      badges?: number;
     };
   };
   totals: {
@@ -148,13 +149,13 @@ const CTFStatsDashboard: React.FC = () => {
                 </span>
               </div>
 
-              {platform.level !== undefined && (
+              {platform.badges !== undefined && (
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600 dark:text-slate-400">
-                    Level
+                    Badges
                   </span>
                   <span className="font-medium text-slate-900 dark:text-white">
-                    {platform.level}
+                    {platform.badges}
                   </span>
                 </div>
               )}
