@@ -4,7 +4,7 @@ services:
     runtime: python
     rootDir: backend
     startCommand: "gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT main:app"
-    buildCommand: "pip install -r requirements.txt && alembic upgrade head"
+    buildCommand: "pip install -r requirements.txt && alembic upgrade head && python seed_writeups.py"
     envVars:
       - key: DATABASE_URL
         sync: false
