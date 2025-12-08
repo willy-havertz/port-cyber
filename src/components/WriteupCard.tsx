@@ -110,4 +110,4 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
   );
 };
 
-export default WriteupCard;
+export default React.memo(WriteupCard);
