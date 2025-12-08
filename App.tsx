@@ -3,7 +3,12 @@ import "@radix-ui/themes/styles.css";
 import { Theme } from "@radix-ui/themes";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { ThemeProvider } from "./src/contexts/ThemeContext";
 
 import Home from "./src/pages/Home";
@@ -14,6 +19,11 @@ import Writeups from "./src/pages/Writeups";
 import WriteupDetail from "./src/pages/WriteupDetail";
 import Contact from "./src/pages/Contact";
 import NotFound from "./src/pages/NotFound";
+import AdminLogin from "./src/pages/AdminLogin";
+import AdminDashboard from "./src/pages/AdminDashboard";
+import AdminWriteups from "./src/pages/AdminWriteups";
+import AdminComments from "./src/pages/AdminComments";
+import ProtectedRoute from "./src/components/ProtectedRoute";
 
 const App: React.FC = () => {
   return (
@@ -29,6 +39,34 @@ const App: React.FC = () => {
               <Route path="/writeups" element={<Writeups />} />
               <Route path="/writeups/:id" element={<WriteupDetail />} />
               <Route path="/contact" element={<Contact />} />
+
+              {/* Admin Routes */}
+              <Route path="/admin/login" element={<AdminLogin />} />
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/writeups"
+                element={
+                  <ProtectedRoute>
+                    <AdminWriteups />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/comments"
+                element={
+                  <ProtectedRoute>
+                    <AdminComments />
+                  </ProtectedRoute>
+                }
+              />
+
               <Route path="*" element={<NotFound />} />
             </Routes>
             <ToastContainer

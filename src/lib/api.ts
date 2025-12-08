@@ -39,6 +39,9 @@ export interface Comment {
   user_email: string;
   content: string;
   created_at: string;
+  is_approved?: boolean;
+  is_spam?: boolean;
+  updated_at?: string;
 }
 
 export interface CreateCommentPayload {
@@ -73,6 +76,79 @@ export const postComment = async (
     ...payload,
   });
   return data;
+};
+
+// Admin API functions
+export interface CreateWriteupPayload {
+  title: string;
+  platform: string;
+  difficulty: string;
+  category: string;
+  date: string;
+  time_spent: string;
+  writeup_url: string;
+  summary?: string;
+}
+
+export interface UpdateWriteupPayload {
+  title?: string;
+  platform?: string;
+  difficulty?: string;
+  category?: string;
+  date?: string;
+  time_spent?: string;
+  writeup_url?: string;
+  summary?: string;
+}
+
+export const createWriteup = async (payload: CreateWriteupPayload) => {
+  const { data } = await api.post("/writeups", payload);
+  return data as Writeup;
+};
+
+export const updateWriteup = async (
+  id: number,
+  payload: UpdateWriteupPayload
+) => {
+  const { data } = await api.put(`/writeups/${id}`, payload);
+  return data as Writeup;
+};
+
+export const deleteWriteup = async (id: number) => {
+  await api.delete(`/writeups/${id}`);
+};
+
+export const getPendingComments = async () => {
+  const { data } = await api.get("/comments/admin/pending");
+  return data as Comment[];
+};
+
+export const approveComment = async (commentId: number) => {
+  const { data } = await api.patch(`/comments/${commentId}`, {
+    is_approved: true,
+  });
+  return data as Comment;
+};
+
+export const rejectComment = async (commentId: number) => {
+  const { data } = await api.patch(`/comments/${commentId}`, {
+    is_approved: false,
+  });
+  return data as Comment;
+};
+
+export const deleteComment = async (commentId: number) => {
+  await api.delete(`/comments/${commentId}`);
+};
+
+export const loginAdmin = async (password: string) => {
+  const { data } = await api.post("/auth/login", { password });
+  localStorage.setItem("auth_token", data.access_token);
+  return data;
+};
+
+export const logoutAdmin = () => {
+  localStorage.removeItem("auth_token");
 };
 
 export default api;
