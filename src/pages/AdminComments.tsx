@@ -7,7 +7,6 @@ import {
   fetchComments,
   approveComment,
   deleteComment,
-  type Writeup,
   type Comment,
 } from "../lib/api";
 
