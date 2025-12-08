@@ -14,20 +14,19 @@
     "tryhackme": {
       "name": "Try Hack Me",
       "username": "Hackertz",
-      "rank": "Regular",
-      "level": 25,
-      "points": 5320,
-      "roomsCompleted": 89,
-      "badges": 34,
-      "streak": 12,
-      "ranking": 4521,
+      "rank": "Medium",
+      "level": 10,
+      "roomsCompleted": 30,
+      "badges": 10,
+      "streak": 30,
+      "ranking": 242725,
       "avatar": ""
     }
   },
   "totals": {
-    "machinesCompleted": 157,
-    "pointsEarned": 8170,
+    "machinesCompleted": 98,
+    "pointsEarned": 0,
     "rank": "Hacker",
-    "hoursSpent": 314
+    "hoursSpent": 196
   }
 }
