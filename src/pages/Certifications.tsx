@@ -5,13 +5,13 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CertificateModal from "../components/CertificateModal";
 
-// Import certificate PDFs
-import ethicalHackerCert from "../assets/Ethical_Hacker_certificate_wiltordichingwa-gmail-com_4095fa46-0c39-4723-af19-0d32afa047eb (1).pdf";
-import mernStackCert from "../assets/wiltord Full-Stack Development MERN Stack certificate.pdf";
+// Import certificate images
+import ethicalHackerCert from "../assets/ethical_hacker_cert-1.png";
+import mernStackCert1 from "../assets/mern_stack_cert-1.png";
 
 export default function Certifications() {
   const [selectedCertificate, setSelectedCertificate] = useState<{
-    url: string;
+    urls: string[];
     title: string;
   } | null>(null);
 
@@ -32,8 +32,9 @@ export default function Certifications() {
       title: "Ethical Hacker",
       issuer: "Cisco Networking Academy",
       date: "2025",
-      description: "Comprehensive 12-week training covering ethical hacking methodologies, penetration testing, and cybersecurity fundamentals.",
-      pdfUrl: ethicalHackerCert,
+      description:
+        "Comprehensive 12-week training covering ethical hacking methodologies, penetration testing, and cybersecurity fundamentals.",
+      imageUrls: [ethicalHackerCert],
       color: "from-green-500 to-emerald-600",
       icon: Shield,
     },
@@ -41,8 +42,9 @@ export default function Certifications() {
       title: "Full-Stack Development - MERN Stack",
       issuer: "Power Learn Project",
       date: "2025",
-      description: "14-week intensive program covering MongoDB, Express.js, React, and Node.js for full-stack web application development.",
-      pdfUrl: mernStackCert,
+      description:
+        "14-week intensive program covering MongoDB, Express.js, React, and Node.js for full-stack web application development.",
+      imageUrls: [mernStackCert1],
       color: "from-blue-500 to-indigo-600",
       icon: Award,
     },
@@ -65,7 +67,9 @@ export default function Certifications() {
               Certifications & Badges
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-              Professional certifications, training programs, and industry-recognized achievements demonstrating expertise in cybersecurity and software development.
+              Professional certifications, training programs, and
+              industry-recognized achievements demonstrating expertise in
+              cybersecurity and software development.
             </p>
           </motion.div>
 
@@ -83,13 +87,15 @@ export default function Certifications() {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 border border-slate-200 dark:border-slate-700"
+                className="bg-white dark:bg-white rounded-lg shadow-lg p-8 border border-slate-200 dark:border-slate-300"
+                onContextMenu={(e) => e.preventDefault()}
               >
                 <div
                   data-iframe-width="150"
                   data-iframe-height="270"
                   data-share-badge-id="7d2b2a3f-3d87-4930-a2c9-33b8ceea0288"
                   data-share-badge-host="https://www.credly.com"
+                  className="[&>iframe]:rounded-lg [&>iframe]:shadow-inner"
                 ></div>
               </motion.div>
             </div>
@@ -118,7 +124,9 @@ export default function Certifications() {
                     className="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700"
                   >
                     {/* Gradient Header */}
-                    <div className={`bg-gradient-to-r ${cert.color} p-6 text-white`}>
+                    <div
+                      className={`bg-gradient-to-r ${cert.color} p-6 text-white`}
+                    >
                       <div className="flex items-center justify-between mb-4">
                         <IconComponent className="h-12 w-12" />
                         <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">
@@ -137,7 +145,12 @@ export default function Certifications() {
 
                       {/* Actions */}
                       <button
-                        onClick={() => setSelectedCertificate({ url: cert.pdfUrl, title: cert.title })}
+                        onClick={() =>
+                          setSelectedCertificate({
+                            urls: cert.imageUrls,
+                            title: cert.title,
+                          })
+                        }
                         className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
                       >
                         <Eye className="h-4 w-4" />
@@ -158,9 +171,13 @@ export default function Certifications() {
             className="mt-16"
           >
             <div className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-lg shadow-lg p-8 text-white text-center">
-              <h2 className="text-3xl font-bold mb-4">Pursuing Advanced Certifications</h2>
+              <h2 className="text-3xl font-bold mb-4">
+                Pursuing Advanced Certifications
+              </h2>
               <p className="text-lg mb-6 max-w-2xl mx-auto">
-                Currently working towards industry-leading security certifications to further enhance expertise in penetration testing and cybersecurity.
+                Currently working towards industry-leading security
+                certifications to further enhance expertise in penetration
+                testing and cybersecurity.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
                 <span className="px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full font-semibold text-lg">
@@ -185,7 +202,7 @@ export default function Certifications() {
         <CertificateModal
           isOpen={!!selectedCertificate}
           onClose={() => setSelectedCertificate(null)}
-          certificateUrl={selectedCertificate.url}
+          certificateUrls={selectedCertificate.urls}
           title={selectedCertificate.title}
         />
       )}

@@ -5,14 +5,14 @@ import { motion, AnimatePresence } from "framer-motion";
 interface CertificateModalProps {
   isOpen: boolean;
   onClose: () => void;
-  certificateUrl: string;
+  certificateUrls: string[];
   title: string;
 }
 
 const CertificateModal: React.FC<CertificateModalProps> = ({
   isOpen,
   onClose,
-  certificateUrl,
+  certificateUrls,
   title,
 }) => {
   if (!isOpen) return null;
@@ -49,33 +49,25 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
           </div>
 
           {/* Certificate Content */}
-          <div 
-            className="overflow-auto max-h-[calc(90vh-80px)] bg-slate-50 dark:bg-slate-900"
-            onContextMenu={(e) => e.preventDefault()} // Prevent right-click
+          <div
+            className="overflow-auto max-h-[calc(90vh-80px)] bg-slate-50 dark:bg-slate-900 p-4"
+            onContextMenu={(e) => e.preventDefault()}
           >
-            <div className="p-4 flex justify-center">
-              <object
-                data={certificateUrl}
-                type="application/pdf"
-                className="w-full h-[calc(90vh-120px)] rounded-lg"
-                style={{ 
-                  pointerEvents: 'none', // Prevent download on right-click
-                  userSelect: 'none' 
-                }}
-                onContextMenu={(e) => e.preventDefault()}
-              >
-                <iframe
-                  src={`${certificateUrl}#toolbar=0&navpanes=0&scrollbar=0`}
-                  className="w-full h-[calc(90vh-120px)] rounded-lg"
-                  title={title}
-                  style={{ 
-                    border: 'none',
-                    pointerEvents: 'none',
-                    userSelect: 'none'
-                  }}
+            <div className="flex flex-col items-center gap-4" onContextMenu={(e) => e.preventDefault()}>
+              {certificateUrls.map((url, index) => (
+                <img
+                  key={index}
+                  src={url}
+                  alt={`${title} - Page ${index + 1}`}
+                  className="w-full max-w-4xl rounded-lg shadow-lg"
                   onContextMenu={(e) => e.preventDefault()}
+                  style={{
+                    pointerEvents: "none",
+                    userSelect: "none",
+                  }}
+                  draggable={false}
                 />
-              </object>
+              ))}
             </div>
           </div>
         </motion.div>
