@@ -1,10 +1,33 @@
 {
-  "lastUpdated": "2025-12-08T03:13:02.330988",
-  "platforms": {},
+  "lastUpdated": "2025-12-08T03:26:05.398495",
+  "platforms": {
+    "hackthebox": {
+      "name": "Hack The Box",
+      "username": "example_user",
+      "rank": "Pro Hacker",
+      "points": 2850,
+      "owns": 68,
+      "respect": 145,
+      "ranking": 2341,
+      "avatar": ""
+    },
+    "tryhackme": {
+      "name": "Try Hack Me",
+      "username": "Hackertz",
+      "rank": "Regular",
+      "level": 25,
+      "points": 5320,
+      "roomsCompleted": 89,
+      "badges": 34,
+      "streak": 12,
+      "ranking": 4521,
+      "avatar": ""
+    }
+  },
   "totals": {
-    "machinesCompleted": 0,
-    "pointsEarned": 0,
-    "hoursSpent": 0,
-    "platforms": 0
+    "machinesCompleted": 157,
+    "pointsEarned": 8170,
+    "rank": "Hacker",
+    "hoursSpent": 314
   }
 }
