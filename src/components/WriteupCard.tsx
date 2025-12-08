@@ -1,5 +1,5 @@
 import React from "react";
-import { ExternalLink, Trophy, Clock, Target } from "lucide-react";
+import { ExternalLink, Trophy, Clock, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 
@@ -78,7 +78,7 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
 
         <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 mb-4 space-x-4">
           <div className="flex items-center">
-            <Target className="h-4 w-4 mr-1" />
+            <Calendar className="h-4 w-4 mr-1" />
             {date}
           </div>
           <div className="flex items-center">

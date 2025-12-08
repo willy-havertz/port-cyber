@@ -57,13 +57,22 @@ export default function Writeups() {
   const platforms = ["All", "Hack The Box", "Try Hack Me"];
 
   const allCategories = useMemo(
-    () => [...new Set(writeups.map((w) => w.category).filter(Boolean))],
+    () => [...new Set(writeups.map((w) => w.category).filter(Boolean))].sort(),
     [writeups]
   );
-  const allTags = useMemo(
-    () => [...new Set(writeups.flatMap((w) => w.tags))],
-    [writeups]
-  );
+  const allTags = useMemo(() => {
+    const tags = new Set<string>();
+    writeups.forEach((w) => {
+      if (w.tags && Array.isArray(w.tags)) {
+        w.tags.forEach((tag) => {
+          if (tag && typeof tag === 'string') {
+            tags.add(tag);
+          }
+        });
+      }
+    });
+    return Array.from(tags).sort();
+  }, [writeups])
 
   const filteredWriteups = useMemo(() => {
     return writeups.filter((writeup) => {
