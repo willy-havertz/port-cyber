@@ -130,12 +130,12 @@ def seed_database():
     
     print(f"Creating {len(writeups_data)} sample writeups...")
     
-    # Create writeups with ascending timestamps so fowsniff (last) is newest
-    base_time = datetime.utcnow() - timedelta(days=len(writeups_data))
+    # Create writeups with descending timestamps so fowsniff (first) is newest
+    base_time = datetime.utcnow()
     
     for idx, data in enumerate(writeups_data):
-        # Calculate creation time - each writeup is 1 day apart
-        created_time = base_time + timedelta(days=idx)
+        # Calculate creation time - each writeup is 1 day apart (descending)
+        created_time = base_time - timedelta(days=idx)
         
         writeup = Writeup(
             title=data["title"],
