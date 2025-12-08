@@ -153,9 +153,14 @@ const Footer = () => {
           viewport={{ once: true }}
           className="border-t border-slate-800 mt-8 pt-8 text-center"
         >
-          <p className="text-slate-400 text-sm">
-            © {new Date().getFullYear()} Wiltord's Portfolio. All rights
-            reserved.
+          <p
+            className="text-slate-400 text-sm"
+            style={{
+              fontFamily: "'Dancing Script', 'Brush Script MT', cursive",
+              fontWeight: 700,
+            }}
+          >
+            © {new Date().getFullYear()} Wiltord Ichingwa. All rights reserved.
           </p>
         </motion.div>
       </div>

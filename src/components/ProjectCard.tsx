@@ -87,7 +87,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               className="flex items-center px-3 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-md hover:bg-black dark:hover:bg-gray-100 transition-colors"
             >
               <ExternalLink className="h-4 w-4 mr-1" />
-              Live Demo
+              OWASP Guide
             </a>
           )}
         </div>
