@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: port-cyber-backend
+    runtime: python
+    rootDir: backend
+    startCommand: "gunicorn -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:$PORT main:app"
+    buildCommand: "pip install -r requirements.txt && alembic upgrade head"
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: SECRET_KEY
+        sync: false
+      - key: FRONTEND_URL
+        value: https://port-cyber.vercel.app
+      - key: ENVIRONMENT
+        value: production
