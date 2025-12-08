@@ -193,10 +193,10 @@ export default function AdminWriteups() {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {/* Header */}
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
             Manage Writeups
           </h1>
           {!showForm && (
@@ -207,9 +207,9 @@ export default function AdminWriteups() {
                 setShowForm(true);
                 setEditingId(null);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base w-full sm:w-auto justify-center"
             >
-              <Plus className="h-5 w-5" />
+              <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
               New Writeup
             </motion.button>
           )}
@@ -242,12 +242,12 @@ export default function AdminWriteups() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow p-6"
+            className="bg-white dark:bg-slate-800 rounded-lg shadow p-4 sm:p-6"
           >
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4">
               {editingId ? "Edit Writeup" : "Create New Writeup"}
             </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <input
                   type="text"
@@ -416,11 +416,11 @@ export default function AdminWriteups() {
                 </div>
               )}
 
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <button
                   type="submit"
                   disabled={isUploading}
-                  className="px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   {isUploading
                     ? "Uploading..."
@@ -432,7 +432,7 @@ export default function AdminWriteups() {
                   type="button"
                   disabled={isUploading}
                   onClick={resetForm}
-                  className="px-4 py-2 bg-slate-300 dark:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg hover:bg-slate-400 dark:hover:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-slate-300 dark:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg hover:bg-slate-400 dark:hover:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   Cancel
                 </button>
@@ -449,20 +449,20 @@ export default function AdminWriteups() {
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-hidden">
-            <table className="w-full">
+          <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-x-auto">
+            <table className="w-full min-w-[640px]">
               <thead className="bg-slate-50 dark:bg-slate-700">
                 <tr>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                     Title
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                     Platform
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                     Difficulty
                   </th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-slate-900 dark:text-white">
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                     Actions
                   </th>
                 </tr>
@@ -473,15 +473,15 @@ export default function AdminWriteups() {
                     key={writeup.id}
                     className="hover:bg-slate-50 dark:hover:bg-slate-700"
                   >
-                    <td className="px-6 py-4 text-slate-900 dark:text-white">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-slate-900 dark:text-white">
                       {writeup.title}
                     </td>
-                    <td className="px-6 py-4 text-slate-600 dark:text-slate-400">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-base text-slate-600 dark:text-slate-400">
                       {writeup.platform}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`px-2 sm:px-3 py-1 rounded-full text-xs font-medium ${
                           writeup.difficulty === "Easy"
                             ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
                             : writeup.difficulty === "Medium"
@@ -494,16 +494,16 @@ export default function AdminWriteups() {
                         {writeup.difficulty}
                       </span>
                     </td>
-                    <td className="px-6 py-4 flex gap-2">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 flex gap-1 sm:gap-2">
                       <button
                         onClick={() => handleEdit(writeup)}
-                        className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                        className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
                         onClick={() => handleDelete(writeup.id)}
-                        className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                        className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>
