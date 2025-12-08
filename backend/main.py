@@ -16,20 +16,15 @@ app = FastAPI(
     version="1.0.0"
 )
 
-# CORS Configuration
-allowed_origins = [
-    settings.FRONTEND_URL, 
-    "http://localhost:5173",
-    "https://port-cyber.vercel.app",
-]
-
-# Allow all Vercel preview URLs in production
-if os.getenv("ENVIRONMENT") == "production":
-    allowed_origins.append("https://*.vercel.app")
-
+# CORS Configuration - Allow Vercel deployments
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
+    allow_origins=[
+        settings.FRONTEND_URL, 
+        "http://localhost:5173",
+        "https://wiltordichingwa.vercel.app",
+        "https://port-cyber.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
