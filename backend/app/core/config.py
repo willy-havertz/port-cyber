@@ -21,7 +21,7 @@ class Settings(BaseSettings):
     REDIS_URL: str = "redis://localhost:6379/0"
     
     # CORS
-    FRONTEND_URL: str = "http://localhost:5173"
+    FRONTEND_URL: str = "https://wiltordichingwa.vercel.app"
     
     # File Upload
     UPLOAD_DIR: str = "uploads/writeups"
