@@ -1,14 +1,20 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Award, Download, ExternalLink, Shield } from "lucide-react";
+import { Award, Eye, Shield } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
+import CertificateModal from "../components/CertificateModal";
 
 // Import certificate PDFs
 import ethicalHackerCert from "../assets/Ethical_Hacker_certificate_wiltordichingwa-gmail-com_4095fa46-0c39-4723-af19-0d32afa047eb (1).pdf";
 import mernStackCert from "../assets/wiltord Full-Stack Development MERN Stack certificate.pdf";
 
 export default function Certifications() {
+  const [selectedCertificate, setSelectedCertificate] = useState<{
+    url: string;
+    title: string;
+  } | null>(null);
+
   useEffect(() => {
     // Load Credly badge script
     const script = document.createElement("script");
@@ -25,7 +31,7 @@ export default function Certifications() {
     {
       title: "Ethical Hacker",
       issuer: "Cisco Networking Academy",
-      date: "2024",
+      date: "2025",
       description: "Comprehensive 12-week training covering ethical hacking methodologies, penetration testing, and cybersecurity fundamentals.",
       pdfUrl: ethicalHackerCert,
       color: "from-green-500 to-emerald-600",
@@ -34,7 +40,7 @@ export default function Certifications() {
     {
       title: "Full-Stack Development - MERN Stack",
       issuer: "Power Learn Project",
-      date: "2024",
+      date: "2025",
       description: "14-week intensive program covering MongoDB, Express.js, React, and Node.js for full-stack web application development.",
       pdfUrl: mernStackCert,
       color: "from-blue-500 to-indigo-600",
@@ -130,24 +136,13 @@ export default function Certifications() {
                       </p>
 
                       {/* Actions */}
-                      <div className="flex gap-3">
-                        <a
-                          href={cert.pdfUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
-                        >
-                          <ExternalLink className="h-4 w-4" />
-                          View Certificate
-                        </a>
-                        <a
-                          href={cert.pdfUrl}
-                          download
-                          className="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 font-medium rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-                        >
-                          <Download className="h-5 w-5" />
-                        </a>
-                      </div>
+                      <button
+                        onClick={() => setSelectedCertificate({ url: cert.pdfUrl, title: cert.title })}
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
+                      >
+                        <Eye className="h-4 w-4" />
+                        View Certificate
+                      </button>
                     </div>
                   </motion.article>
                 );
@@ -184,6 +179,16 @@ export default function Certifications() {
       </main>
 
       <Footer />
+
+      {/* Certificate Modal */}
+      {selectedCertificate && (
+        <CertificateModal
+          isOpen={!!selectedCertificate}
+          onClose={() => setSelectedCertificate(null)}
+          certificateUrl={selectedCertificate.url}
+          title={selectedCertificate.title}
+        />
+      )}
     </div>
   );
 }
