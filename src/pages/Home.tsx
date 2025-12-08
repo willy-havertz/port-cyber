@@ -14,6 +14,7 @@ import Footer from "../components/Footer";
 import ResumeModal from "../components/ResumeModal";
 import FeaturedCarousel from "../components/FeaturedCarousel";
 import { Link } from "react-router-dom";
+import CTFStatsDashboard from "../components/CTFStatsDashboard";
 
 export default function Home() {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
@@ -208,6 +209,36 @@ export default function Home() {
                 </motion.div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* CTF Statistics Dashboard */}
+        <section className="py-20 bg-white dark:bg-slate-800 transition-colors">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6 }}
+              viewport={{ once: true }}
+              className="text-center mb-12"
+            >
+              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+                CTF Statistics
+              </h2>
+              <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+                Live statistics from Hack The Box and Try Hack Me platforms,
+                showcasing completed challenges and earned achievements.
+              </p>
+            </motion.div>
+
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              viewport={{ once: true }}
+            >
+              <CTFStatsDashboard />
+            </motion.div>
           </div>
         </section>
 

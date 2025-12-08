@@ -1,0 +1,2 @@
+# Python requirements for CTF stats scraper
+requests>=2.31.0
