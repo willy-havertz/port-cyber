@@ -4,7 +4,7 @@ import {
   Code,
   Search,
   Users,
-  ArrowRight,
+  ExternalLink,
   Download,
   Eye,
 } from "lucide-react";
@@ -133,7 +133,7 @@ export default function Home() {
                     className="inline-flex items-center px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors"
                   >
                     View Projects
-                    <ArrowRight className="ml-2 h-5 w-5" />
+                    <ExternalLink className="ml-2 h-5 w-5" />
                   </Link>
                   <div className="flex gap-2">
                     <button className="inline-flex items-center px-6 py-3 border-2 border-gray-900 text-gray-900 dark:border-white dark:text-white font-semibold rounded-lg hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors">
@@ -343,7 +343,7 @@ export default function Home() {
                 className="inline-flex items-center px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors"
               >
                 View All Writeups
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ExternalLink className="ml-2 h-5 w-5" />
               </Link>
             </motion.div>
           </div>
@@ -370,7 +370,7 @@ export default function Home() {
               className="inline-flex items-center px-8 py-4 bg-gray-900 text-white dark:bg-black dark:text-white font-semibold rounded-lg hover:bg-black dark:hover:bg-gray-800 transition-colors text-lg"
             >
               Get In Touch
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ExternalLink className="ml-2 h-5 w-5" />
             </Link>
           </motion.div>
         </section>
