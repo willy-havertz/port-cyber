@@ -159,14 +159,16 @@ const CTFStatsDashboard: React.FC = () => {
                 </div>
               )}
 
-              <div className="flex justify-between text-sm">
-                <span className="text-slate-600 dark:text-slate-400">
-                  Points
-                </span>
-                <span className="font-medium text-slate-900 dark:text-white">
-                  {platform.points.toLocaleString()}
-                </span>
-              </div>
+              {platform.points !== undefined && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-600 dark:text-slate-400">
+                    Points
+                  </span>
+                  <span className="font-medium text-slate-900 dark:text-white">
+                    {platform.points.toLocaleString()}
+                  </span>
+                </div>
+              )}
 
               {platform.totalOwns !== undefined && (
                 <div className="flex justify-between text-sm">

@@ -16,6 +16,7 @@
       "username": "Hackertz",
       "rank": "Medium",
       "level": 10,
+      "points": 5654,
       "roomsCompleted": 30,
       "badges": 10,
       "streak": 30,
@@ -25,7 +26,7 @@
   },
   "totals": {
     "machinesCompleted": 98,
-    "pointsEarned": 0,
+    "pointsEarned": 8504,
     "rank": "Hacker",
     "hoursSpent": 196
   }

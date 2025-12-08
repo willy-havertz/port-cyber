@@ -157,13 +157,13 @@ crontab -e
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| `401 Unauthorized` | Check your HTB API token is correct |
-| `404 Not Found` | Verify HTB/THM username is correct |
-| `Timeout` | Check internet connection |
+| Issue                       | Solution                                                 |
+| --------------------------- | -------------------------------------------------------- |
+| `401 Unauthorized`          | Check your HTB API token is correct                      |
+| `404 Not Found`             | Verify HTB/THM username is correct                       |
+| `Timeout`                   | Check internet connection                                |
 | `text/html instead of JSON` | THM API endpoint may be down - use manual update instead |
-| Invalid JSON error | Use `update_stats_manual.py` for manual entry |
+| Invalid JSON error          | Use `update_stats_manual.py` for manual entry            |
 
 ## Security Notes
 
@@ -171,5 +171,3 @@ crontab -e
 - Use environment variables or `.env` file
 - Add `.env` to `.gitignore`
 - Dashboard display is public - stats shown on portfolio
-
-
