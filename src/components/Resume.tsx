@@ -217,7 +217,9 @@ const Resume: React.FC = () => {
             <ul className="list-disc list-inside space-y-1">
               <li>Certified in Cybersecurity (ISC2) — Credly badge</li>
               <li>Ethical Hacker — Cisco Networking Academy (2025)</li>
-              <li>Full-Stack Development (MERN) — Power Learn Project (2025)</li>
+              <li>
+                Full-Stack Development (MERN) — Power Learn Project (2025)
+              </li>
             </ul>
           </div>
           <div>

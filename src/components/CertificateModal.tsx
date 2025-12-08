@@ -53,7 +53,10 @@ const CertificateModal: React.FC<CertificateModalProps> = ({
             className="overflow-auto max-h-[calc(90vh-80px)] bg-slate-50 dark:bg-slate-900 p-4"
             onContextMenu={(e) => e.preventDefault()}
           >
-            <div className="flex flex-col items-center gap-4" onContextMenu={(e) => e.preventDefault()}>
+            <div
+              className="flex flex-col items-center gap-4"
+              onContextMenu={(e) => e.preventDefault()}
+            >
               {certificateUrls.map((url, index) => (
                 <img
                   key={index}

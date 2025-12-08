@@ -65,14 +65,14 @@ export default function Writeups() {
     writeups.forEach((w) => {
       if (w.tags && Array.isArray(w.tags)) {
         w.tags.forEach((tag) => {
-          if (tag && typeof tag === 'string') {
+          if (tag && typeof tag === "string") {
             tags.add(tag);
           }
         });
       }
     });
     return Array.from(tags).sort();
-  }, [writeups])
+  }, [writeups]);
 
   const filteredWriteups = useMemo(() => {
     return writeups.filter((writeup) => {
