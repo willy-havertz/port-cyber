@@ -14,6 +14,22 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Add response interceptor to handle auth errors
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid - redirect to login
+      localStorage.removeItem("auth_token");
+      if (window.location.pathname.startsWith("/admin") && 
+          window.location.pathname !== "/admin/login") {
+        window.location.href = "/admin/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export interface Writeup {
   id: number;
   title: string;
