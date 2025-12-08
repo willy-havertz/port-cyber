@@ -15,6 +15,7 @@ from app.models.writeup import Writeup, Tag, Platform, Difficulty
 from app.models.user import User
 from app.core.database import Base
 from app.core.config import settings
+from app.core.security import get_password_hash
 from datetime import datetime
 
 # Create engine and session
@@ -24,6 +25,26 @@ db = SessionLocal()
 
 def seed_database():
     print("Starting database seeding...")
+    
+    # Ensure admin user exists
+    admin_user = db.query(User).filter(User.username == "admin").first()
+    if not admin_user:
+        print("Creating admin user...")
+        admin_password = getattr(settings, 'ADMIN_PASSWORD', 'admin123')
+        admin_user = User(
+            username="admin",
+            email="admin@portcyber.local",
+            hashed_password=get_password_hash(admin_password),
+            is_admin=True,
+            is_active=True,
+            created_at=datetime.utcnow(),
+            updated_at=datetime.utcnow(),
+        )
+        db.add(admin_user)
+        db.commit()
+        print("✅ Admin user created.")
+    else:
+        print("Admin user already exists.")
     
     # Clear existing writeups to ensure we have the latest data
     existing_count = db.query(Writeup).count()
