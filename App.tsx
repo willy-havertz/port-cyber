@@ -18,6 +18,7 @@ import Analyses from "./src/pages/Analyses";
 import Writeups from "./src/pages/Writeups";
 import WriteupDetail from "./src/pages/WriteupDetail";
 import Contact from "./src/pages/Contact";
+import Certifications from "./src/pages/Certifications";
 import NotFound from "./src/pages/NotFound";
 import AdminLogin from "./src/pages/admin/Login.tsx";
 import AdminDashboard from "./src/pages/admin/Dashboard.tsx";
@@ -38,6 +39,7 @@ const App: React.FC = () => {
               <Route path="/analyses" element={<Analyses />} />
               <Route path="/writeups" element={<Writeups />} />
               <Route path="/writeups/:id" element={<WriteupDetail />} />
+              <Route path="/certifications" element={<Certifications />} />
               <Route path="/contact" element={<Contact />} />
 
               {/* Admin Routes */}
