@@ -17,6 +17,7 @@ from app.schemas.writeup import (
 )
 from app.core.config import settings
 from app.utils.pdf_processor import extract_metadata_from_pdf, suggest_tags
+from app.utils.cloudinary_handler import upload_pdf_to_cloudinary, delete_pdf_from_cloudinary
 
 router = APIRouter()
 
@@ -88,50 +89,65 @@ async def create_writeup(
             detail="Only PDF files are allowed"
         )
     
-    # Generate unique filename
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    filename = f"{timestamp}_{file.filename}"
-    file_path = os.path.join(settings.UPLOAD_DIR, filename)
-    
-    # Save file
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(file.file, buffer)
-    
-    # Extract metadata and suggest tags
-    pdf_metadata = extract_metadata_from_pdf(file_path)
-    suggested_tags = suggest_tags(file_path)
-    
-    # Parse tags
-    tag_names = [t.strip() for t in tags.split(',')]
-    tag_names.extend(suggested_tags)  # Add auto-suggested tags
-    tag_names = list(set(tag_names))  # Remove duplicates
-    
-    # Create or get tags
-    tag_objects = []
-    for tag_name in tag_names:
-        tag = db.query(Tag).filter(Tag.name == tag_name).first()
-        if not tag:
-            tag = Tag(name=tag_name)
-            db.add(tag)
-        tag_objects.append(tag)
-    
-    # Create writeup
-    writeup = Writeup(
-        title=title,
-        platform=platform,
-        difficulty=difficulty,
-        category=category,
-        date=date,
-        time_spent=time_spent,
-        summary=summary or pdf_metadata.get('summary', ''),
-        writeup_url=f"/uploads/writeups/{filename}",
-        tags=tag_objects
-    )
-    
-    db.add(writeup)
-    db.commit()
-    db.refresh(writeup)
-    return writeup
+    try:
+        # Read file content
+        file_content = await file.read()
+        
+        # Upload to Cloudinary
+        cloudinary_url = await upload_pdf_to_cloudinary(file_content, file.filename)
+        
+        # Extract metadata and suggest tags from file content
+        # We'll use a temporary file for this
+        os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+        temp_filename = f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
+        temp_file_path = os.path.join(settings.UPLOAD_DIR, temp_filename)
+        
+        with open(temp_file_path, "wb") as buffer:
+            buffer.write(file_content)
+        
+        pdf_metadata = extract_metadata_from_pdf(temp_file_path)
+        suggested_tags = suggest_tags(temp_file_path)
+        
+        # Clean up temp file
+        os.remove(temp_file_path)
+        
+        # Parse tags
+        tag_names = [t.strip() for t in tags.split(',') if t.strip()]
+        tag_names.extend(suggested_tags)  # Add auto-suggested tags
+        tag_names = list(set(tag_names))  # Remove duplicates
+        
+        # Create or get tags
+        tag_objects = []
+        for tag_name in tag_names:
+            tag = db.query(Tag).filter(Tag.name == tag_name).first()
+            if not tag:
+                tag = Tag(name=tag_name)
+                db.add(tag)
+            tag_objects.append(tag)
+        
+        # Create writeup with Cloudinary URL
+        writeup = Writeup(
+            title=title,
+            platform=platform,
+            difficulty=difficulty,
+            category=category,
+            date=date,
+            time_spent=time_spent,
+            summary=summary or pdf_metadata.get('summary', ''),
+            writeup_url=cloudinary_url,
+            tags=tag_objects
+        )
+        
+        db.add(writeup)
+        db.commit()
+        db.refresh(writeup)
+        return writeup
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing PDF: {str(e)}"
+        )
 
 @router.put("/{writeup_id}", response_model=WriteupSchema)
 async def update_writeup(
@@ -191,75 +207,86 @@ async def update_writeup_with_file(
             detail="Writeup not found"
         )
     
-    # If new file uploaded, validate and save it
-    if file and file.filename:
-        # Validate file type
-        if not file.filename.endswith('.pdf'):
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Only PDF files are allowed"
-            )
+    try:
+        # If new file uploaded, validate and upload to Cloudinary
+        if file and file.filename:
+            # Validate file type
+            if not file.filename.endswith('.pdf'):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Only PDF files are allowed"
+                )
+            
+            # Read file content
+            file_content = await file.read()
+            
+            # Delete old file from Cloudinary if it exists
+            if writeup.writeup_url and "cloudinary.com" in writeup.writeup_url:
+                await delete_pdf_from_cloudinary(writeup.writeup_url)
+            
+            # Upload new file to Cloudinary
+            cloudinary_url = await upload_pdf_to_cloudinary(file_content, file.filename)
+            writeup.writeup_url = cloudinary_url
+            
+            # Extract metadata and suggest tags if not provided
+            if not tags:
+                # Use a temporary file for metadata extraction
+                os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+                temp_filename = f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
+                temp_file_path = os.path.join(settings.UPLOAD_DIR, temp_filename)
+                
+                with open(temp_file_path, "wb") as buffer:
+                    buffer.write(file_content)
+                
+                pdf_metadata = extract_metadata_from_pdf(temp_file_path)
+                suggested_tags = suggest_tags(temp_file_path)
+                tags = ",".join(suggested_tags)
+                
+                # Clean up temp file
+                os.remove(temp_file_path)
         
-        # Delete old file if it exists
-        old_file_path = os.path.join(os.getcwd(), writeup.writeup_url.lstrip('/'))
-        if os.path.exists(old_file_path):
-            try:
-                os.remove(old_file_path)
-            except:
-                pass  # Continue even if deletion fails
+        # Update other fields
+        if title is not None:
+            writeup.title = title
+        if platform is not None:
+            writeup.platform = platform
+        if difficulty is not None:
+            writeup.difficulty = difficulty
+        if category is not None:
+            writeup.category = category
+        if date is not None:
+            writeup.date = date
+        if time_spent is not None:
+            writeup.time_spent = time_spent
+        if summary is not None:
+            writeup.summary = summary
         
-        # Generate unique filename
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"{timestamp}_{file.filename}"
-        file_path = os.path.join(settings.UPLOAD_DIR, filename)
+        # Handle tags
+        if tags is not None:
+            tag_names = [t.strip() for t in tags.split(',') if t.strip()]
+            tag_objects = []
+            for tag_name in tag_names:
+                tag = db.query(Tag).filter(Tag.name == tag_name).first()
+                if not tag:
+                    tag = Tag(name=tag_name)
+                    db.add(tag)
+                tag_objects.append(tag)
+            writeup.tags = tag_objects
         
-        # Save file
-        with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+        # Update timestamp to track edits, but don't affect ordering
+        writeup.updated_at = datetime.now()
         
-        # Update writeup URL
-        writeup.writeup_url = f"/uploads/writeups/{filename}"
+        db.commit()
+        db.refresh(writeup)
+        return writeup
         
-        # Extract metadata and suggest tags if not provided
-        if not tags:
-            pdf_metadata = extract_metadata_from_pdf(file_path)
-            suggested_tags = suggest_tags(file_path)
-            tags = ",".join(suggested_tags)
-    
-    # Update other fields
-    if title is not None:
-        writeup.title = title
-    if platform is not None:
-        writeup.platform = platform
-    if difficulty is not None:
-        writeup.difficulty = difficulty
-    if category is not None:
-        writeup.category = category
-    if date is not None:
-        writeup.date = date
-    if time_spent is not None:
-        writeup.time_spent = time_spent
-    if summary is not None:
-        writeup.summary = summary
-    
-    # Handle tags
-    if tags is not None:
-        tag_names = [t.strip() for t in tags.split(',') if t.strip()]
-        tag_objects = []
-        for tag_name in tag_names:
-            tag = db.query(Tag).filter(Tag.name == tag_name).first()
-            if not tag:
-                tag = Tag(name=tag_name)
-                db.add(tag)
-            tag_objects.append(tag)
-        writeup.tags = tag_objects
-    
-    # Update timestamp to track edits, but don't affect ordering
-    writeup.updated_at = datetime.now()
-    
-    db.commit()
-    db.refresh(writeup)
-    return writeup
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error processing PDF: {str(e)}"
+        )
 
 @router.delete("/{writeup_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_writeup(
@@ -275,9 +302,12 @@ async def delete_writeup(
             detail="Writeup not found"
         )
     
-    # Delete PDF file
-    if os.path.exists(writeup.writeup_url):
-        os.remove(writeup.writeup_url)
+    # Delete PDF from Cloudinary if it exists
+    if writeup.writeup_url and "cloudinary.com" in writeup.writeup_url:
+        try:
+            await delete_pdf_from_cloudinary(writeup.writeup_url)
+        except:
+            pass  # Continue even if deletion fails
     
     db.delete(writeup)
     db.commit()
