@@ -101,6 +101,36 @@ export interface UpdateWriteupPayload {
   summary?: string;
 }
 
+export const uploadWriteupFile = async (
+  payload: CreateWriteupPayload,
+  file: File,
+  onProgress?: (progress: number) => void
+) => {
+  const formData = new FormData();
+  formData.append("title", payload.title);
+  formData.append("platform", payload.platform);
+  formData.append("difficulty", payload.difficulty);
+  formData.append("category", payload.category);
+  formData.append("date", payload.date);
+  formData.append("time_spent", payload.time_spent);
+  formData.append("summary", payload.summary || "");
+  formData.append("tags", ""); // Backend auto-suggests tags from PDF
+  formData.append("file", file);
+
+  const { data } = await api.post("/writeups", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    onUploadProgress: (event) => {
+      if (onProgress) {
+        const progress = Math.round(
+          (event.loaded / (event.total || 1)) * 100
+        );
+        onProgress(progress);
+      }
+    },
+  });
+  return data as Writeup;
+};
+
 export const createWriteup = async (payload: CreateWriteupPayload) => {
   const { data } = await api.post("/writeups", payload);
   return data as Writeup;

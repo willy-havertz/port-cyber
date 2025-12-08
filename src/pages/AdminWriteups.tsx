@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit2, Trash2, AlertCircle } from "lucide-react";
+import { Plus, Edit2, Trash2, AlertCircle, X } from "lucide-react";
 import AdminLayout from "../components/AdminLayout";
 import {
   fetchWriteups,
   deleteWriteup,
   createWriteup,
   updateWriteup,
+  uploadWriteupFile,
   type Writeup,
   type CreateWriteupPayload,
   type UpdateWriteupPayload,
@@ -19,6 +20,9 @@ export default function AdminWriteups() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [isUploading, setIsUploading] = useState(false);
   const [formData, setFormData] = useState<CreateWriteupPayload>({
     title: "",
     platform: "Hack The Box",
@@ -55,35 +59,84 @@ export default function AdminWriteups() {
       return;
     }
 
+    // If creating and file is selected, validate it's a PDF
+    if (!editingId && selectedFile) {
+      if (!selectedFile.name.endsWith(".pdf")) {
+        setError("Only PDF files are allowed");
+        return;
+      }
+      if (selectedFile.size > 50 * 1024 * 1024) {
+        setError("File size must be less than 50MB");
+        return;
+      }
+    }
+
     try {
       setError(null);
       setSuccess(null);
+      setIsUploading(true);
 
       if (editingId) {
         const payload: UpdateWriteupPayload = formData;
         await updateWriteup(editingId, payload);
         setSuccess("Writeup updated successfully!");
+      } else if (selectedFile) {
+        // Upload with file
+        await uploadWriteupFile(formData, selectedFile, (progress) => {
+          setUploadProgress(progress);
+        });
+        setSuccess("Writeup created and PDF uploaded successfully!");
       } else {
+        // Create without file (manual URL entry)
         await createWriteup(formData);
         setSuccess("Writeup created successfully!");
       }
 
-      setFormData({
-        title: "",
-        platform: "Hack The Box",
-        difficulty: "Easy",
-        category: "Web Security",
-        date: new Date().toISOString().split("T")[0],
-        time_spent: "1 hour",
-        writeup_url: "/writeups/",
-        summary: "",
-      });
-      setShowForm(false);
-      setEditingId(null);
+      resetForm();
       await load();
     } catch (err) {
       console.error(err);
-      setError("Failed to save writeup");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to save writeup"
+      );
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(0);
+    }
+  };
+
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      platform: "Hack The Box",
+      difficulty: "Easy",
+      category: "Web Security",
+      date: new Date().toISOString().split("T")[0],
+      time_spent: "1 hour",
+      writeup_url: "/writeups/",
+      summary: "",
+    });
+    setSelectedFile(null);
+    setUploadProgress(0);
+    setShowForm(false);
+    setEditingId(null);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.name.endsWith(".pdf")) {
+        setError("Only PDF files are allowed");
+        return;
+      }
+      if (file.size > 50 * 1024 * 1024) {
+        setError("File size must be less than 50MB");
+        return;
+      }
+      setSelectedFile(file);
+      setError(null);
     }
   };
 
@@ -244,29 +297,119 @@ export default function AdminWriteups() {
                 rows={3}
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               />
-              <input
-                type="text"
-                placeholder="Writeup URL"
-                value={formData.writeup_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, writeup_url: e.target.value })
-                }
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-              />
+
+              {/* File Upload or URL */}
+              {!editingId && (
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Upload PDF Writeup (or enter manual URL below)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={handleFileChange}
+                      disabled={isUploading}
+                      className="hidden"
+                      id="pdf-input"
+                    />
+                    <label
+                      htmlFor="pdf-input"
+                      className="flex items-center justify-center w-full px-4 py-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <span className="text-slate-600 dark:text-slate-400">
+                        {selectedFile
+                          ? selectedFile.name
+                          : "Click to select PDF or drag and drop"}
+                      </span>
+                    </label>
+                  </div>
+
+                  {/* File info and progress */}
+                  {selectedFile && (
+                    <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                      <div className="text-sm text-slate-700 dark:text-slate-300">
+                        <p className="font-medium">{selectedFile.name}</p>
+                        <p className="text-xs text-slate-600 dark:text-slate-400">
+                          {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+                        </p>
+                      </div>
+                      {!isUploading && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setSelectedFile(null);
+                            setError(null);
+                          }}
+                          className="p-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Upload progress */}
+                  {isUploading && uploadProgress > 0 && (
+                    <div className="space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-slate-700 dark:text-slate-300">
+                          Uploading...
+                        </span>
+                        <span className="text-slate-600 dark:text-slate-400">
+                          {uploadProgress}%
+                        </span>
+                      </div>
+                      <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
+                        <div
+                          className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Manual URL input (alternative or when editing) */}
+              {editingId && (
+                <input
+                  type="text"
+                  placeholder="Writeup URL"
+                  value={formData.writeup_url}
+                  onChange={(e) =>
+                    setFormData({ ...formData, writeup_url: e.target.value })
+                  }
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                />
+              )}
+
+              {!editingId && (
+                <div className="text-sm text-slate-600 dark:text-slate-400">
+                  <p>
+                    💡 Uploading a PDF will automatically extract metadata and
+                    suggest tags based on content.
+                  </p>
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <button
                   type="submit"
-                  className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                  disabled={isUploading}
+                  className="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {editingId ? "Update" : "Create"}
+                  {isUploading
+                    ? "Uploading..."
+                    : editingId
+                    ? "Update"
+                    : "Create"}
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setShowForm(false);
-                    setEditingId(null);
-                  }}
-                  className="px-4 py-2 bg-slate-300 dark:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg hover:bg-slate-400 dark:hover:bg-slate-500 transition-colors"
+                  disabled={isUploading}
+                  onClick={resetForm}
+                  className="px-4 py-2 bg-slate-300 dark:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg hover:bg-slate-400 dark:hover:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
