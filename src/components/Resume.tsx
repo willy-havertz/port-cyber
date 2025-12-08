@@ -182,14 +182,14 @@ const Resume: React.FC = () => {
             </h4>
             <p>
               Burp Suite, Metasploit, Nmap, Wireshark, Kali Linux, OWASP Top 10,
-              Maltego
+              Maltego, React, Node.js
             </p>
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">
               Programming Languages:
             </h4>
-            <p>Python, Bash, JavaScript, SQL, PowerShell</p>
+            <p>Python, TypeScript/JavaScript, Bash, SQL, PowerShell</p>
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">
@@ -199,9 +199,34 @@ const Resume: React.FC = () => {
           </div>
           <div>
             <h4 className="font-semibold text-gray-900 mb-2">
-              Certifications (In Progress):
+              Security Focus:
             </h4>
-            <p>OSCP, CEH, Security+</p>
+            <p>Web app security (OWASP), infrastructure hardening, DevSecOps</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Certifications */}
+      <section className="mb-8">
+        <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-gray-300 pb-2">
+          Certifications
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-2">Completed:</h4>
+            <ul className="list-disc list-inside space-y-1">
+              <li>Certified in Cybersecurity (ISC2) — Credly badge</li>
+              <li>Ethical Hacker — Cisco Networking Academy (2025)</li>
+              <li>Full-Stack Development (MERN) — Power Learn Project (2025)</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold text-gray-900 mb-2">In Progress:</h4>
+            <ul className="list-disc list-inside space-y-1">
+              <li>Offensive Security Certified Professional (OSCP)</li>
+              <li>Certified Ethical Hacker (CEH)</li>
+              <li>CompTIA Security+</li>
+            </ul>
           </div>
         </div>
       </section>
