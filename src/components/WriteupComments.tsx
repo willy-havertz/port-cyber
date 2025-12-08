@@ -1,14 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import { Send, MessageCircle } from "lucide-react";
-import { supabase } from "../lib/supabase";
-
-interface Comment {
-  id: string;
-  author_name: string;
-  comment_text: string;
-  created_at: string;
-}
+import { fetchComments, postComment, type Comment } from "../lib/api";
 
 interface WriteupCommentsProps {
   writeupId: string;
@@ -18,25 +11,22 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    author_name: "",
-    author_email: "",
-    comment_text: "",
+    user_name: "",
+    user_email: "",
+    content: "",
   });
 
-  const fetchComments = useCallback(async () => {
+  const loadComments = useCallback(async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("writeup_comments")
-        .select("id, author_name, comment_text, created_at")
-        .eq("writeup_id", writeupId)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setComments(data || []);
-    } catch (error) {
-      console.error("Error fetching comments:", error);
+      setError(null);
+      const data = await fetchComments(writeupId);
+      setComments(data);
+    } catch (err) {
+      console.error("Error fetching comments:", err);
+      setError("Failed to load comments");
     } finally {
       setLoading(false);
     }
@@ -44,59 +34,40 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
 
   // Fetch comments on mount
   useEffect(() => {
-    fetchComments();
-  }, [fetchComments]);
+    loadComments();
+  }, [loadComments]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (
-      !formData.author_name ||
-      !formData.author_email ||
-      !formData.comment_text
-    ) {
+    if (!formData.user_name || !formData.user_email || !formData.content) {
       alert("Please fill in all fields");
       return;
     }
 
     try {
       setSubmitting(true);
-      const { error } = await supabase.from("writeup_comments").insert([
-        {
-          writeup_id: writeupId,
-          author_name: formData.author_name,
-          author_email: formData.author_email,
-          comment_text: formData.comment_text,
-        },
-      ]);
-
-      if (error) throw error;
+      setError(null);
+      await postComment(writeupId, {
+        user_name: formData.user_name,
+        user_email: formData.user_email,
+        content: formData.content,
+      });
 
       setFormData({
-        author_name: "",
-        author_email: "",
-        comment_text: "",
+        user_name: "",
+        user_email: "",
+        content: "",
       });
 
       // Refresh comments
-      fetchComments();
-    } catch (error) {
-      console.error("Error submitting comment:", error);
-      alert("Error submitting comment. Please try again.");
+      await loadComments();
+    } catch (err) {
+      console.error("Error submitting comment:", err);
+      setError("Error submitting comment. Please try again.");
     } finally {
       setSubmitting(false);
     }
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
   };
 
   return (
@@ -129,18 +100,18 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
           <input
             type="text"
             placeholder="Your Name"
-            value={formData.author_name}
+            value={formData.user_name}
             onChange={(e) =>
-              setFormData({ ...formData, author_name: e.target.value })
+              setFormData({ ...formData, user_name: e.target.value })
             }
             className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <input
             type="email"
             placeholder="Your Email"
-            value={formData.author_email}
+            value={formData.user_email}
             onChange={(e) =>
-              setFormData({ ...formData, author_email: e.target.value })
+              setFormData({ ...formData, user_email: e.target.value })
             }
             className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
@@ -148,9 +119,9 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
 
         <textarea
           placeholder="Share your thoughts, questions, or insights about this writeup..."
-          value={formData.comment_text}
+          value={formData.content}
           onChange={(e) =>
-            setFormData({ ...formData, comment_text: e.target.value })
+            setFormData({ ...formData, content: e.target.value })
           }
           rows={4}
           className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
@@ -167,6 +138,13 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
           {submitting ? "Posting..." : "Post Comment"}
         </motion.button>
       </motion.form>
+
+      {/* Error Message */}
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg">
+          {error}
+        </div>
+      )}
 
       {/* Comments List */}
       <div className="space-y-4">
@@ -189,14 +167,20 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
             >
               <div className="flex justify-between items-start mb-2">
                 <h4 className="font-semibold text-slate-900 dark:text-white">
-                  {comment.author_name}
+                  {comment.user_name}
                 </h4>
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {formatDate(comment.created_at)}
+                  {new Date(comment.created_at).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
                 </span>
               </div>
               <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
-                {comment.comment_text}
+                {comment.content}
               </p>
             </motion.div>
           ))

@@ -3,6 +3,7 @@
 Complete API documentation for backend integration.
 
 ## Base URL
+
 ```
 http://localhost:8000/api
 ```
@@ -10,6 +11,7 @@ http://localhost:8000/api
 ## Authentication
 
 All protected endpoints require JWT token in Authorization header:
+
 ```
 Authorization: Bearer {token}
 ```
@@ -19,6 +21,7 @@ Authorization: Bearer {token}
 ## Authentication Endpoints
 
 ### Register User
+
 ```http
 POST /auth/register
 Content-Type: application/json
@@ -41,6 +44,7 @@ Response: 201 Created
 ```
 
 ### Login
+
 ```http
 POST /auth/login
 Content-Type: application/x-www-form-urlencoded
@@ -55,6 +59,7 @@ Response: 200 OK
 ```
 
 ### Get Current User
+
 ```http
 GET /auth/me
 Authorization: Bearer {token}
@@ -75,6 +80,7 @@ Response: 200 OK
 ## Writeup Endpoints
 
 ### List Writeups
+
 ```http
 GET /writeups/?skip=0&limit=100&platform=Try Hack Me&category=Linux&difficulty=Easy&search=keyword
 
@@ -114,6 +120,7 @@ Response: 200 OK
 ```
 
 ### Get Single Writeup
+
 ```http
 GET /writeups/{id}
 
@@ -135,6 +142,7 @@ Response: 200 OK
 ```
 
 ### Create Writeup (Admin Only)
+
 ```http
 POST /writeups/
 Authorization: Bearer {admin_token}
@@ -163,6 +171,7 @@ Note: Tags are auto-suggested from PDF content
 ```
 
 ### Update Writeup (Admin Only)
+
 ```http
 PUT /writeups/{id}
 Authorization: Bearer {admin_token}
@@ -184,6 +193,7 @@ Response: 200 OK
 ```
 
 ### Delete Writeup (Admin Only)
+
 ```http
 DELETE /writeups/{id}
 Authorization: Bearer {admin_token}
@@ -192,6 +202,7 @@ Response: 204 No Content
 ```
 
 ### Search Writeups
+
 ```http
 GET /writeups/search/?q=keyword&skip=0&limit=50
 
@@ -214,6 +225,7 @@ Response: 200 OK
 ## Comment Endpoints
 
 ### Get Comments for Writeup
+
 ```http
 GET /comments/{writeup_id}
 
@@ -234,6 +246,7 @@ Response: 200 OK
 ```
 
 ### Create Comment
+
 ```http
 POST /comments/
 Content-Type: application/json
@@ -262,6 +275,7 @@ Note: Auto-checked for spam. Approved unless flagged.
 ```
 
 ### Get Pending Comments (Admin Only)
+
 ```http
 GET /comments/admin/pending
 Authorization: Bearer {admin_token}
@@ -282,6 +296,7 @@ Response: 200 OK
 ```
 
 ### Moderate Comment (Admin Only)
+
 ```http
 PATCH /comments/{id}
 Authorization: Bearer {admin_token}
@@ -297,6 +312,7 @@ Response: 200 OK
 ```
 
 ### Delete Comment (Admin Only)
+
 ```http
 DELETE /comments/{id}
 Authorization: Bearer {admin_token}
@@ -309,6 +325,7 @@ Response: 204 No Content
 ## Security Scanner Endpoints
 
 ### Perform Scan
+
 ```http
 POST /scanner/scan
 Authorization: Bearer {token}
@@ -347,6 +364,7 @@ Response: 200 OK
 ```
 
 ### Get Scanner Disclaimer
+
 ```http
 GET /scanner/disclaimer
 
@@ -368,6 +386,7 @@ Response: 200 OK
 ## Error Responses
 
 ### 400 Bad Request
+
 ```json
 {
   "detail": "Only PDF files are allowed"
@@ -375,6 +394,7 @@ Response: 200 OK
 ```
 
 ### 401 Unauthorized
+
 ```json
 {
   "detail": "Could not validate credentials"
@@ -382,6 +402,7 @@ Response: 200 OK
 ```
 
 ### 403 Forbidden
+
 ```json
 {
   "detail": "Not enough permissions"
@@ -389,6 +410,7 @@ Response: 200 OK
 ```
 
 ### 404 Not Found
+
 ```json
 {
   "detail": "Writeup not found"
@@ -396,6 +418,7 @@ Response: 200 OK
 ```
 
 ### 429 Too Many Requests
+
 ```json
 {
   "detail": "Scan limit exceeded. Please try again later."
@@ -403,6 +426,7 @@ Response: 200 OK
 ```
 
 ### 500 Internal Server Error
+
 ```json
 {
   "detail": "Scan failed: Connection timeout"
@@ -424,6 +448,7 @@ Response: 200 OK
 When uploading a writeup PDF, the system automatically detects and suggests tags:
 
 Common Tags (auto-detected):
+
 - `sql-injection` - SQL injection vulnerabilities
 - `xss` - Cross-site scripting
 - `privesc` - Privilege escalation
@@ -454,11 +479,13 @@ Common Tags (auto-detected):
 ## Swagger Documentation
 
 Access interactive API docs:
+
 ```
 http://localhost:8000/docs
 ```
 
 Redoc alternative docs:
+
 ```
 http://localhost:8000/redoc
 ```
@@ -468,6 +495,7 @@ http://localhost:8000/redoc
 ## Example Usage with cURL
 
 ### Register User
+
 ```bash
 curl -X POST http://localhost:8000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -479,6 +507,7 @@ curl -X POST http://localhost:8000/api/auth/register \
 ```
 
 ### Login
+
 ```bash
 curl -X POST http://localhost:8000/api/auth/login \
   -H "Content-Type: application/x-www-form-urlencoded" \
@@ -486,6 +515,7 @@ curl -X POST http://localhost:8000/api/auth/login \
 ```
 
 ### Upload Writeup
+
 ```bash
 TOKEN="your_access_token"
 curl -X POST http://localhost:8000/api/writeups/ \
@@ -501,11 +531,13 @@ curl -X POST http://localhost:8000/api/writeups/ \
 ```
 
 ### Get Writeups
+
 ```bash
 curl http://localhost:8000/api/writeups/?limit=10
 ```
 
 ### Create Comment
+
 ```bash
 curl -X POST http://localhost:8000/api/comments/ \
   -H "Content-Type: application/json" \

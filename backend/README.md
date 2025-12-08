@@ -22,33 +22,39 @@ FastAPI backend for Wiltord's cybersecurity portfolio.
 ### Local Development
 
 1. **Clone and navigate to backend directory**
+
    ```bash
    cd backend
    ```
 
 2. **Create virtual environment**
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. **Install dependencies**
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. **Set up environment variables**
+
    ```bash
    cp .env.example .env
    # Edit .env with your actual credentials
    ```
 
 5. **Run database migrations**
+
    ```bash
    alembic upgrade head
    ```
 
 6. **Start the server**
+
    ```bash
    uvicorn main:app --reload
    ```
@@ -59,16 +65,19 @@ FastAPI backend for Wiltord's cybersecurity portfolio.
 ### Docker Setup
 
 1. **Build and run with Docker Compose**
+
    ```bash
    docker-compose up --build
    ```
 
    This starts:
+
    - FastAPI backend on port 8000
    - PostgreSQL on port 5432
    - Redis on port 6379
 
 2. **Run migrations in Docker**
+
    ```bash
    docker-compose exec backend alembic upgrade head
    ```
@@ -81,11 +90,13 @@ FastAPI backend for Wiltord's cybersecurity portfolio.
 ## API Endpoints
 
 ### Authentication
+
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - Login and get JWT token
 - `GET /api/auth/me` - Get current user info
 
 ### Writeups
+
 - `GET /api/writeups/` - List all writeups (with filtering)
 - `GET /api/writeups/{id}` - Get specific writeup
 - `POST /api/writeups/` - Upload new writeup (admin only)
@@ -94,6 +105,7 @@ FastAPI backend for Wiltord's cybersecurity portfolio.
 - `GET /api/writeups/search/?q=query` - Search writeups
 
 ### Comments
+
 - `GET /api/comments/{writeup_id}` - Get comments for writeup
 - `POST /api/comments/` - Create new comment
 - `GET /api/comments/admin/pending` - Get pending comments (admin)
@@ -101,6 +113,7 @@ FastAPI backend for Wiltord's cybersecurity portfolio.
 - `DELETE /api/comments/{id}` - Delete comment (admin)
 
 ### Security Scanner
+
 - `POST /api/scanner/scan` - Perform security scan
 - `GET /api/scanner/disclaimer` - Get scanner disclaimer
 
