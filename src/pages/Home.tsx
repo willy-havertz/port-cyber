@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Shield,
   Code,
@@ -15,47 +15,37 @@ import ResumeModal from "../components/ResumeModal";
 import FeaturedCarousel from "../components/FeaturedCarousel";
 import { Link } from "react-router-dom";
 import CTFStatsDashboard from "../components/CTFStatsDashboard";
+import { fetchWriteups, type Writeup } from "../lib/api";
 
 export default function Home() {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
+  const [featuredWriteups, setFeaturedWriteups] = useState<any[]>([]);
 
-  const featuredWriteups = [
-    {
-      id: "fowsniff",
-      title: "Fowsniff - Linux Privilege Escalation via Misconfigured MOTD",
-      platform: "Try Hack Me" as const,
-      difficulty: "Easy" as const,
-      category: "Linux",
-      date: "Nov 20, 2025",
-      timeSpent: "1hr 30min",
-      tags: [
-        "port scanning",
-        "email service exploitation",
-        "password cracking",
-        "privilege escalation",
-      ],
-    },
-    {
-      id: "lame",
-      title: "Lame - Classic Linux Privilege Escalation",
-      platform: "Hack The Box" as const,
-      difficulty: "Easy" as const,
-      category: "Linux",
-      date: "Jan 18, 2025",
-      timeSpent: "1.5 hours",
-      tags: ["linux", "samba", "exploit", "privesc"],
-    },
-    {
-      id: "cybernetics",
-      title: "Cybernetics - Advanced Web Exploitation",
-      platform: "Hack The Box" as const,
-      difficulty: "Hard" as const,
-      category: "Web Security",
-      date: "Jan 15, 2025",
-      timeSpent: "8 hours",
-      tags: ["web", "sql-injection", "xxe", "deserialization"],
-    },
-  ];
+  useEffect(() => {
+    const loadFeaturedWriteups = async () => {
+      try {
+        const writeups = await fetchWriteups();
+        // Get the 3 most recent writeups for featured carousel
+        const featured = writeups.slice(0, 3).map((w: Writeup) => ({
+          id: String(w.id),
+          title: w.title,
+          platform: w.platform as "Hack The Box" | "Try Hack Me",
+          difficulty: w.difficulty as "Easy" | "Medium" | "Hard" | "Insane",
+          category: w.category,
+          date: w.date,
+          timeSpent: w.time_spent,
+          tags: w.tags || [],
+        }));
+        setFeaturedWriteups(featured);
+      } catch (error) {
+        console.error("Failed to load featured writeups:", error);
+        // Set empty array on error
+        setFeaturedWriteups([]);
+      }
+    };
+
+    loadFeaturedWriteups();
+  }, []);
 
   const skills = [
     { name: "Penetration Testing", level: 95 },
