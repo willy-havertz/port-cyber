@@ -32,9 +32,13 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
     """
     try:
         # Upload to Cloudinary with resource_type 'raw' for PDFs
+        # Force public delivery (type="upload") so the PDF is world-accessible.
+        # "raw" resource_type keeps the PDF intact.
         result = cloudinary.uploader.upload(
             file_content,
             resource_type="raw",
+            type="upload",
+            access_mode="public",
             folder="writeups",
             public_id=filename.replace(".pdf", ""),
             overwrite=True,
@@ -48,6 +52,43 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
         
     except Exception as e:
         logger.error(f"Error uploading to Cloudinary: {str(e)}")
+        raise
+
+
+def generate_signed_url(public_id: str, expiration_hours: int = 1) -> str:
+    """
+    Generate a time-limited signed URL for a PDF on Cloudinary.
+    URL expires after specified hours.
+    
+    Args:
+        public_id: Cloudinary public ID (e.g., \"writeups/Fowsniff_ctf\")
+        expiration_hours: URL expiration time in hours (default 1 hour)
+        
+    Returns:
+        A signed URL valid for the specified duration
+    """
+    try:
+        from cloudinary.utils import cloudinary_url
+        from time import time
+        
+        # Calculate expiration timestamp
+        expiration = int(time()) + (expiration_hours * 3600)
+        
+        # Generate signed URL
+        url, options = cloudinary_url(
+            public_id,
+            resource_type="raw",
+            type="fetch",
+            sign_url=True,
+            secure=True,
+            expires_at=expiration
+        )
+        
+        logger.info(f"Generated signed URL for {public_id}, expires in {expiration_hours} hours")
+        return url
+        
+    except Exception as e:
+        logger.error(f"Error generating signed URL: {str(e)}")
         raise
 
 

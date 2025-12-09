@@ -17,7 +17,7 @@ from app.schemas.writeup import (
 )
 from app.core.config import settings
 from app.utils.pdf_processor import extract_metadata_from_pdf, suggest_tags
-from app.utils.cloudinary_handler import upload_pdf_to_cloudinary, delete_pdf_from_cloudinary
+from app.utils.cloudinary_handler import upload_pdf_to_cloudinary, delete_pdf_from_cloudinary, generate_signed_url
 
 router = APIRouter()
 
@@ -66,6 +66,51 @@ async def get_writeup(writeup_id: int, db: Session = Depends(get_db)):
             detail="Writeup not found"
         )
     return writeup
+
+@router.get("/{writeup_id}/download-url")
+async def get_writeup_download_url(writeup_id: int, db: Session = Depends(get_db)):
+    """
+    Get a time-limited signed URL for downloading the writeup PDF.
+    URL expires after 1 hour. Public endpoint—no authentication required.
+    """
+    writeup = db.query(Writeup).filter(Writeup.id == writeup_id).first()
+    if not writeup:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Writeup not found"
+        )
+    
+    if not writeup.writeup_url:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No PDF available for this writeup"
+        )
+    
+    try:
+        # Extract public_id from Cloudinary URL
+        url_parts = writeup.writeup_url.split("/")
+        
+        # Find the public_id (everything after /upload/v{version}/)
+        if "upload" in url_parts:
+            upload_idx = url_parts.index("upload")
+            public_id_parts = url_parts[upload_idx + 2:]  # Skip 'upload' and 'v{version}'
+            public_id = "/".join(public_id_parts).replace(".pdf", "")
+        else:
+            raise ValueError("Invalid Cloudinary URL format")
+        
+        # Generate signed URL with 1-hour expiration
+        signed_url = generate_signed_url(public_id, expiration_hours=1)
+        
+        return {
+            "download_url": signed_url,
+            "expires_in": "1 hour"
+        }
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error generating download URL: {str(e)}"
+        )
 
 @router.post("/", response_model=WriteupSchema, status_code=status.HTTP_201_CREATED)
 async def create_writeup(
