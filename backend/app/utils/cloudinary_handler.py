@@ -16,38 +16,40 @@ cloudinary.config(
 )
 
 
-async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
+async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> tuple[str, str]:
     """
-    Upload a PDF file to Cloudinary and return the URL
-    
-    Args:
-        file_content: The file bytes to upload
-        filename: Original filename
-        
-    Returns:
-        The secure URL of the uploaded file
-        
-    Raises:
-        Exception: If upload fails
+    Upload a PDF file to Cloudinary and return (inline_pdf_url, thumbnail_url).
     """
     try:
-        # Upload to Cloudinary; resource_type="auto" allows PDF transforms (thumbnails)
+        public_id = filename.replace(".pdf", "")
+
         result = cloudinary.uploader.upload(
             file_content,
-            resource_type="auto",
+            resource_type="auto",  # allow PDF + image transforms
             folder="writeups",
-            public_id=filename.replace(".pdf", ""),
+            public_id=public_id,
             overwrite=True,
             use_filename=True,
             unique_filename=False
         )
 
-        # Force inline viewing by adding fl_inline transformation to the delivery URL
-        url = result["secure_url"].replace("/upload/", "/upload/fl_inline/")
+        # Inline PDF URL
+        inline_url = result["secure_url"].replace("/upload/", "/upload/fl_inline/")
 
-        logger.info(f"Successfully uploaded {filename} to Cloudinary (inline view enabled)")
-        return url
-        
+        # Thumbnail (first page as PNG)
+        from cloudinary.utils import cloudinary_url
+
+        thumb_url, _ = cloudinary_url(
+            f"writeups/{public_id}",
+            resource_type="auto",
+            format="png",
+            page=1,
+            transformation=[{"width": 800, "crop": "scale", "quality": "auto"}]
+        )
+
+        logger.info(f"Successfully uploaded {filename} to Cloudinary (inline + thumbnail)")
+        return inline_url, thumb_url
+
     except Exception as e:
         logger.error(f"Error uploading to Cloudinary: {str(e)}")
         raise

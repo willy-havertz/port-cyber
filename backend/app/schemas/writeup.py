@@ -22,6 +22,7 @@ class WriteupBase(BaseModel):
     date: str
     time_spent: str
     summary: Optional[str] = None
+    thumbnail_url: Optional[str] = None
 
 class WriteupCreate(WriteupBase):
     tags: List[str]

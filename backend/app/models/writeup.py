@@ -33,6 +33,7 @@ class Writeup(Base):
     date = Column(String, nullable=False)
     time_spent = Column(String, nullable=False)
     writeup_url = Column(String, nullable=False)  # Path to PDF file
+    thumbnail_url = Column(String, nullable=True)
     summary = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
