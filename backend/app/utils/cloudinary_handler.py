@@ -31,7 +31,7 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
         Exception: If upload fails
     """
     try:
-        # Upload to Cloudinary as public raw resource
+        # Upload to Cloudinary as public raw resource with inline viewing
         result = cloudinary.uploader.upload(
             file_content,
             resource_type="raw",
@@ -39,7 +39,8 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
             public_id=filename.replace(".pdf", ""),
             overwrite=True,
             use_filename=True,
-            unique_filename=False
+            unique_filename=False,
+            flags="attachment:false"
         )
         
         logger.info(f"Successfully uploaded {filename} to Cloudinary")
