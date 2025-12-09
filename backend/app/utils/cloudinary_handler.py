@@ -78,7 +78,7 @@ def generate_signed_url(public_id: str, expiration_hours: int = 1) -> str:
         url, options = cloudinary_url(
             public_id,
             resource_type="raw",
-            type="fetch",
+            type="authenticated",
             sign_url=True,
             secure=True,
             expires_at=expiration
