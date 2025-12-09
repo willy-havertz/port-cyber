@@ -16,8 +16,9 @@ from app.schemas.writeup import (
     WriteupUpdate
 )
 from app.core.config import settings
-from app.utils.pdf_processor import extract_metadata_from_pdf, suggest_tags
+from app.utils.pdf_processor import extract_metadata_from_pdf, suggest_tags, extract_text_and_summary
 from app.utils.cloudinary_handler import upload_pdf_to_cloudinary, delete_pdf_from_cloudinary, generate_signed_url
+from app.utils.virus_scan import scan_bytes_for_viruses
 
 router = APIRouter()
 
@@ -137,30 +138,38 @@ async def create_writeup(
     try:
         # Read file content
         file_content = await file.read()
-        
-        # Upload to Cloudinary
-        cloudinary_url = await upload_pdf_to_cloudinary(file_content, file.filename)
-        
-        # Extract metadata and suggest tags from file content
-        # We'll use a temporary file for this
+
+        # Virus scan
+        clean, reason = scan_bytes_for_viruses(file_content)
+        if not clean:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Upload blocked by virus scan: {reason}"
+            )
+
+        # Upload to Cloudinary (returns inline PDF URL and thumbnail URL)
+        cloudinary_url, thumbnail_url = await upload_pdf_to_cloudinary(file_content, file.filename)
+
+        # Extract metadata, summary, and tags from file content via temp file
         os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
         temp_filename = f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
         temp_file_path = os.path.join(settings.UPLOAD_DIR, temp_filename)
-        
+
         with open(temp_file_path, "wb") as buffer:
             buffer.write(file_content)
-        
+
         pdf_metadata = extract_metadata_from_pdf(temp_file_path)
+        full_text, extracted_summary = extract_text_and_summary(temp_file_path)
         suggested_tags = suggest_tags(temp_file_path)
-        
+
         # Clean up temp file
         os.remove(temp_file_path)
-        
+
         # Parse tags
         tag_names = [t.strip() for t in tags.split(',') if t.strip()]
-        tag_names.extend(suggested_tags)  # Add auto-suggested tags
-        tag_names = list(set(tag_names))  # Remove duplicates
-        
+        tag_names.extend(suggested_tags)
+        tag_names = list(set(tag_names))
+
         # Create or get tags
         tag_objects = []
         for tag_name in tag_names:
@@ -169,8 +178,10 @@ async def create_writeup(
                 tag = Tag(name=tag_name)
                 db.add(tag)
             tag_objects.append(tag)
-        
-        # Create writeup with Cloudinary URL
+
+        # Prefer provided summary, else extracted
+        final_summary = summary or pdf_metadata.get('summary') or extracted_summary or ''
+
         writeup = Writeup(
             title=title,
             platform=platform,
@@ -178,16 +189,19 @@ async def create_writeup(
             category=category,
             date=date,
             time_spent=time_spent,
-            summary=summary or pdf_metadata.get('summary', ''),
+            summary=final_summary,
             writeup_url=cloudinary_url,
+            thumbnail_url=thumbnail_url,
             tags=tag_objects
         )
-        
+
         db.add(writeup)
         db.commit()
         db.refresh(writeup)
         return writeup
-        
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -253,7 +267,7 @@ async def update_writeup_with_file(
         )
     
     try:
-        # If new file uploaded, validate and upload to Cloudinary
+        # If new file uploaded, validate, scan, and upload to Cloudinary
         if file and file.filename:
             # Validate file type
             if not file.filename.endswith('.pdf'):
@@ -264,14 +278,23 @@ async def update_writeup_with_file(
             
             # Read file content
             file_content = await file.read()
+
+            # Virus scan
+            clean, reason = scan_bytes_for_viruses(file_content)
+            if not clean:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Upload blocked by virus scan: {reason}"
+                )
             
             # Delete old file from Cloudinary if it exists
             if writeup.writeup_url and "cloudinary.com" in writeup.writeup_url:
                 await delete_pdf_from_cloudinary(writeup.writeup_url)
             
             # Upload new file to Cloudinary
-            cloudinary_url = await upload_pdf_to_cloudinary(file_content, file.filename)
+            cloudinary_url, thumbnail_url = await upload_pdf_to_cloudinary(file_content, file.filename)
             writeup.writeup_url = cloudinary_url
+            writeup.thumbnail_url = thumbnail_url
             
             # Extract metadata and suggest tags if not provided
             if not tags:
@@ -284,8 +307,11 @@ async def update_writeup_with_file(
                     buffer.write(file_content)
                 
                 pdf_metadata = extract_metadata_from_pdf(temp_file_path)
+                _, extracted_summary = extract_text_and_summary(temp_file_path)
                 suggested_tags = suggest_tags(temp_file_path)
                 tags = ",".join(suggested_tags)
+                if not summary:
+                    summary = pdf_metadata.get('summary') or extracted_summary
                 
                 # Clean up temp file
                 os.remove(temp_file_path)
