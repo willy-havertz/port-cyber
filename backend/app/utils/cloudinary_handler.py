@@ -23,25 +23,27 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> tuple[
     try:
         public_id = filename.replace(".pdf", "")
 
+        # Upload as image resource type to enable transformations (thumbnails)
         result = cloudinary.uploader.upload(
             file_content,
-            resource_type="auto",  # allow PDF + image transforms
+            resource_type="image",  # Treat PDF as image for transforms
             folder="writeups",
             public_id=public_id,
             overwrite=True,
             use_filename=True,
-            unique_filename=False
+            unique_filename=False,
+            format="pdf"  # Keep original PDF format
         )
 
-        # Inline PDF URL
-        inline_url = result["secure_url"].replace("/upload/", "/upload/fl_inline/")
+        # Inline PDF URL with content-disposition inline
+        inline_url = result["secure_url"].replace("/upload/", "/upload/fl_attachment:inline/")
 
         # Thumbnail (first page as PNG)
         from cloudinary.utils import cloudinary_url
 
         thumb_url, _ = cloudinary_url(
-            f"writeups/{public_id}",
-            resource_type="auto",
+            f"writeups/{public_id}.pdf",
+            resource_type="image",
             format="png",
             page=1,
             transformation=[{"width": 800, "crop": "scale", "quality": "auto"}]
@@ -74,14 +76,15 @@ def generate_signed_url(public_id: str, expiration_hours: int = 1) -> str:
         # Calculate expiration timestamp
         expiration = int(time()) + (expiration_hours * 3600)
         
-        # Generate signed URL
+        # Generate signed URL with inline attachment
         url, options = cloudinary_url(
-            public_id,
-            resource_type="raw",
-            type="authenticated",
+            f"{public_id}.pdf",
+            resource_type="image",  # PDFs stored as images for transforms
+            type="upload",
             sign_url=True,
             secure=True,
-            expires_at=expiration
+            expires_at=expiration,
+            flags="attachment:inline"
         )
         
         logger.info(f"Generated signed URL for {public_id}, expires in {expiration_hours} hours")
@@ -113,13 +116,13 @@ async def delete_pdf_from_cloudinary(file_url: str) -> bool:
         public_id = parts[-1].replace(".pdf", "")
         
         # If there's a folder, include it
-        if len(parts) > 5 and parts[-2] != "upload":
+        if len(parts) > 5 and parts[-2] not in ("upload", "fl_attachment:inline"):
             folder = parts[-2]
             public_id = f"{folder}/{public_id}"
         
         result = cloudinary.uploader.destroy(
-            public_id,
-            resource_type="raw"
+            f"{public_id}.pdf",
+            resource_type="image"  # PDFs stored as images for transforms
         )
         
         logger.info(f"Successfully deleted {file_url} from Cloudinary")
