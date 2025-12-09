@@ -31,20 +31,15 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
         Exception: If upload fails
     """
     try:
-        # Upload to Cloudinary with resource_type 'raw' for PDFs
-        # Force public delivery (type="upload") so the PDF is world-accessible.
-        # "raw" resource_type keeps the PDF intact.
+        # Upload to Cloudinary as public raw resource
         result = cloudinary.uploader.upload(
             file_content,
             resource_type="raw",
-            type="upload",
-            access_mode="public",
             folder="writeups",
             public_id=filename.replace(".pdf", ""),
             overwrite=True,
             use_filename=True,
-            unique_filename=False,
-            format="pdf"
+            unique_filename=False
         )
         
         logger.info(f"Successfully uploaded {filename} to Cloudinary")
