@@ -58,7 +58,7 @@ const setCachedData = <T>(key: string, data: T): void => {
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://localhost:8000/api",
   withCredentials: false,
-  timeout: 10000, // 10 second timeout
+  timeout: 30000, // 30 second timeout for slower connections
 });
 
 api.interceptors.request.use((config) => {
@@ -133,16 +133,32 @@ export const fetchWriteups = async () => {
     return cached;
   }
 
-  // Fetch from API
-  const { data } = await api.get("/writeups", {
-    params: { skip: 0, limit: 50 },
-  });
-  const writeups = data.items || data;
+  const maxRetries = 3;
+  const retryDelay = 1000; // 1 second between retries
 
-  // Cache the result
-  setCachedData(cacheKey, writeups);
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      // Fetch from API
+      const { data } = await api.get("/writeups", {
+        params: { skip: 0, limit: 50 },
+      });
+      const writeups = data.items || data;
 
-  return writeups;
+      // Cache the result
+      setCachedData(cacheKey, writeups);
+
+      return writeups;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        console.error("Failed to fetch writeups after", maxRetries, "attempts:", error);
+        throw error;
+      }
+      console.warn(`Attempt ${attempt} failed, retrying in ${retryDelay}ms...`);
+      await new Promise((resolve) => setTimeout(resolve, retryDelay));
+    }
+  }
+
+  return [];
 };
 
 export const fetchWriteup = async (id: string | number) => {

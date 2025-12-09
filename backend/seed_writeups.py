@@ -46,17 +46,11 @@ def seed_database():
     else:
         print("Admin user already exists.")
     
-    # Clear existing writeups to ensure we have the latest data
+    # Check if writeups already exist - if so, skip seeding to preserve user edits
     existing_count = db.query(Writeup).count()
     if existing_count > 0:
-        print(f"Clearing {existing_count} existing writeups...")
-        # Use raw SQL to disable foreign key checks temporarily
-        from sqlalchemy import text
-        db.execute(text("DELETE FROM writeup_tags"))
-        db.execute(text("DELETE FROM writeups"))
-        db.execute(text("DELETE FROM tags"))
-        db.commit()
-        print("✅ Existing writeups, tags, and associations cleared.")
+        print(f"✅ Database already seeded with {existing_count} writeups. Skipping to preserve user edits.")
+        return
     
     # Create sample writeups
     writeups_data = [
