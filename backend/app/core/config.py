@@ -1,17 +1,20 @@
 from pydantic_settings import BaseSettings
+from pydantic import Field, model_validator
 from functools import lru_cache
+import os
 
 class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
     
     # JWT
-    SECRET_KEY: str = "your-secret-key-change-in-production"
+    SECRET_KEY: str = Field(default="")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
     # Admin
-    ADMIN_PASSWORD: str = "admin123"
+    ADMIN_PASSWORD: str = Field(default="")
+    ADMIN_USERNAME: str = Field(default="admin")
     
     # Supabase (optional for now)
     SUPABASE_URL: str = "https://example.supabase.co"
@@ -22,6 +25,7 @@ class Settings(BaseSettings):
     
     # CORS
     FRONTEND_URL: str = "https://wiltordichingwa.vercel.app"
+    ALLOWED_ORIGINS: list[str] = Field(default_factory=lambda: ["https://wiltordichingwa.vercel.app"])
     
     # File Upload
     UPLOAD_DIR: str = "uploads/writeups"
@@ -32,8 +36,36 @@ class Settings(BaseSettings):
     CLOUDINARY_API_KEY: str = ""
     CLOUDINARY_API_SECRET: str = ""
     
+    # Rate limiting
+    RATE_LIMIT_ENABLED: bool = True
+    RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
+    
     class Config:
         env_file = ".env"
+    
+    @model_validator(mode="after")
+    def validate_secrets(self):
+        """Validate that required secrets are set in production"""
+        is_development = os.getenv("ENVIRONMENT", "development") == "development"
+        
+        if not is_development:
+            # In production, these MUST be set via environment variables
+            if not self.SECRET_KEY or self.SECRET_KEY == "":
+                raise ValueError(
+                    "SECRET_KEY must be set via environment variable in production"
+                )
+            if not self.ADMIN_PASSWORD or self.ADMIN_PASSWORD == "":
+                raise ValueError(
+                    "ADMIN_PASSWORD must be set via environment variable in production"
+                )
+        else:
+            # In development, provide sensible defaults only if not set
+            if not self.SECRET_KEY or self.SECRET_KEY == "":
+                self.SECRET_KEY = "dev-secret-key-change-in-production"
+            if not self.ADMIN_PASSWORD or self.ADMIN_PASSWORD == "":
+                self.ADMIN_PASSWORD = "admin123"
+        
+        return self
 
 @lru_cache()
 def get_settings():
