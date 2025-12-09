@@ -150,7 +150,12 @@ export const fetchWriteups = async () => {
       return writeups;
     } catch (error) {
       if (attempt === maxRetries) {
-        console.error("Failed to fetch writeups after", maxRetries, "attempts:", error);
+        console.error(
+          "Failed to fetch writeups after",
+          maxRetries,
+          "attempts:",
+          error
+        );
         throw error;
       }
       console.warn(`Attempt ${attempt} failed, retrying in ${retryDelay}ms...`);
@@ -327,8 +332,8 @@ export const deleteComment = async (commentId: number) => {
   await api.delete(`/comments/${commentId}`);
 };
 
-export const loginAdmin = async (password: string) => {
-  const { data } = await api.post("/auth/login", { password });
+export const loginAdmin = async (username: string, password: string) => {
+  const { data } = await api.post("/auth/login", { username, password });
   localStorage.setItem("auth_token", data.access_token);
   return data;
 };

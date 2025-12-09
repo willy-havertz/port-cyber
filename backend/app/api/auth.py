@@ -18,6 +18,7 @@ from app.schemas.user import UserCreate, User as UserSchema, Token
 router = APIRouter()
 
 class AdminLoginRequest(BaseModel):
+    username: str
     password: str
 
 
@@ -49,15 +50,17 @@ async def register(user_data: UserCreate, db: Session = Depends(get_db)):
     return db_user
 
 @router.post("/login", response_model=Token)
-async def login(request: AdminLoginRequest):
-    """Admin login with password only"""
-    # Get the admin password from environment
-    admin_password = getattr(settings, 'ADMIN_PASSWORD', 'admin123')
+async def login(login_request: AdminLoginRequest):
+    """Admin login with username and password"""
+    # Get the admin credentials from settings
+    admin_username = settings.ADMIN_USERNAME
+    admin_password = settings.ADMIN_PASSWORD
     
-    if request.password != admin_password:
+    # Check both username and password
+    if login_request.username != admin_username or login_request.password != admin_password:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid admin password",
+            detail="Invalid admin credentials",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
