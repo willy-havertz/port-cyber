@@ -42,11 +42,8 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
             unique_filename=False
         )
         
-        # Modify URL to force inline viewing by using transformation
-        # Cloudinary serves with inline disposition when accessed via /fetch/
-        url = result["secure_url"]
-        # Replace /upload/ with /fetch/ to trigger inline viewing
-        url = url.replace("/raw/upload/", "/raw/fetch/")
+        # Force inline viewing by adding fl_inline transformation to the delivery URL
+        url = result["secure_url"].replace("/upload/", "/upload/fl_inline/")
         
         logger.info(f"Successfully uploaded {filename} to Cloudinary (inline view enabled)")
         return url
