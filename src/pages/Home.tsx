@@ -34,7 +34,9 @@ export default function Home() {
           category: w.category,
           date: w.date,
           timeSpent: w.time_spent,
-          tags: w.tags || [],
+          tags: (w.tags || [])
+            .map((tag) => (typeof tag === "string" ? tag : tag.name))
+            .filter(Boolean),
         }));
         setFeaturedWriteups(featured);
       } catch (error) {
