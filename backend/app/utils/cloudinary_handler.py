@@ -31,20 +31,20 @@ async def upload_pdf_to_cloudinary(file_content: bytes, filename: str) -> str:
         Exception: If upload fails
     """
     try:
-        # Upload to Cloudinary as public raw resource with inline viewing
+        # Upload to Cloudinary; resource_type="auto" allows PDF transforms (thumbnails)
         result = cloudinary.uploader.upload(
             file_content,
-            resource_type="raw",
+            resource_type="auto",
             folder="writeups",
             public_id=filename.replace(".pdf", ""),
             overwrite=True,
             use_filename=True,
             unique_filename=False
         )
-        
+
         # Force inline viewing by adding fl_inline transformation to the delivery URL
         url = result["secure_url"].replace("/upload/", "/upload/fl_inline/")
-        
+
         logger.info(f"Successfully uploaded {filename} to Cloudinary (inline view enabled)")
         return url
         
