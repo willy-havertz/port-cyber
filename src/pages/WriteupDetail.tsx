@@ -1,62 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, Clock, Trophy, Loader } from "lucide-react";
+import { ArrowLeft, FileText, Clock, Trophy } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import WriteupComments from "../components/WriteupComments";
 import { fetchWriteup, type Writeup } from "../lib/api";
 import { Link } from "react-router-dom";
-
-interface PDFDownloadButtonProps {
-  writeupId: string;
-}
-
-const PDFDownloadButton: React.FC<PDFDownloadButtonProps> = ({ writeupId }) => {
-  const [loading, setLoading] = useState(false);
-
-  const handleDownload = async () => {
-    setLoading(true);
-    try {
-      const api = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-      const response = await fetch(`${api}/writeups/${writeupId}/download-url`);
-
-      if (!response.ok) {
-        throw new Error("Failed to get download URL");
-      }
-
-      const data = await response.json();
-
-      // Open PDF in new tab with signed URL
-      window.open(data.download_url, "_blank");
-    } catch (error) {
-      console.error("Error getting download URL:", error);
-      alert("Failed to generate download link. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <button
-      onClick={handleDownload}
-      disabled={loading}
-      className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold rounded-lg hover:shadow-lg transition-shadow disabled:opacity-50"
-    >
-      {loading ? (
-        <>
-          <Loader className="h-5 w-5 mr-2 animate-spin" />
-          Generating link...
-        </>
-      ) : (
-        <>
-          <FileText className="h-5 w-5 mr-2" />
-          Open PDF Writeup
-        </>
-      )}
-    </button>
-  );
-};
 
 export default function WriteupDetail() {
   const { id } = useParams<{ id: string }>();
@@ -491,7 +441,15 @@ export default function WriteupDetail() {
             <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
               Full Writeup with Screenshots
             </h3>
-            <PDFDownloadButton writeupId={String(writeup.id)} />
+            <a
+              href={writeup.writeup_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+            >
+              <FileText className="h-5 w-5 mr-2" />
+              Open PDF Writeup
+            </a>
           </motion.div>
         )}
 
