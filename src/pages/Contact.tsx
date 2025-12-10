@@ -459,35 +459,12 @@ export default function Contact() {
                     </a>
                   ))}
                 </div>
-
               </motion.div>
 
-              {/* LinkedIn Profile Badge */}
               <motion.div
                 initial={{ y: 50, opacity: 0 }}
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8 flex justify-center"
-              >
-                <div className="badge-base LI-profile-badge"
-                  data-locale="en_US"
-                  data-size="medium"
-                  data-theme="dark"
-                  data-type="VERTICAL"
-                  data-vanity="wiltord-ichingwa"
-                  data-version="v1"
-                >
-                  <a className="badge-base__link LI-simple-link" href="https://ke.linkedin.com/in/wiltord-ichingwa?trk=profile-badge">
-                    Wiltord Ichingwa
-                  </a>
-                </div>
-              </motion.div>
-
-              <motion.div
-                initial={{ y: 50, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
                 viewport={{ once: true }}
                 className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-8"
               >
