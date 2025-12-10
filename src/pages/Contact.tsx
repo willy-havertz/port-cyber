@@ -10,16 +10,49 @@ import Footer from "../components/Footer";
 import XIcon from "../components/XIcon";
 import { supabase } from "../lib/supabase";
 
+// Type declaration for hCaptcha window object
+declare global {
+  interface Window {
+    hcaptcha?: {
+      render: (
+        element: string | HTMLElement,
+        options: Record<string, unknown>
+      ) => void;
+      reset: (widgetId?: string) => void;
+      remove: (widgetId?: string) => void;
+      getResponse: (widgetId?: string) => string;
+    };
+  }
+}
+
 const contactSchema = z.object({
-  name: z.string().min(2, "Name must be at least 2 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  subject: z.string().min(5, "Subject must be at least 5 characters"),
-  message: z.string().min(10, "Message must be at least 10 characters"),
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters")
+    .max(100, "Name must be less than 100 characters"),
+  email: z
+    .string()
+    .email("Please enter a valid email address")
+    .max(255, "Email must be less than 255 characters"),
+  subject: z
+    .string()
+    .min(5, "Subject must be at least 5 characters")
+    .max(200, "Subject must be less than 200 characters"),
+  message: z
+    .string()
+    .min(10, "Message must be at least 10 characters")
+    .max(5000, "Message must be less than 5000 characters"),
+  honeypot: z.string().max(0, "Spam detected").optional(),
 });
 
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
+  const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
+  const [submitStatus, setSubmitStatus] = React.useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
   const {
     register,
     handleSubmit,
@@ -31,29 +64,93 @@ export default function Contact() {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
-      // Insert contact form data into Supabase
-      const { error } = await supabase.from("contact_messages").insert([
-        {
-          name: data.name,
-          email: data.email,
-          subject: data.subject,
-          message: data.message,
-          created_at: new Date().toISOString(),
-        },
-      ]);
+      setSubmitStatus("loading");
 
-      if (error) {
-        console.error("Supabase error:", error);
-        throw error;
+      // Validate captcha
+      if (!captchaToken) {
+        toast.error("Please complete the CAPTCHA verification");
+        setSubmitStatus("error");
+        return;
+      }
+
+      // Call backend endpoint instead of direct Supabase insert
+      const response = await fetch(
+        `${
+          import.meta.env.VITE_API_URL || "http://localhost:8000"
+        }/api/contact`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name: data.name,
+            email: data.email,
+            subject: data.subject,
+            message: data.message,
+            captchaToken: captchaToken,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+
+        if (response.status === 429) {
+          toast.error("Too many requests. Please try again later.");
+        } else if (response.status === 400) {
+          toast.error(errorData.detail || "Invalid input provided");
+        } else {
+          toast.error("Failed to send message. Please try again later.");
+        }
+        setSubmitStatus("error");
+        return;
       }
 
       toast.success("Message sent successfully! I'll get back to you soon.");
       reset();
+      setCaptchaToken(null);
+      setSubmitStatus("success");
     } catch (error) {
       console.error("Failed to send message:", error);
-      toast.error("Failed to send message. Please try again.");
+      toast.error("Failed to send message. Please try again later.");
+      setSubmitStatus("error");
     }
   };
+
+  // Load and render hCaptcha
+  React.useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://js.hcaptcha.com/1/api.js";
+    script.async = true;
+    script.defer = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  // Handle hCaptcha callback
+  React.useEffect(() => {
+    if (window.hcaptcha) {
+      window.hcaptcha.render("h-captcha", {
+        sitekey: import.meta.env.VITE_HCAPTCHA_SITE_KEY as string,
+        callback: (token: string) => {
+          setCaptchaToken(token);
+        },
+        "error-callback": () => {
+          setCaptchaToken(null);
+        },
+        "expired-callback": () => {
+          setCaptchaToken(null);
+        },
+      });
+    }
+  }, []);
 
   const contactInfo = [
     {
@@ -218,9 +315,29 @@ export default function Contact() {
                   )}
                 </div>
 
+                {/* Honeypot field - hidden from users */}
+                <input
+                  {...register("honeypot")}
+                  type="text"
+                  style={{ display: "none" }}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                />
+
+                {/* hCaptcha Widget */}
+                <div className="mb-6">
+                  <div id="h-captcha" />
+                  {!captchaToken && (
+                    <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
+                      Please complete the CAPTCHA verification above
+                    </p>
+                  )}
+                </div>
+
                 <button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || !captchaToken}
                   className="w-full flex items-center justify-center px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium rounded-lg hover:bg-black dark:hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
