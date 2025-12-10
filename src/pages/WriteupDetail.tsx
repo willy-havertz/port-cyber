@@ -477,8 +477,10 @@ export default function WriteupDetail() {
                       {children}
                     </li>
                   ),
-                  code: ({ children, inline }) =>
-                    inline ? (
+                  code: ({ children, node }: any) => {
+                    const match = (node?.data?.meta || "")?.match(/language-(\w+)/);
+                    const isInline = !match;
+                    return isInline ? (
                       <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-900 dark:text-white font-mono text-sm">
                         {children}
                       </code>
@@ -486,7 +488,8 @@ export default function WriteupDetail() {
                       <code className="block bg-slate-900 dark:bg-slate-950 text-slate-100 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
                         {children}
                       </code>
-                    ),
+                    );
+                  },
                   pre: ({ children }) => (
                     <pre className="bg-slate-900 dark:bg-slate-950 text-slate-100 p-4 rounded-lg overflow-x-auto mb-4">
                       {children}
