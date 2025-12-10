@@ -62,8 +62,11 @@ export default function AdminWriteups() {
 
     // Validate file if selected
     if (selectedFile) {
-      if (!selectedFile.name.endsWith(".pdf")) {
-        setError("Only PDF files are allowed");
+      const isValidFile =
+        selectedFile.name.endsWith(".pdf") ||
+        selectedFile.name.endsWith(".zip");
+      if (!isValidFile) {
+        setError("Only PDF or ZIP files are allowed");
         return;
       }
       if (selectedFile.size > 50 * 1024 * 1024) {
@@ -89,7 +92,7 @@ export default function AdminWriteups() {
               setUploadProgress(progress);
             }
           );
-          setSuccess("Writeup updated and PDF uploaded successfully!");
+          setSuccess("Writeup updated and file uploaded successfully!");
         } else {
           // Update without file
           const payload: UpdateWriteupPayload = formData;
@@ -101,7 +104,7 @@ export default function AdminWriteups() {
         await uploadWriteupFile(formData, selectedFile, (progress) => {
           setUploadProgress(progress);
         });
-        setSuccess("Writeup created and PDF uploaded successfully!");
+        setSuccess("Writeup created and file uploaded successfully!");
       } else {
         // Create without file (manual URL entry)
         await createWriteup(formData);
@@ -148,8 +151,10 @@ export default function AdminWriteups() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (!file.name.endsWith(".pdf")) {
-        setError("Only PDF files are allowed");
+      const isValidFile =
+        file.name.endsWith(".pdf") || file.name.endsWith(".zip");
+      if (!isValidFile) {
+        setError("Only PDF or ZIP files are allowed");
         return;
       }
       if (file.size > 50 * 1024 * 1024) {
@@ -323,13 +328,17 @@ export default function AdminWriteups() {
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
                   {editingId
-                    ? "Upload New PDF (optional)"
-                    : "Upload PDF Writeup"}
+                    ? "Upload New File (optional)"
+                    : "Upload Writeup File"}
                 </label>
+                <div className="text-xs text-slate-500 dark:text-slate-400 mb-2">
+                  PDF for traditional writeups, or ZIP containing README.md +
+                  images for markdown writeups
+                </div>
                 <div className="relative">
                   <input
                     type="file"
-                    accept=".pdf"
+                    accept=".pdf,.zip"
                     onChange={handleFileChange}
                     disabled={isUploading}
                     className="hidden"
@@ -343,8 +352,8 @@ export default function AdminWriteups() {
                       {selectedFile
                         ? selectedFile.name
                         : editingId
-                        ? "Click to upload new PDF"
-                        : "Click to select PDF or drag and drop"}
+                        ? "Click to upload new file (PDF or ZIP)"
+                        : "Click to select PDF or ZIP file"}
                     </span>
                   </label>
                 </div>
@@ -394,11 +403,11 @@ export default function AdminWriteups() {
                 )}
               </div>
 
-              {/* Current PDF URL display when editing */}
+              {/* Current File URL display when editing */}
               {editingId && (
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-slate-700 dark:text-slate-300">
-                    Current PDF URL
+                    Current Writeup URL (PDF only)
                   </label>
                   <input
                     type="text"
@@ -407,11 +416,11 @@ export default function AdminWriteups() {
                       setFormData({ ...formData, writeup_url: e.target.value })
                     }
                     className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-                    placeholder="Writeup URL"
+                    placeholder="Writeup URL (leave empty for markdown)"
                   />
                   <p className="text-xs text-slate-500 dark:text-slate-400">
-                    💡 Upload a new PDF above to replace, or edit the URL
-                    manually
+                    💡 Upload a new file above to replace. PDF uses URL, ZIP
+                    stores markdown content.
                   </p>
                 </div>
               )}
