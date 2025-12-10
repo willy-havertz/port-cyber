@@ -98,6 +98,8 @@ export interface Writeup {
   time_spent?: string;
   summary?: string;
   writeup_url?: string;
+  writeup_content?: string;
+  content_type?: "pdf" | "markdown";
   thumbnail_url?: string;
   tags?: { id: number; name: string }[];
   overview?: string;

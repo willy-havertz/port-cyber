@@ -32,7 +32,9 @@ class Writeup(Base):
     category = Column(String, nullable=False)
     date = Column(String, nullable=False)
     time_spent = Column(String, nullable=False)
-    writeup_url = Column(String, nullable=False)  # Path to PDF file
+    writeup_url = Column(String, nullable=True)  # Path to PDF file (optional, for backward compatibility)
+    writeup_content = Column(Text, nullable=True)  # Markdown content (new field for README)
+    content_type = Column(String, default="pdf")  # 'pdf' or 'markdown'
     thumbnail_url = Column(String, nullable=True)
     summary = Column(Text)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

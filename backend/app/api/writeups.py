@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Optional
 import os
 import shutil
+import re
 from datetime import datetime
 
 from app.core.database import get_db
@@ -19,8 +20,21 @@ from app.core.config import settings
 from app.utils.pdf_processor import extract_metadata_from_pdf, suggest_tags, extract_text_and_summary
 from app.utils.cloudinary_handler import upload_pdf_to_cloudinary, delete_pdf_from_cloudinary, generate_signed_url
 from app.utils.virus_scan import scan_bytes_for_viruses
+from app.utils.zip_processor import extract_and_process_zip, validate_readme_structure
 
 router = APIRouter()
+
+def extract_summary_from_markdown(content: str, max_length: int = 200) -> str:
+    """Extract first non-heading paragraph from markdown as summary"""
+    lines = content.split('\n')
+    for line in lines:
+        # Skip empty lines and headings
+        line = line.strip()
+        if line and not line.startswith('#'):
+            # Remove markdown formatting
+            text = re.sub(r'[*_`\[\]()]', '', line)
+            return text[:max_length]
+    return ""
 
 @router.get("/", response_model=WriteupList)
 async def get_writeups(
@@ -58,6 +72,7 @@ async def get_writeups(
     }
 
 @router.get("/{writeup_id}", response_model=WriteupSchema)
+@router.get("/{writeup_id}")
 async def get_writeup(writeup_id: int, db: Session = Depends(get_db)):
     """Get a specific writeup by ID"""
     writeup = db.query(Writeup).filter(Writeup.id == writeup_id).first()
@@ -67,6 +82,29 @@ async def get_writeup(writeup_id: int, db: Session = Depends(get_db)):
             detail="Writeup not found"
         )
     return writeup
+
+@router.get("/{writeup_id}/content")
+async def get_writeup_content(writeup_id: int, db: Session = Depends(get_db)):
+    """Get markdown content of a writeup (if available)"""
+    writeup = db.query(Writeup).filter(Writeup.id == writeup_id).first()
+    if not writeup:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Writeup not found"
+        )
+    
+    if writeup.content_type != "markdown" or not writeup.writeup_content:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Markdown content not available for this writeup"
+        )
+    
+    return {
+        "id": writeup.id,
+        "title": writeup.title,
+        "content": writeup.writeup_content,
+        "content_type": "markdown"
+    }
 
 @router.get("/{writeup_id}/download-url")
 async def get_writeup_download_url(writeup_id: int, db: Session = Depends(get_db)):
@@ -127,13 +165,7 @@ async def create_writeup(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_admin_user)
 ):
-    """Upload a new writeup (Admin only)"""
-    # Validate file type
-    if not file.filename.endswith('.pdf'):
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Only PDF files are allowed"
-        )
+    """Upload a new writeup (Admin only) - supports both PDF and ZIP files"""
     
     try:
         # Read file content
@@ -147,27 +179,89 @@ async def create_writeup(
                 detail=f"Upload blocked by virus scan: {reason}"
             )
 
-        # Upload to Cloudinary (returns inline PDF URL and thumbnail URL)
-        cloudinary_url, thumbnail_url = await upload_pdf_to_cloudinary(file_content, file.filename)
+        # Determine file type
+        is_zip = file.filename.endswith('.zip')
+        is_pdf = file.filename.endswith('.pdf')
 
-        # Extract metadata, summary, and tags from file content via temp file
-        os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-        temp_filename = f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
-        temp_file_path = os.path.join(settings.UPLOAD_DIR, temp_filename)
+        if not (is_zip or is_pdf):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Only PDF and ZIP files are allowed"
+            )
 
-        with open(temp_file_path, "wb") as buffer:
-            buffer.write(file_content)
+        # Process based on file type
+        if is_zip:
+            # Process ZIP file (README + images)
+            try:
+                readme_content, images, metadata = await extract_and_process_zip(file_content)
+            except ValueError as e:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=str(e)
+                )
+            
+            # Validate README
+            valid, error = validate_readme_structure(readme_content)
+            if not valid:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"Invalid README: {error}"
+                )
+            
+            # Create directory for this writeup
+            writeup_dir = os.path.join(settings.UPLOAD_DIR, title.replace(" ", "_"))
+            os.makedirs(writeup_dir, exist_ok=True)
+            
+            # Save images locally
+            image_paths = {}
+            for img_name, img_content in images.items():
+                img_path = os.path.join(writeup_dir, img_name)
+                os.makedirs(os.path.dirname(img_path), exist_ok=True)
+                with open(img_path, 'wb') as f:
+                    f.write(img_content)
+                image_paths[img_name] = f"/public/writeups/{title.replace(' ', '_')}/{img_name}"
+            
+            # Update image references in markdown if needed
+            final_content = readme_content
+            for local_name, public_path in image_paths.items():
+                # Replace local references with public paths
+                final_content = final_content.replace(local_name, public_path)
+            
+            # Use auto-generated summary from first paragraph of README
+            auto_summary = extract_summary_from_markdown(readme_content)
+            final_summary = summary or auto_summary
+            
+            content_type = "markdown"
+            writeup_url = None
+            thumbnail_url = None
 
-        pdf_metadata = extract_metadata_from_pdf(temp_file_path)
-        full_text, extracted_summary = extract_text_and_summary(temp_file_path)
-        suggested_tags = suggest_tags(temp_file_path)
+        else:
+            # Process PDF file (existing logic)
+            os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+            temp_filename = f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
+            temp_file_path = os.path.join(settings.UPLOAD_DIR, temp_filename)
 
-        # Clean up temp file
-        os.remove(temp_file_path)
+            with open(temp_file_path, "wb") as buffer:
+                buffer.write(file_content)
 
-        # Parse tags
+            pdf_metadata = extract_metadata_from_pdf(temp_file_path)
+            full_text, extracted_summary = extract_text_and_summary(temp_file_path)
+            suggested_tags_list = suggest_tags(temp_file_path)
+
+            # Clean up temp file
+            os.remove(temp_file_path)
+
+            # Upload to Cloudinary
+            cloudinary_url, thumbnail_url = await upload_pdf_to_cloudinary(file_content, file.filename)
+
+            final_summary = summary or pdf_metadata.get('summary') or extracted_summary or ''
+            content_type = "pdf"
+            writeup_url = cloudinary_url
+            suggested_tags_list = suggested_tags_list or []
+            tags = tags + "," + ",".join(suggested_tags_list)
+
+        # Parse and create tags
         tag_names = [t.strip() for t in tags.split(',') if t.strip()]
-        tag_names.extend(suggested_tags)
         tag_names = list(set(tag_names))
 
         # Create or get tags
@@ -179,9 +273,7 @@ async def create_writeup(
                 db.add(tag)
             tag_objects.append(tag)
 
-        # Prefer provided summary, else extracted
-        final_summary = summary or pdf_metadata.get('summary') or extracted_summary or ''
-
+        # Create writeup
         writeup = Writeup(
             title=title,
             platform=platform,
@@ -190,7 +282,9 @@ async def create_writeup(
             date=date,
             time_spent=time_spent,
             summary=final_summary,
-            writeup_url=cloudinary_url,
+            writeup_url=writeup_url,
+            writeup_content=readme_content if is_zip else None,
+            content_type=content_type,
             thumbnail_url=thumbnail_url,
             tags=tag_objects
         )
@@ -205,7 +299,7 @@ async def create_writeup(
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Error processing PDF: {str(e)}"
+            detail=f"Error processing upload: {str(e)}"
         )
 
 @router.put("/{writeup_id}", response_model=WriteupSchema)

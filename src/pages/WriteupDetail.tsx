@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowLeft, FileText, Clock, Trophy } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import WriteupComments from "../components/WriteupComments";
@@ -430,12 +431,110 @@ export default function WriteupDetail() {
           </motion.div>
         )}
 
-        {/* PDF Link Section */}
-        {writeup.writeup_url && (
+        {/* Markdown Content Section */}
+        {writeup.content_type === "markdown" && writeup.writeup_content && (
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.8 }}
+            className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-8 mb-8 prose dark:prose-invert max-w-none"
+          >
+            <div className="prose prose-slate dark:prose-invert max-w-none">
+              <ReactMarkdown
+                components={{
+                  h1: ({ children }) => (
+                    <h1 className="text-3xl font-bold text-slate-900 dark:text-white mt-6 mb-4">
+                      {children}
+                    </h1>
+                  ),
+                  h2: ({ children }) => (
+                    <h2 className="text-2xl font-bold text-slate-900 dark:text-white mt-6 mb-3">
+                      {children}
+                    </h2>
+                  ),
+                  h3: ({ children }) => (
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mt-4 mb-2">
+                      {children}
+                    </h3>
+                  ),
+                  p: ({ children }) => (
+                    <p className="text-slate-700 dark:text-slate-300 mb-4 leading-relaxed">
+                      {children}
+                    </p>
+                  ),
+                  ul: ({ children }) => (
+                    <ul className="list-disc list-inside text-slate-700 dark:text-slate-300 mb-4 space-y-2">
+                      {children}
+                    </ul>
+                  ),
+                  ol: ({ children }) => (
+                    <ol className="list-decimal list-inside text-slate-700 dark:text-slate-300 mb-4 space-y-2">
+                      {children}
+                    </ol>
+                  ),
+                  li: ({ children }) => (
+                    <li className="text-slate-700 dark:text-slate-300">
+                      {children}
+                    </li>
+                  ),
+                  code: ({ children, inline }) =>
+                    inline ? (
+                      <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-900 dark:text-white font-mono text-sm">
+                        {children}
+                      </code>
+                    ) : (
+                      <code className="block bg-slate-900 dark:bg-slate-950 text-slate-100 p-4 rounded-lg overflow-x-auto font-mono text-sm mb-4">
+                        {children}
+                      </code>
+                    ),
+                  pre: ({ children }) => (
+                    <pre className="bg-slate-900 dark:bg-slate-950 text-slate-100 p-4 rounded-lg overflow-x-auto mb-4">
+                      {children}
+                    </pre>
+                  ),
+                  blockquote: ({ children }) => (
+                    <blockquote className="border-l-4 border-blue-500 pl-4 italic text-slate-600 dark:text-slate-400 my-4">
+                      {children}
+                    </blockquote>
+                  ),
+                  img: ({ src, alt }) => (
+                    <img
+                      src={src}
+                      alt={alt}
+                      className="max-w-full h-auto rounded-lg my-4 shadow-lg"
+                      onError={(e) => {
+                        // Try to resolve image path if it's relative
+                        const target = e.currentTarget as HTMLImageElement;
+                        if (!target.src.startsWith("http") && src) {
+                          target.src = `/public/writeups/${writeup.title.replace(/ /g, "_")}/${src}`;
+                        }
+                      }}
+                    />
+                  ),
+                  a: ({ href, children }) => (
+                    <a
+                      href={href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      {children}
+                    </a>
+                  ),
+                }}
+              >
+                {writeup.writeup_content}
+              </ReactMarkdown>
+            </div>
+          </motion.div>
+        )}
+
+        {/* PDF Link Section - only show for PDF writeups */}
+        {(writeup.content_type === "pdf" || !writeup.content_type) && writeup.writeup_url && (
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.9 }}
             className="bg-gradient-to-r from-gray-900 to-black dark:from-white dark:to-gray-100 rounded-lg shadow-lg p-8 text-center"
           >
             <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
