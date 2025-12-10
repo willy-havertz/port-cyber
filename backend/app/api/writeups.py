@@ -397,7 +397,7 @@ async def update_writeup_with_file(
                     f.write(file_content)
                 
                 # Extract and process the ZIP
-                markdown_content, images = extract_and_process_zip(temp_zip_path)
+                markdown_content, images = await extract_and_process_zip(temp_zip_path)
                 
                 # Create a unique folder for this writeup's images
                 safe_title = "".join(c if c.isalnum() or c in (' ', '_') else '_' for c in (title or writeup.title))
