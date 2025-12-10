@@ -98,7 +98,7 @@ const Footer = () => {
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="https://www.linkedin.com/in/wiltord-ichingwa-5927aa292"
+                href="https://www.linkedin.com/in/wiltord-ichingwa"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-blue-400 transition-colors"
