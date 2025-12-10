@@ -51,9 +51,6 @@ export default function Contact() {
   const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
   const [hcaptchaReady, setHcaptchaReady] = React.useState(false);
   const widgetIdRef = React.useRef<string | null>(null);
-  const [submitStatus, setSubmitStatus] = React.useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
 
   const {
     register,
@@ -66,12 +63,9 @@ export default function Contact() {
 
   const onSubmit = async (data: ContactFormData) => {
     try {
-      setSubmitStatus("loading");
-
       // Validate captcha
       if (!captchaToken) {
         toast.error("Please complete the CAPTCHA verification");
-        setSubmitStatus("error");
         return;
       }
 
@@ -105,18 +99,15 @@ export default function Contact() {
         } else {
           toast.error("Failed to send message. Please try again later.");
         }
-        setSubmitStatus("error");
         return;
       }
 
       toast.success("Message sent successfully! I'll get back to you soon.");
       reset();
       setCaptchaToken(null);
-      setSubmitStatus("success");
     } catch (error) {
       console.error("Failed to send message:", error);
       toast.error("Failed to send message. Please try again later.");
-      setSubmitStatus("error");
     }
   };
 
@@ -210,7 +201,7 @@ export default function Contact() {
     {
       icon: Linkedin,
       label: "LinkedIn",
-      href: "https://www.linkedin.com/in/wiltord-ichingwa-5927aa292",
+      href: "https://www.linkedin.com/in/wiltord-ichingwa",
     },
     {
       icon: XIcon,
@@ -467,6 +458,29 @@ export default function Contact() {
                       <social.icon className="h-6 w-6" />
                     </a>
                   ))}
+                </div>
+
+              </motion.div>
+
+              {/* LinkedIn Profile Badge */}
+              <motion.div
+                initial={{ y: 50, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8 flex justify-center"
+              >
+                <div className="badge-base LI-profile-badge"
+                  data-locale="en_US"
+                  data-size="medium"
+                  data-theme="dark"
+                  data-type="VERTICAL"
+                  data-vanity="wiltord-ichingwa"
+                  data-version="v1"
+                >
+                  <a className="badge-base__link LI-simple-link" href="https://ke.linkedin.com/in/wiltord-ichingwa?trk=profile-badge">
+                    Wiltord Ichingwa
+                  </a>
                 </div>
               </motion.div>
 
