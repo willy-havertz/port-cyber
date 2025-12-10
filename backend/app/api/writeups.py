@@ -361,13 +361,16 @@ async def update_writeup_with_file(
         )
     
     try:
-        # If new file uploaded, validate, scan, and upload to Cloudinary
+        # If new file uploaded, validate, scan, and process
         if file and file.filename:
             # Validate file type
-            if not file.filename.endswith('.pdf'):
+            is_pdf = file.filename.endswith('.pdf')
+            is_zip = file.filename.endswith('.zip')
+            
+            if not is_pdf and not is_zip:
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Only PDF files are allowed"
+                    detail="Only PDF and ZIP files are allowed"
                 )
             
             # Read file content
@@ -381,34 +384,84 @@ async def update_writeup_with_file(
                     detail=f"Upload blocked by virus scan: {reason}"
                 )
             
-            # Delete old file from Cloudinary if it exists
-            if writeup.writeup_url and "cloudinary.com" in writeup.writeup_url:
-                await delete_pdf_from_cloudinary(writeup.writeup_url)
-            
-            # Upload new file to Cloudinary
-            cloudinary_url, thumbnail_url = await upload_pdf_to_cloudinary(file_content, file.filename)
-            writeup.writeup_url = cloudinary_url
-            writeup.thumbnail_url = thumbnail_url
-            
-            # Extract metadata and suggest tags if not provided
-            if not tags:
-                # Use a temporary file for metadata extraction
+            if is_zip:
+                # Handle ZIP file with markdown content
+                # Save the ZIP temporarily
                 os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-                temp_filename = f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
-                temp_file_path = os.path.join(settings.UPLOAD_DIR, temp_filename)
+                temp_zip_path = os.path.join(
+                    settings.UPLOAD_DIR, 
+                    f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
+                )
                 
-                with open(temp_file_path, "wb") as buffer:
-                    buffer.write(file_content)
+                with open(temp_zip_path, "wb") as f:
+                    f.write(file_content)
                 
-                pdf_metadata = extract_metadata_from_pdf(temp_file_path)
-                _, extracted_summary = extract_text_and_summary(temp_file_path)
-                suggested_tags = suggest_tags(temp_file_path)
-                tags = ",".join(suggested_tags)
+                # Extract and process the ZIP
+                markdown_content, images = extract_and_process_zip(temp_zip_path)
+                
+                # Create a unique folder for this writeup's images
+                safe_title = "".join(c if c.isalnum() or c in (' ', '_') else '_' for c in (title or writeup.title))
+                writeup_folder = os.path.join(settings.UPLOAD_DIR, safe_title.replace(' ', '_'))
+                os.makedirs(writeup_folder, exist_ok=True)
+                
+                # Save images locally
+                images_folder = os.path.join(writeup_folder, "images")
+                os.makedirs(images_folder, exist_ok=True)
+                
+                for img_name, img_content in images.items():
+                    img_path = os.path.join(images_folder, img_name)
+                    with open(img_path, "wb") as img_file:
+                        img_file.write(img_content)
+                
+                # Update markdown content image references
+                markdown_content = markdown_content.replace(
+                    "images/",
+                    f"/uploads/writeups/{safe_title.replace(' ', '_')}/images/"
+                )
+                
+                # Update writeup fields for markdown
+                writeup.writeup_content = markdown_content
+                writeup.content_type = "markdown"
+                writeup.writeup_url = None
+                
+                # Extract summary if not provided
                 if not summary:
-                    summary = pdf_metadata.get('summary') or extracted_summary
+                    summary = extract_summary_from_markdown(markdown_content)
                 
                 # Clean up temp file
-                os.remove(temp_file_path)
+                os.remove(temp_zip_path)
+                
+            else:  # is_pdf
+                # Delete old file from Cloudinary if it exists
+                if writeup.writeup_url and "cloudinary.com" in writeup.writeup_url:
+                    await delete_pdf_from_cloudinary(writeup.writeup_url)
+                
+                # Upload new file to Cloudinary
+                cloudinary_url, thumbnail_url = await upload_pdf_to_cloudinary(file_content, file.filename)
+                writeup.writeup_url = cloudinary_url
+                writeup.thumbnail_url = thumbnail_url
+                writeup.content_type = "pdf"
+                writeup.writeup_content = None
+                
+                # Extract metadata and suggest tags if not provided
+                if not tags:
+                    # Use a temporary file for metadata extraction
+                    os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
+                    temp_filename = f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
+                    temp_file_path = os.path.join(settings.UPLOAD_DIR, temp_filename)
+                    
+                    with open(temp_file_path, "wb") as buffer:
+                        buffer.write(file_content)
+                    
+                    pdf_metadata = extract_metadata_from_pdf(temp_file_path)
+                    _, extracted_summary = extract_text_and_summary(temp_file_path)
+                    suggested_tags = suggest_tags(temp_file_path)
+                    tags = ",".join(suggested_tags)
+                    if not summary:
+                        summary = pdf_metadata.get('summary') or extracted_summary
+                    
+                    # Clean up temp file
+                    os.remove(temp_file_path)
         
         # Update other fields
         if title is not None:
