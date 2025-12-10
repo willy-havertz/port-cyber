@@ -65,7 +65,7 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
               alt={`${title} thumbnail`}
               className="w-full h-full object-cover"
               onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none';
+                (e.target as HTMLImageElement).style.display = "none";
               }}
             />
           </div>
@@ -97,9 +97,7 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
         {/* Summary Snippet */}
         {summary && (
           <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 line-clamp-2">
-            {summary.length > 150
-              ? `${summary.substring(0, 150)}...`
-              : summary}
+            {summary.length > 150 ? `${summary.substring(0, 150)}...` : summary}
           </p>
         )}
 
