@@ -16,6 +16,7 @@ import FeaturedCarousel from "../components/FeaturedCarousel";
 import { Link } from "react-router-dom";
 import CTFStatsDashboard from "../components/CTFStatsDashboard";
 import { fetchWriteups, type Writeup } from "../lib/api";
+import homepic from "../assets/homepic.png";
 
 export default function Home() {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
@@ -149,11 +150,13 @@ export default function Home() {
                 className="relative"
               >
                 <img
-                  src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  src={homepic}
                   alt="Cybersecurity professional workspace"
-                  className="rounded-lg shadow-2xl"
-                  width="800"
-                  height="600"
+                  className="rounded-lg shadow-2xl w-full select-none"
+                  onContextMenu={(e) => e.preventDefault()}
+                  onDragStart={(e) => e.preventDefault()}
+                  style={{ userSelect: "none", WebkitUserSelect: "none" }}
+                  draggable={false}
                 />
               </motion.div>
             </div>
