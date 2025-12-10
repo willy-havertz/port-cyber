@@ -98,6 +98,7 @@ export interface Writeup {
   time_spent?: string;
   summary?: string;
   writeup_url?: string;
+  thumbnail_url?: string;
   tags?: { id: number; name: string }[];
   overview?: string;
   methodology?: string[];
