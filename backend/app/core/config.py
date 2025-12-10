@@ -40,6 +40,10 @@ class Settings(BaseSettings):
     RATE_LIMIT_ENABLED: bool = True
     RATE_LIMIT_REQUESTS_PER_MINUTE: int = 60
     
+    # hCaptcha
+    HCAPTCHA_SECRET_KEY: str = Field(default="")
+    HCAPTCHA_SITE_KEY: str = Field(default="")
+    
     class Config:
         env_file = ".env"
     
