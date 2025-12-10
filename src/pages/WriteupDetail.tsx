@@ -478,7 +478,9 @@ export default function WriteupDetail() {
                     </li>
                   ),
                   code: ({ children, node }: any) => {
-                    const match = (node?.data?.meta || "")?.match(/language-(\w+)/);
+                    const match = (node?.data?.meta || "")?.match(
+                      /language-(\w+)/
+                    );
                     const isInline = !match;
                     return isInline ? (
                       <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-slate-900 dark:text-white font-mono text-sm">
@@ -509,7 +511,10 @@ export default function WriteupDetail() {
                         // Try to resolve image path if it's relative
                         const target = e.currentTarget as HTMLImageElement;
                         if (!target.src.startsWith("http") && src) {
-                          target.src = `/public/writeups/${writeup.title.replace(/ /g, "_")}/${src}`;
+                          target.src = `/public/writeups/${writeup.title.replace(
+                            / /g,
+                            "_"
+                          )}/${src}`;
                         }
                       }}
                     />
@@ -533,27 +538,28 @@ export default function WriteupDetail() {
         )}
 
         {/* PDF Link Section - only show for PDF writeups */}
-        {(writeup.content_type === "pdf" || !writeup.content_type) && writeup.writeup_url && (
-          <motion.div
-            initial={{ y: 20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.9 }}
-            className="bg-gradient-to-r from-gray-900 to-black dark:from-white dark:to-gray-100 rounded-lg shadow-lg p-8 text-center"
-          >
-            <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
-              Full Writeup with Screenshots
-            </h3>
-            <a
-              href={writeup.writeup_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+        {(writeup.content_type === "pdf" || !writeup.content_type) &&
+          writeup.writeup_url && (
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.9 }}
+              className="bg-gradient-to-r from-gray-900 to-black dark:from-white dark:to-gray-100 rounded-lg shadow-lg p-8 text-center"
             >
-              <FileText className="h-5 w-5 mr-2" />
-              View PDF Writeup
-            </a>
-          </motion.div>
-        )}
+              <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
+                Full Writeup with Screenshots
+              </h3>
+              <a
+                href={writeup.writeup_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
+              >
+                <FileText className="h-5 w-5 mr-2" />
+                View PDF Writeup
+              </a>
+            </motion.div>
+          )}
 
         {/* Comments Section */}
         <WriteupComments writeupId={String(writeup.id)} />
