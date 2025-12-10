@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import XIcon from "../components/XIcon";
-import { supabase } from "../lib/supabase";
 
 // Type declaration for hCaptcha window object
 declare global {
@@ -48,7 +47,10 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
+  const siteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY as string | undefined;
   const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
+  const [hcaptchaReady, setHcaptchaReady] = React.useState(false);
+  const widgetIdRef = React.useRef<string | null>(null);
   const [submitStatus, setSubmitStatus] = React.useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -118,39 +120,65 @@ export default function Contact() {
     }
   };
 
-  // Load and render hCaptcha
+  // Load hCaptcha script lazily and mark when ready
   React.useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://js.hcaptcha.com/1/api.js";
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+    const scriptSrc = "https://js.hcaptcha.com/1/api.js?render=explicit";
+    const existingScript = document.querySelector(
+      `script[src="${scriptSrc}"]`
+    ) as HTMLScriptElement | null;
+
+    if (existingScript && window.hcaptcha) {
+      setHcaptchaReady(true);
+      return;
+    }
+
+    const script = existingScript ?? document.createElement("script");
+    if (!existingScript) {
+      script.src = scriptSrc;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
+    }
+
+    const handleLoad = () => setHcaptchaReady(true);
+    script.addEventListener("load", handleLoad);
 
     return () => {
-      // Cleanup
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
+      script.removeEventListener("load", handleLoad);
     };
   }, []);
 
-  // Handle hCaptcha callback
+  // Render hCaptcha widget after script loads
   React.useEffect(() => {
-    if (window.hcaptcha) {
-      window.hcaptcha.render("h-captcha", {
-        sitekey: import.meta.env.VITE_HCAPTCHA_SITE_KEY as string,
-        callback: (token: string) => {
-          setCaptchaToken(token);
-        },
-        "error-callback": () => {
-          setCaptchaToken(null);
-        },
-        "expired-callback": () => {
-          setCaptchaToken(null);
-        },
-      });
+    if (!hcaptchaReady) return;
+    if (!siteKey) return;
+    if (!window.hcaptcha) return;
+
+    if (widgetIdRef.current !== null) {
+      window.hcaptcha.reset(widgetIdRef.current);
+      return;
     }
-  }, []);
+
+    widgetIdRef.current = window.hcaptcha.render("h-captcha", {
+      sitekey: siteKey,
+      callback: (token: string) => {
+        setCaptchaToken(token);
+      },
+      "error-callback": () => {
+        setCaptchaToken(null);
+      },
+      "expired-callback": () => {
+        setCaptchaToken(null);
+      },
+    }) as unknown as string;
+
+    return () => {
+      if (widgetIdRef.current && window.hcaptcha) {
+        window.hcaptcha.remove(widgetIdRef.current);
+        widgetIdRef.current = null;
+      }
+    };
+  }, [hcaptchaReady, siteKey]);
 
   const contactInfo = [
     {
@@ -328,7 +356,17 @@ export default function Contact() {
                 {/* hCaptcha Widget */}
                 <div className="mb-6">
                   <div id="h-captcha" />
-                  {!captchaToken && (
+                  {!hcaptchaReady && (
+                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
+                      Loading CAPTCHA...
+                    </p>
+                  )}
+                  {hcaptchaReady && !siteKey && (
+                    <p className="mt-2 text-sm text-red-600 dark:text-red-400">
+                      CAPTCHA misconfigured: site key is missing.
+                    </p>
+                  )}
+                  {hcaptchaReady && siteKey && !captchaToken && (
                     <p className="mt-2 text-sm text-amber-600 dark:text-amber-400">
                       Please complete the CAPTCHA verification above
                     </p>
@@ -337,7 +375,9 @@ export default function Contact() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitting || !captchaToken}
+                  disabled={
+                    isSubmitting || !captchaToken || !hcaptchaReady || !siteKey
+                  }
                   className="w-full flex items-center justify-center px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium rounded-lg hover:bg-black dark:hover:bg-gray-100 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 dark:focus:ring-offset-slate-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
