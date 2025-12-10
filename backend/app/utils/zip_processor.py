@@ -6,17 +6,22 @@ import shutil
 
 async def extract_and_process_zip(file_content: bytes) -> Tuple[str, List[bytes], dict]:
     """
-    Extract zip file containing README.md and images.
+    Extract zip file containing markdown and images.
+    
+    Supports two structures:
+    1. README.md (or similar .md file) + images/ folder
+    2. [Title].md + [Title]/ folder with images
     
     Returns:
         Tuple of:
-        - readme_content: The content of README.md as string
-        - images: List of image file contents as bytes
+        - readme_content: The content of markdown file as string
+        - images: Dict of image file contents as bytes (path -> content)
         - metadata: Dict with image names and their paths
     
     Raises:
-        ValueError: If zip is invalid or README.md not found
+        ValueError: If zip is invalid or no markdown file found
     """
+    temp_dir = None
     try:
         # Create temporary directory
         temp_dir = tempfile.mkdtemp()
@@ -30,21 +35,25 @@ async def extract_and_process_zip(file_content: bytes) -> Tuple[str, List[bytes]
         with zipfile.ZipFile(zip_path, 'r') as zip_ref:
             zip_ref.extractall(temp_dir)
         
-        # Find README.md
-        readme_path = None
+        # Find any markdown file (.md, .markdown)
+        markdown_path = None
         for root, dirs, files in os.walk(temp_dir):
+            # Skip the temp zip itself
+            if "upload.zip" in root:
+                continue
             for file in files:
-                if file.lower() == "readme.md":
-                    readme_path = os.path.join(root, file)
+                if file.lower().endswith(('.md', '.markdown')):
+                    markdown_path = os.path.join(root, file)
                     break
+            if markdown_path:
+                break
         
-        if not readme_path:
-            shutil.rmtree(temp_dir)
-            raise ValueError("README.md not found in zip file")
+        if not markdown_path:
+            raise ValueError("No markdown file (.md or .markdown) found in zip file")
         
-        # Read README content
-        with open(readme_path, 'r', encoding='utf-8') as f:
-            readme_content = f.read()
+        # Read markdown content
+        with open(markdown_path, 'r', encoding='utf-8') as f:
+            markdown_content = f.read()
         
         # Find all images
         images = {}
@@ -59,17 +68,17 @@ async def extract_and_process_zip(file_content: bytes) -> Tuple[str, List[bytes]
                     with open(file_path, 'rb') as img_f:
                         images[rel_path] = img_f.read()
         
-        # Cleanup
-        shutil.rmtree(temp_dir)
-        
-        return readme_content, images, {"readme_path": readme_path}
+        return markdown_content, images, {"markdown_path": markdown_path}
     
     except zipfile.BadZipFile:
-        shutil.rmtree(temp_dir, ignore_errors=True)
         raise ValueError("Invalid zip file")
+    except ValueError:
+        raise
     except Exception as e:
-        shutil.rmtree(temp_dir, ignore_errors=True)
         raise ValueError(f"Error processing zip file: {str(e)}")
+    finally:
+        if temp_dir:
+            shutil.rmtree(temp_dir, ignore_errors=True)
 
 
 def validate_readme_structure(readme_content: str) -> Tuple[bool, Optional[str]]:

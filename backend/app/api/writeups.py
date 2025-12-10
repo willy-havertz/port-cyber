@@ -386,18 +386,8 @@ async def update_writeup_with_file(
             
             if is_zip:
                 # Handle ZIP file with markdown content
-                # Save the ZIP temporarily
-                os.makedirs(settings.UPLOAD_DIR, exist_ok=True)
-                temp_zip_path = os.path.join(
-                    settings.UPLOAD_DIR, 
-                    f"temp_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{file.filename}"
-                )
-                
-                with open(temp_zip_path, "wb") as f:
-                    f.write(file_content)
-                
                 # Extract and process the ZIP
-                markdown_content, images = await extract_and_process_zip(temp_zip_path)
+                markdown_content, images = await extract_and_process_zip(file_content)
                 
                 # Create a unique folder for this writeup's images
                 safe_title = "".join(c if c.isalnum() or c in (' ', '_') else '_' for c in (title or writeup.title))

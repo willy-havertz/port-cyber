@@ -25,7 +25,11 @@ class Settings(BaseSettings):
     
     # CORS
     FRONTEND_URL: str = "https://wiltordichingwa.vercel.app"
-    ALLOWED_ORIGINS: list[str] = Field(default_factory=lambda: ["https://wiltordichingwa.vercel.app"])
+    ALLOWED_ORIGINS: list[str] = Field(default_factory=lambda: [
+        "https://wiltordichingwa.vercel.app",
+        "http://localhost:5173",
+        "http://localhost:3000"
+    ])
     
     # File Upload
     UPLOAD_DIR: str = "uploads/writeups"
