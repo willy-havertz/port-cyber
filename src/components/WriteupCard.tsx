@@ -12,6 +12,8 @@ interface WriteupCardProps {
   date: string;
   timeSpent: string;
   writeupUrl: string;
+  thumbnailUrl?: string;
+  summary?: string;
   tags: string[];
 }
 
@@ -23,6 +25,8 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
   category,
   date,
   timeSpent,
+  thumbnailUrl,
+  summary,
   tags,
 }) => {
   const getDifficultyColor = (difficulty: string) => {
@@ -51,8 +55,22 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
       <motion.article
         whileHover={{ y: -5 }}
         transition={{ duration: 0.3 }}
-        className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300"
+        className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6 hover:shadow-md transition-shadow duration-300 overflow-hidden"
       >
+        {/* Thumbnail Image */}
+        {thumbnailUrl && (
+          <div className="mb-4 rounded-md overflow-hidden bg-slate-200 dark:bg-slate-700 h-40">
+            <img
+              src={thumbnailUrl}
+              alt={`${title} thumbnail`}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
+        )}
+
         <div className="flex items-start justify-between mb-3">
           <div className="flex items-center space-x-2">
             <Trophy className={`h-5 w-5 ${getPlatformColor(platform)}`} />
@@ -75,6 +93,15 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
         <p className="text-slate-600 dark:text-slate-400 mb-4">
           Category: {category}
         </p>
+
+        {/* Summary Snippet */}
+        {summary && (
+          <p className="text-sm text-slate-600 dark:text-slate-300 mb-4 line-clamp-2">
+            {summary.length > 150
+              ? `${summary.substring(0, 150)}...`
+              : summary}
+          </p>
+        )}
 
         <div className="flex items-center text-sm text-slate-500 dark:text-slate-400 mb-4 space-x-4">
           <div className="flex items-center">

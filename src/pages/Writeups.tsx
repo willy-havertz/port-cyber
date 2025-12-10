@@ -14,6 +14,8 @@ interface UiWriteup {
   date?: string;
   timeSpent?: string;
   writeupUrl?: string;
+  thumbnailUrl?: string;
+  summary?: string;
   tags: string[];
 }
 
@@ -41,6 +43,8 @@ export default function Writeups() {
           date: w.date,
           timeSpent: w.time_spent,
           writeupUrl: w.writeup_url,
+          thumbnailUrl: w.thumbnail_url,
+          summary: w.summary,
           tags: (w.tags || []).map((t) => t.name),
         }));
         setWriteups(normalized);
@@ -177,6 +181,8 @@ export default function Writeups() {
                         date={writeup.date || "Unknown"}
                         timeSpent={writeup.timeSpent || "Unknown"}
                         writeupUrl={writeup.writeupUrl || "#"}
+                        thumbnailUrl={writeup.thumbnailUrl}
+                        summary={writeup.summary}
                       />
                     ))
                 ) : (
