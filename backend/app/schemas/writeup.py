@@ -23,6 +23,9 @@ class WriteupBase(BaseModel):
     time_spent: str
     summary: Optional[str] = None
     thumbnail_url: Optional[str] = None
+    writeup_url: Optional[str] = None  # Optional for markdown-based writeups
+    writeup_content: Optional[str] = None
+    content_type: str = "pdf"  # 'pdf' or 'markdown'
 
 class WriteupCreate(WriteupBase):
     tags: List[str]
@@ -39,7 +42,6 @@ class WriteupUpdate(BaseModel):
 
 class Writeup(WriteupBase):
     id: int
-    writeup_url: str
     tags: List[Tag]
     created_at: datetime
     updated_at: Optional[datetime] = None
