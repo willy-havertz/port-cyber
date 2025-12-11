@@ -508,17 +508,19 @@ export default function WriteupDetail() {
                     if (imageSrc && !imageSrc.startsWith("http")) {
                       // If it starts with /uploads, use the backend URL
                       if (imageSrc.startsWith("/uploads")) {
-                        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+                        const apiUrl =
+                          import.meta.env.VITE_API_URL ||
+                          "http://localhost:8000/api";
                         const backendBaseUrl = apiUrl.replace("/api", "");
                         // URL-encode the path component to handle spaces and special characters
-                        const parts = imageSrc.split('/');
+                        const parts = imageSrc.split("/");
                         const encodedParts = parts.map((part, idx) => {
                           // Don't encode the empty first part from the leading /
                           if (idx === 0 || idx === 1) return part;
                           // URL-encode each path segment
                           return encodeURIComponent(part);
                         });
-                        imageSrc = backendBaseUrl + encodedParts.join('/');
+                        imageSrc = backendBaseUrl + encodedParts.join("/");
                       }
                     }
                     return (
@@ -530,12 +532,16 @@ export default function WriteupDetail() {
                           // If image still fails to load, try alternative paths
                           const target = e.currentTarget as HTMLImageElement;
                           if (!target.src.includes("/uploads")) {
-                            const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+                            const apiUrl =
+                              import.meta.env.VITE_API_URL ||
+                              "http://localhost:8000/api";
                             const backendBaseUrl = apiUrl.replace("/api", "");
-                            target.src = backendBaseUrl + `/uploads/writeups/${writeup.title.replace(
-                              / /g,
-                              "_"
-                            )}/${alt || ""}`;
+                            target.src =
+                              backendBaseUrl +
+                              `/uploads/writeups/${writeup.title.replace(
+                                / /g,
+                                "_"
+                              )}/${alt || ""}`;
                           }
                         }}
                       />
