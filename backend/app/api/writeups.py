@@ -387,27 +387,38 @@ async def update_writeup_with_file(
             if is_zip:
                 # Handle ZIP file with markdown content
                 # Extract and process the ZIP
-                markdown_content, images = await extract_and_process_zip(file_content)
+                markdown_content, images, _ = await extract_and_process_zip(file_content)
                 
                 # Create a unique folder for this writeup's images
                 safe_title = "".join(c if c.isalnum() or c in (' ', '_') else '_' for c in (title or writeup.title))
                 writeup_folder = os.path.join(settings.UPLOAD_DIR, safe_title.replace(' ', '_'))
                 os.makedirs(writeup_folder, exist_ok=True)
                 
-                # Save images locally
-                images_folder = os.path.join(writeup_folder, "images")
-                os.makedirs(images_folder, exist_ok=True)
-                
-                for img_name, img_content in images.items():
-                    img_path = os.path.join(images_folder, img_name)
-                    with open(img_path, "wb") as img_file:
+                # Save images locally, preserving directory structure from ZIP
+                for img_path, img_content in images.items():
+                    # Full path where image will be saved
+                    full_img_path = os.path.join(writeup_folder, img_path)
+                    # Create parent directories if needed
+                    os.makedirs(os.path.dirname(full_img_path), exist_ok=True)
+                    # Write the image file
+                    with open(full_img_path, "wb") as img_file:
                         img_file.write(img_content)
                 
-                # Update markdown content image references
-                markdown_content = markdown_content.replace(
-                    "images/",
-                    f"/uploads/writeups/{safe_title.replace(' ', '_')}/images/"
-                )
+                # Update markdown content image references to point to uploaded location
+                # Replace all relative image paths with the correct upload URL
+                safe_title_underscore = safe_title.replace(' ', '_')
+                for img_path in images.keys():
+                    # Convert backslashes to forward slashes for URLs
+                    url_path = img_path.replace('\\', '/')
+                    markdown_content = markdown_content.replace(
+                        img_path,
+                        f"/uploads/writeups/{safe_title_underscore}/{url_path}"
+                    )
+                    # Also handle forward slash versions
+                    markdown_content = markdown_content.replace(
+                        url_path,
+                        f"/uploads/writeups/{safe_title_underscore}/{url_path}"
+                    )
                 
                 # Update writeup fields for markdown
                 writeup.writeup_content = markdown_content
@@ -417,9 +428,6 @@ async def update_writeup_with_file(
                 # Extract summary if not provided
                 if not summary:
                     summary = extract_summary_from_markdown(markdown_content)
-                
-                # Clean up temp file
-                os.remove(temp_zip_path)
                 
             else:  # is_pdf
                 # Delete old file from Cloudinary if it exists
