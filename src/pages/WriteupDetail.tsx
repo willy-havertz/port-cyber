@@ -502,23 +502,37 @@ export default function WriteupDetail() {
                       {children}
                     </blockquote>
                   ),
-                  img: ({ src, alt }) => (
-                    <img
-                      src={src}
-                      alt={alt}
-                      className="max-w-full h-auto rounded-lg my-4 shadow-lg"
-                      onError={(e) => {
-                        // Try to resolve image path if it's relative
-                        const target = e.currentTarget as HTMLImageElement;
-                        if (!target.src.startsWith("http") && src) {
-                          target.src = `/public/writeups/${writeup.title.replace(
-                            / /g,
-                            "_"
-                          )}/${src}`;
-                        }
-                      }}
-                    />
-                  ),
+                  img: ({ src, alt }) => {
+                    // Convert relative paths to absolute backend URLs
+                    let imageSrc = src;
+                    if (imageSrc && !imageSrc.startsWith("http")) {
+                      // If it starts with /uploads, use the backend URL
+                      if (imageSrc.startsWith("/uploads")) {
+                        const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+                        const backendBaseUrl = apiUrl.replace("/api", "");
+                        imageSrc = backendBaseUrl + imageSrc;
+                      }
+                    }
+                    return (
+                      <img
+                        src={imageSrc}
+                        alt={alt}
+                        className="max-w-full h-auto rounded-lg my-4 shadow-lg"
+                        onError={(e) => {
+                          // If image still fails to load, try alternative paths
+                          const target = e.currentTarget as HTMLImageElement;
+                          if (!target.src.includes("/uploads")) {
+                            const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+                            const backendBaseUrl = apiUrl.replace("/api", "");
+                            target.src = backendBaseUrl + `/uploads/writeups/${writeup.title.replace(
+                              / /g,
+                              "_"
+                            )}/${alt || ""}`;
+                          }
+                        }}
+                      />
+                    );
+                  },
                   a: ({ href, children }) => (
                     <a
                       href={href}
