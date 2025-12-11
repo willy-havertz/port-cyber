@@ -503,14 +503,22 @@ export default function WriteupDetail() {
                     </blockquote>
                   ),
                   img: ({ src, alt }) => {
-                    // Convert relative paths to absolute backend URLs
+                    // Convert relative paths to absolute backend URLs with proper URL encoding
                     let imageSrc = src;
                     if (imageSrc && !imageSrc.startsWith("http")) {
                       // If it starts with /uploads, use the backend URL
                       if (imageSrc.startsWith("/uploads")) {
                         const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
                         const backendBaseUrl = apiUrl.replace("/api", "");
-                        imageSrc = backendBaseUrl + imageSrc;
+                        // URL-encode the path component to handle spaces and special characters
+                        const parts = imageSrc.split('/');
+                        const encodedParts = parts.map((part, idx) => {
+                          // Don't encode the empty first part from the leading /
+                          if (idx === 0 || idx === 1) return part;
+                          // URL-encode each path segment
+                          return encodeURIComponent(part);
+                        });
+                        imageSrc = backendBaseUrl + encodedParts.join('/');
                       }
                     }
                     return (

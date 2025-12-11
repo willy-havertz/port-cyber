@@ -209,23 +209,36 @@ async def create_writeup(
                 )
             
             # Create directory for this writeup
-            writeup_dir = os.path.join(settings.UPLOAD_DIR, title.replace(" ", "_"))
+            safe_title = "".join(c if c.isalnum() or c in (' ', '_') else '_' for c in title)
+            writeup_dir = os.path.join(settings.UPLOAD_DIR, safe_title.replace(" ", "_"))
             os.makedirs(writeup_dir, exist_ok=True)
             
-            # Save images locally
-            image_paths = {}
+            # Save images locally, preserving directory structure
             for img_name, img_content in images.items():
+                # Full path where image will be saved
                 img_path = os.path.join(writeup_dir, img_name)
+                # Create parent directories if needed
                 os.makedirs(os.path.dirname(img_path), exist_ok=True)
                 with open(img_path, 'wb') as f:
                     f.write(img_content)
-                image_paths[img_name] = f"/public/writeups/{title.replace(' ', '_')}/{img_name}"
             
-            # Update image references in markdown if needed
+            # Update image references in markdown to point to backend URLs
+            # Convert backslashes to forward slashes and replace relative paths
             final_content = readme_content
-            for local_name, public_path in image_paths.items():
-                # Replace local references with public paths
-                final_content = final_content.replace(local_name, public_path)
+            safe_title_underscore = safe_title.replace(' ', '_')
+            for img_name in images.keys():
+                # Convert backslashes to forward slashes
+                url_path = img_name.replace('\\', '/')
+                # Replace in markdown with backend URL (unencoded - browser will handle encoding)
+                final_content = final_content.replace(
+                    img_name,
+                    f"/uploads/writeups/{safe_title_underscore}/{url_path}"
+                )
+                # Also handle forward slash versions
+                final_content = final_content.replace(
+                    url_path,
+                    f"/uploads/writeups/{safe_title_underscore}/{url_path}"
+                )
             
             # Use auto-generated summary from first paragraph of README
             auto_summary = extract_summary_from_markdown(readme_content)
@@ -406,22 +419,19 @@ async def update_writeup_with_file(
                 
                 # Update markdown content image references to point to uploaded location
                 # Replace all relative image paths with the correct upload URL
-                # Use the actual folder name (with spaces), which will be URL-encoded by the browser
-                from urllib.parse import quote
                 safe_title_underscore = safe_title.replace(' ', '_')
                 for img_path in images.keys():
                     # Convert backslashes to forward slashes for URLs
                     url_path = img_path.replace('\\', '/')
-                    # URL-encode the path to handle spaces and special characters
-                    encoded_url_path = quote(url_path.encode('utf-8'), safe='/')
+                    # Store plain path without encoding - frontend will handle URL encoding
                     markdown_content = markdown_content.replace(
                         img_path,
-                        f"/uploads/writeups/{safe_title_underscore}/{encoded_url_path}"
+                        f"/uploads/writeups/{safe_title_underscore}/{url_path}"
                     )
                     # Also handle forward slash versions
                     markdown_content = markdown_content.replace(
                         url_path,
-                        f"/uploads/writeups/{safe_title_underscore}/{encoded_url_path}"
+                        f"/uploads/writeups/{safe_title_underscore}/{url_path}"
                     )
                 
                 # Update writeup fields for markdown
