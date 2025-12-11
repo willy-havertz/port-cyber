@@ -406,18 +406,22 @@ async def update_writeup_with_file(
                 
                 # Update markdown content image references to point to uploaded location
                 # Replace all relative image paths with the correct upload URL
+                # Use the actual folder name (with spaces), which will be URL-encoded by the browser
+                from urllib.parse import quote
                 safe_title_underscore = safe_title.replace(' ', '_')
                 for img_path in images.keys():
                     # Convert backslashes to forward slashes for URLs
                     url_path = img_path.replace('\\', '/')
+                    # URL-encode the path to handle spaces and special characters
+                    encoded_url_path = quote(url_path.encode('utf-8'), safe='/')
                     markdown_content = markdown_content.replace(
                         img_path,
-                        f"/uploads/writeups/{safe_title_underscore}/{url_path}"
+                        f"/uploads/writeups/{safe_title_underscore}/{encoded_url_path}"
                     )
                     # Also handle forward slash versions
                     markdown_content = markdown_content.replace(
                         url_path,
-                        f"/uploads/writeups/{safe_title_underscore}/{url_path}"
+                        f"/uploads/writeups/{safe_title_underscore}/{encoded_url_path}"
                     )
                 
                 # Update writeup fields for markdown
