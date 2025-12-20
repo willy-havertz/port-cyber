@@ -104,9 +104,9 @@ export interface Writeup {
   tags?: { id: number; name: string }[];
   overview?: string;
   methodology?: string[];
-  keyFindings?: string[];
-  toolsUsed?: string[];
-  lessonsLearned?: string[];
+  tools_used?: string[];
+  key_findings?: string[];
+  lessons_learned?: string[];
 }
 
 export interface Comment {
@@ -333,6 +333,19 @@ export const rejectComment = async (commentId: number) => {
 
 export const deleteComment = async (commentId: number) => {
   await api.delete(`/comments/${commentId}`);
+};
+
+export const generateAIContent = async (writeupId: number) => {
+  const { data } = await api.post(`/writeups/${writeupId}/generate`);
+  // Clear cache for this writeup
+  const cacheKey = `writeup_${writeupId}`;
+  cache.delete(cacheKey);
+  try {
+    localStorage.removeItem(cacheKey);
+  } catch (e) {
+    // Ignore
+  }
+  return data as Writeup;
 };
 
 export const loginAdmin = async (username: string, password: string) => {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit2, Trash2, AlertCircle, X } from "lucide-react";
+import { Plus, Edit2, Trash2, AlertCircle, X, Sparkles } from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
@@ -9,6 +9,7 @@ import {
   updateWriteup,
   uploadWriteupFile,
   updateWriteupWithFile,
+  generateAIContent,
   type Writeup,
   type CreateWriteupPayload,
   type UpdateWriteupPayload,
@@ -24,6 +25,7 @@ export default function AdminWriteups() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [generatingAI, setGeneratingAI] = useState<number | null>(null);
   const [formData, setFormData] = useState<CreateWriteupPayload>({
     title: "",
     platform: "Hack The Box",
@@ -193,6 +195,28 @@ export default function AdminWriteups() {
     } catch (err) {
       console.error(err);
       setError("Failed to delete writeup");
+    }
+  };
+
+  const handleGenerateAI = async (id: number) => {
+    if (
+      !window.confirm(
+        "Generate AI content for this writeup? This may take a few seconds."
+      )
+    )
+      return;
+
+    try {
+      setError(null);
+      setGeneratingAI(id);
+      await generateAIContent(id);
+      setSuccess("AI content generated successfully!");
+      await load();
+    } catch (err: any) {
+      console.error(err);
+      setError(err.response?.data?.detail || "Failed to generate AI content");
+    } finally {
+      setGeneratingAI(null);
     }
   };
 
@@ -507,12 +531,26 @@ export default function AdminWriteups() {
                       <button
                         onClick={() => handleEdit(writeup)}
                         className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                        title="Edit writeup"
                       >
                         <Edit2 className="h-4 w-4" />
                       </button>
                       <button
+                        onClick={() => handleGenerateAI(writeup.id)}
+                        disabled={generatingAI === writeup.id}
+                        className="p-1.5 sm:p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Generate AI content"
+                      >
+                        <Sparkles
+                          className={`h-4 w-4 ${
+                            generatingAI === writeup.id ? "animate-pulse" : ""
+                          }`}
+                        />
+                      </button>
+                      <button
                         onClick={() => handleDelete(writeup.id)}
                         className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                        title="Delete writeup"
                       >
                         <Trash2 className="h-4 w-4" />
                       </button>

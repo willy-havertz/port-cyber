@@ -21,6 +21,8 @@ from app.utils.pdf_processor import extract_metadata_from_pdf, suggest_tags, ext
 from app.utils.cloudinary_handler import upload_pdf_to_cloudinary, delete_pdf_from_cloudinary, generate_signed_url
 from app.utils.virus_scan import scan_bytes_for_viruses
 from app.utils.zip_processor import extract_and_process_zip, validate_readme_structure
+from app.utils.ai_generator import ai_generator
+import json
 
 router = APIRouter()
 
@@ -566,3 +568,43 @@ async def search_writeups(
         "page": skip // limit + 1,
         "page_size": limit
     }
+
+@router.post("/{writeup_id}/generate", response_model=WriteupSchema)
+async def generate_ai_content(
+    writeup_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_admin_user)
+):
+    """Generate AI content for a writeup (Admin only)"""
+    writeup = db.query(Writeup).filter(Writeup.id == writeup_id).first()
+    if not writeup:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Writeup not found"
+        )
+    
+    try:
+        # Generate AI content
+        ai_content = await ai_generator.generate_writeup_content(
+            title=writeup.title,
+            category=writeup.category,
+            difficulty=writeup.difficulty,
+            platform=writeup.platform,
+            summary=writeup.summary or ""
+        )
+        
+        # Store as JSON strings in database
+        writeup.methodology = json.dumps(ai_content['methodology'])
+        writeup.tools_used = json.dumps(ai_content['tools_used'])
+        writeup.key_findings = json.dumps(ai_content['key_findings'])
+        writeup.lessons_learned = json.dumps(ai_content['lessons_learned'])
+        
+        db.commit()
+        db.refresh(writeup)
+        return writeup
+        
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error generating AI content: {str(e)}"
+        )

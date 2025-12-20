@@ -16,3 +16,7 @@ services:
         value: https://port-cyber.vercel.app
       - key: ENVIRONMENT
         value: production
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: AI_GENERATION_ENABLED
+        value: true

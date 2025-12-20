@@ -37,6 +37,13 @@ class Writeup(Base):
     content_type = Column(String, default="pdf")  # 'pdf' or 'markdown'
     thumbnail_url = Column(String, nullable=True)
     summary = Column(Text)
+    
+    # AI-generated content fields
+    methodology = Column(Text, nullable=True)  # JSON array of methodology steps
+    tools_used = Column(Text, nullable=True)  # JSON array of tools
+    key_findings = Column(Text, nullable=True)  # JSON array of findings
+    lessons_learned = Column(Text, nullable=True)  # JSON array of lessons
+    
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     

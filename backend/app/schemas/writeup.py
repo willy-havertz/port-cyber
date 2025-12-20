@@ -1,6 +1,7 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from typing import List, Optional
 from datetime import datetime
+import json
 
 class TagBase(BaseModel):
     name: str
@@ -26,6 +27,12 @@ class WriteupBase(BaseModel):
     writeup_url: Optional[str] = None  # Optional for markdown-based writeups
     writeup_content: Optional[str] = None
     content_type: str = "pdf"  # 'pdf' or 'markdown'
+    
+    # AI-generated content
+    methodology: Optional[List[str]] = None
+    tools_used: Optional[List[str]] = None
+    key_findings: Optional[List[str]] = None
+    lessons_learned: Optional[List[str]] = None
 
 class WriteupCreate(WriteupBase):
     tags: List[str]
@@ -45,6 +52,17 @@ class Writeup(WriteupBase):
     tags: List[Tag]
     created_at: datetime
     updated_at: Optional[datetime] = None
+
+    @field_validator('methodology', 'tools_used', 'key_findings', 'lessons_learned', mode='before')
+    @classmethod
+    def parse_json_fields(cls, v):
+        """Parse JSON strings to lists"""
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except json.JSONDecodeError:
+                return None
+        return v
 
     class Config:
         from_attributes = True

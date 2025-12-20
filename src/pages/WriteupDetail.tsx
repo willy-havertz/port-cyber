@@ -96,6 +96,12 @@ export default function WriteupDetail() {
 
   // Generate methodology steps from title
   const generateMethodology = (): string[] => {
+    // Use AI-generated content if available
+    if (writeup.methodology && Array.isArray(writeup.methodology)) {
+      return writeup.methodology;
+    }
+
+    // Fall back to hardcoded logic
     const category = writeup.category || "";
     if (category.toLowerCase().includes("linux")) {
       return [
@@ -148,6 +154,12 @@ export default function WriteupDetail() {
 
   // Generate key findings based on category and difficulty
   const generateKeyFindings = (): string[] => {
+    // Use AI-generated content if available
+    if (writeup.key_findings && Array.isArray(writeup.key_findings)) {
+      return writeup.key_findings;
+    }
+
+    // Fall back to hardcoded logic
     const category = writeup.category || "";
     const difficulty = writeup.difficulty || "";
 
@@ -176,6 +188,12 @@ export default function WriteupDetail() {
 
   // Generate tools used based on category
   const generateTools = (): string[] => {
+    // Use AI-generated content if available
+    if (writeup.tools_used && Array.isArray(writeup.tools_used)) {
+      return writeup.tools_used;
+    }
+
+    // Fall back to hardcoded logic
     const category = writeup.category || "";
     const commonTools = ["Nmap", "Burp Suite", "Metasploit", "Wireshark"];
 
@@ -209,6 +227,12 @@ export default function WriteupDetail() {
 
   // Generate lessons learned based on difficulty and category
   const generateLessonsLearned = (): string[] => {
+    // Use AI-generated content if available
+    if (writeup.lessons_learned && Array.isArray(writeup.lessons_learned)) {
+      return writeup.lessons_learned;
+    }
+
+    // Fall back to hardcoded logic
     return [
       "Importance of thorough reconnaissance before exploitation",
       "Multiple privilege escalation vectors should be tested",

@@ -48,6 +48,10 @@ class Settings(BaseSettings):
     HCAPTCHA_SECRET_KEY: str = Field(default="")
     HCAPTCHA_SITE_KEY: str = Field(default="")
     
+    # AI Content Generation
+    GEMINI_API_KEY: str = Field(default="")
+    AI_GENERATION_ENABLED: bool = Field(default=False)
+    
     class Config:
         env_file = ".env"
     
