@@ -7,7 +7,7 @@ logger = logging.getLogger(__name__)
 
 # Lazy import to avoid errors if package not installed
 try:
-    import google.generativeai as genai
+    import google.generativeai as genai  # type: ignore
     GENAI_AVAILABLE = True
     # Configure Gemini
     if settings.GEMINI_API_KEY:
