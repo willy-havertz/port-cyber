@@ -11,7 +11,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision = 'add_ai_generated_content'
-down_revision = 'add_thumbnail_url'
+down_revision = 'add_markdown_support'
 branch_labels = None
 depends_on = None
 
