@@ -49,11 +49,11 @@ const FilterBar: React.FC<FilterBarProps> = ({
           </div>
         </div>
 
-        {/* Technologies Filter */}
-        <div>
-          <h3 className="text-sm font-semibold text-slate-900 dark:text-white mb-3">
-            Technologies
-          </animate={{ opacity: 1 }}
+        {/* Reset Button */}
+        {hasActiveFilters && (
+          <motion.button
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             onClick={onReset}
             className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors w-fit"
           >
