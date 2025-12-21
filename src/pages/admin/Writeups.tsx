@@ -128,9 +128,13 @@ export default function AdminWriteups() {
         }
       } else if (selectedFile) {
         // Create with file
-        const newWriteup = await uploadWriteupFile(formData, selectedFile, (progress) => {
-          setUploadProgress(progress);
-        });
+        const newWriteup = await uploadWriteupFile(
+          formData,
+          selectedFile,
+          (progress) => {
+            setUploadProgress(progress);
+          }
+        );
         // Add new writeup to list immediately
         setWriteups((prev) => [newWriteup, ...prev]);
         setSuccess("Writeup created and file uploaded successfully!");
