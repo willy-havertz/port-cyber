@@ -356,8 +356,8 @@ export default function WriteupDetail() {
             Key Findings
           </h2>
           <ul className="space-y-3">
-            {(writeup.keyFindings && writeup.keyFindings.length > 0
-              ? writeup.keyFindings
+            {(writeup.key_findings && writeup.key_findings.length > 0
+              ? writeup.key_findings
               : generateKeyFindings()
             ).map((finding, index) => (
               <li
@@ -384,8 +384,8 @@ export default function WriteupDetail() {
             Tools Used
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {(writeup.toolsUsed && writeup.toolsUsed.length > 0
-              ? writeup.toolsUsed
+            {(writeup.tools_used && writeup.tools_used.length > 0
+              ? writeup.tools_used
               : generateTools()
             ).map((tool, index) => (
               <div
@@ -414,8 +414,8 @@ export default function WriteupDetail() {
             Lessons Learned
           </h2>
           <ul className="space-y-3">
-            {(writeup.lessonsLearned && writeup.lessonsLearned.length > 0
-              ? writeup.lessonsLearned
+            {(writeup.lessons_learned && writeup.lessons_learned.length > 0
+              ? writeup.lessons_learned
               : generateLessonsLearned()
             ).map((lesson, index) => (
               <li
