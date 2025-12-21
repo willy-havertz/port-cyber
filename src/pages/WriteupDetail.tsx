@@ -94,11 +94,27 @@ export default function WriteupDetail() {
     }
   };
 
+  // Helper to safely parse AI-generated fields
+  const parseAIField = (field: any): string[] | null => {
+    if (!field) return null;
+    if (Array.isArray(field)) return field;
+    if (typeof field === "string") {
+      try {
+        const parsed = JSON.parse(field);
+        return Array.isArray(parsed) ? parsed : null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  };
+
   // Generate methodology steps from title
   const generateMethodology = (): string[] => {
     // Use AI-generated content if available
-    if (writeup.methodology && Array.isArray(writeup.methodology)) {
-      return writeup.methodology;
+    const aiMethodology = parseAIField(writeup.methodology);
+    if (aiMethodology && aiMethodology.length > 0) {
+      return aiMethodology;
     }
 
     // Fall back to hardcoded logic
@@ -155,8 +171,9 @@ export default function WriteupDetail() {
   // Generate key findings based on category and difficulty
   const generateKeyFindings = (): string[] => {
     // Use AI-generated content if available
-    if (writeup.key_findings && Array.isArray(writeup.key_findings)) {
-      return writeup.key_findings;
+    const aiFindings = parseAIField(writeup.key_findings);
+    if (aiFindings && aiFindings.length > 0) {
+      return aiFindings;
     }
 
     // Fall back to hardcoded logic
@@ -189,8 +206,9 @@ export default function WriteupDetail() {
   // Generate tools used based on category
   const generateTools = (): string[] => {
     // Use AI-generated content if available
-    if (writeup.tools_used && Array.isArray(writeup.tools_used)) {
-      return writeup.tools_used;
+    const aiTools = parseAIField(writeup.tools_used);
+    if (aiTools && aiTools.length > 0) {
+      return aiTools;
     }
 
     // Fall back to hardcoded logic
@@ -228,8 +246,9 @@ export default function WriteupDetail() {
   // Generate lessons learned based on difficulty and category
   const generateLessonsLearned = (): string[] => {
     // Use AI-generated content if available
-    if (writeup.lessons_learned && Array.isArray(writeup.lessons_learned)) {
-      return writeup.lessons_learned;
+    const aiLessons = parseAIField(writeup.lessons_learned);
+    if (aiLessons && aiLessons.length > 0) {
+      return aiLessons;
     }
 
     // Fall back to hardcoded logic
