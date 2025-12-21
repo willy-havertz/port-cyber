@@ -88,6 +88,9 @@ export default function AdminWriteups() {
         const updatedWriteup: Writeup = {
           ...writeups.find((w) => w.id === editingId)!,
           ...formData,
+          tools_used: formData.tools_used
+            ? [formData.tools_used]
+            : undefined,
         };
 
         // Update UI immediately (optimistic)

@@ -166,11 +166,8 @@ export default function Projects() {
           >
             <FilterBar
               categories={allCategories}
-              technologies={allTechnologies}
               selectedCategories={selectedCategories}
-              selectedTechnologies={selectedTechnologies}
               onCategoryChange={handleCategoryChange}
-              onTechnologyChange={handleTechnologyChange}
               onReset={handleReset}
             />
           </motion.div>
