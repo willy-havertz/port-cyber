@@ -348,16 +348,18 @@ export default function WriteupDetail() {
             Methodology
           </h2>
           <ol className="space-y-3">
-            {(parseAIField(writeup.methodology) || generateMethodology()).map((step, index) => (
-              <li key={index} className="flex items-start">
-                <span className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold mr-4">
-                  {index + 1}
-                </span>
-                <span className="text-slate-700 dark:text-slate-300 pt-1">
-                  {step}
-                </span>
-              </li>
-            ))}
+            {(parseAIField(writeup.methodology) || generateMethodology()).map(
+              (step, index) => (
+                <li key={index} className="flex items-start">
+                  <span className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold mr-4">
+                    {index + 1}
+                  </span>
+                  <span className="text-slate-700 dark:text-slate-300 pt-1">
+                    {step}
+                  </span>
+                </li>
+              )
+            )}
           </ol>
         </motion.div>
 
