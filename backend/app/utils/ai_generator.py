@@ -34,6 +34,7 @@ class AIContentGenerator:
         platform: str,
         summary: str = "",
         tools_hint: List[str] | None = None,
+        methodology_hint: List[str] | None = None,
     ) -> Dict[str, List[str]]:
         """
         Generate all writeup content sections using AI
@@ -51,7 +52,7 @@ class AIContentGenerator:
         
         try:
             prompt = self._build_comprehensive_prompt(
-                title, category, difficulty, platform, summary, tools_hint or []
+                title, category, difficulty, platform, summary, tools_hint or [], methodology_hint or []
             )
             
             response = self.model.generate_content(prompt)
@@ -62,7 +63,7 @@ class AIContentGenerator:
             
         except Exception as e:
             logger.error(f"Error generating AI content: {str(e)}")
-            return self._get_fallback_content(category, difficulty)
+            return self._get_fallback_content(category, difficulty, tools_hint=tools_hint, methodology_hint=methodology_hint)
     
     def _build_comprehensive_prompt(
         self,
@@ -72,6 +73,7 @@ class AIContentGenerator:
         platform: str,
         summary: str,
         tools_hint: List[str],
+        methodology_hint: List[str],
     ) -> str:
         """Build detailed prompt for Gemini"""
         return f"""You are a cybersecurity expert writing detailed content for a CTF writeup.
@@ -84,6 +86,7 @@ class AIContentGenerator:
 {f'- Summary: {summary}' if summary else ''}
 
 {('Provided Tools (use and prioritize these where relevant):\n' + '\n'.join(f'- {t}' for t in tools_hint)) if tools_hint else ''}
+{('Provided Methodology (derive findings and lessons from these steps):\n' + '\n'.join(f'- {m}' for m in methodology_hint)) if methodology_hint else ''}
 
 Generate the following sections in JSON format:
 
@@ -91,9 +94,9 @@ Generate the following sections in JSON format:
 
 2. **tools_used**: List 8-12 cybersecurity tools commonly used for {category} challenges. Include both common tools and category-specific ones. If a list of tools is provided above, incorporate and prioritize those tools when appropriate.
 
-3. **key_findings**: List 4-6 technical findings or vulnerabilities that are typical for {difficulty} difficulty {category} challenges. Be specific about security issues.
+3. **key_findings**: List 4-6 technical findings or vulnerabilities that are typical for {difficulty} difficulty {category} challenges. If a methodology is provided above, derive the findings directly from those steps and their likely outcomes.
 
-4. **lessons_learned**: List 5-7 educational takeaways about security best practices, prevention techniques, or insights gained from this type of challenge.
+4. **lessons_learned**: List 5-7 educational takeaways about security best practices, prevention techniques, or insights gained from this type of challenge. If a methodology is provided, align lessons with those steps and what they teach.
 
 **Important:** 
 - Be specific to {category} and {difficulty} level
@@ -139,7 +142,7 @@ Output format:
             logger.debug(f"Raw response: {response_text}")
             raise
     
-    def _get_fallback_content(self, category: str, difficulty: str, tools_hint: List[str] | None = None) -> Dict[str, List[str]]:
+    def _get_fallback_content(self, category: str, difficulty: str, tools_hint: List[str] | None = None, methodology_hint: List[str] | None = None) -> Dict[str, List[str]]:
         """Return hardcoded fallback content if AI generation fails"""
         category_lower = category.lower()
         
@@ -274,21 +277,17 @@ Output format:
                     merged.append(t)
                     seen.add(t.lower())
             tools = merged
-            findings = [
-                f"{difficulty} difficulty challenge in {category}",
-                "Multiple exploitation vectors identified",
-                "Security misconfigurations present",
-                "Insufficient access controls",
-                "Vulnerable software versions in use"
-            ]
-            lessons = [
-                "Thorough reconnaissance is critical for success",
-                "Understanding the fundamentals is key",
-                "Security best practices prevent common vulnerabilities",
-                "Regular updates and patching are essential",
-                "Documentation helps in learning and reporting",
-                f"{difficulty} level requires persistence and methodology"
-            ]
+        
+        # If methodology_hint provided, derive generic findings/lessons from steps
+        if methodology_hint:
+            steps = [s.strip() for s in methodology_hint if isinstance(s, str) and s.strip()]
+            if steps:
+                findings = [
+                    f"Outcome from step: {step}" for step in steps[:5]
+                ]
+                lessons = [
+                    f"Lesson from step: {step}" for step in steps[:6]
+                ]
         
         return {
             "methodology": methodology,

@@ -226,6 +226,7 @@ export interface CreateWriteupPayload {
   time_spent: string;
   writeup_url: string;
   summary?: string;
+  methodology?: string;
   tools_used?: string;
 }
 
@@ -238,6 +239,7 @@ export interface UpdateWriteupPayload {
   time_spent?: string;
   writeup_url?: string;
   summary?: string;
+  methodology?: string;
   tools_used?: string;
 }
 
@@ -254,6 +256,8 @@ export const uploadWriteupFile = async (
   formData.append("date", payload.date);
   formData.append("time_spent", payload.time_spent);
   formData.append("summary", payload.summary || "");
+  if (payload.methodology) formData.append("methodology", payload.methodology);
+  if (payload.tools_used) formData.append("tools_used", payload.tools_used);
   formData.append("tags", ""); // Backend auto-suggests tags from PDF
   formData.append("file", file);
 
@@ -296,6 +300,8 @@ export const updateWriteupWithFile = async (
   if (payload.date) formData.append("date", payload.date);
   if (payload.time_spent) formData.append("time_spent", payload.time_spent);
   if (payload.summary) formData.append("summary", payload.summary);
+  if (payload.methodology) formData.append("methodology", payload.methodology);
+  if (payload.tools_used) formData.append("tools_used", payload.tools_used);
   formData.append("file", file);
 
   const { data } = await api.put(`/writeups/${id}/upload`, formData, {

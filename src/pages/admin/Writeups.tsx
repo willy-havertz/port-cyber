@@ -35,6 +35,7 @@ export default function AdminWriteups() {
     time_spent: "1 hour",
     writeup_url: "/writeups/",
     summary: "",
+    methodology: "",
     tools_used: "",
   });
 
@@ -88,7 +89,18 @@ export default function AdminWriteups() {
         const updatedWriteup: Writeup = {
           ...writeups.find((w) => w.id === editingId)!,
           ...formData,
-          tools_used: formData.tools_used ? [formData.tools_used] : undefined,
+          tools_used: formData.tools_used
+            ? formData.tools_used
+                .split(",")
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : undefined,
+          methodology: formData.methodology
+            ? formData.methodology
+                .split(/\r?\n|,/) // split by newline or comma
+                .map((s) => s.trim())
+                .filter(Boolean)
+            : undefined,
         };
 
         // Update UI immediately (optimistic)
@@ -177,6 +189,7 @@ export default function AdminWriteups() {
       time_spent: "1 hour",
       writeup_url: "/writeups/",
       summary: "",
+      methodology: "",
       tools_used: "",
     });
     setSelectedFile(null);
@@ -213,6 +226,11 @@ export default function AdminWriteups() {
       time_spent: writeup.time_spent || "",
       writeup_url: writeup.writeup_url || "",
       summary: writeup.summary || "",
+      methodology: writeup.methodology
+        ? Array.isArray(writeup.methodology)
+          ? writeup.methodology.join("\n")
+          : writeup.methodology
+        : "",
       tools_used: writeup.tools_used
         ? Array.isArray(writeup.tools_used)
           ? writeup.tools_used.join(", ")
@@ -392,6 +410,24 @@ export default function AdminWriteups() {
                 rows={3}
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               />
+
+              {/* Methodology Section */}
+              <div className="pt-2 pb-2 border-t border-slate-300 dark:border-slate-600">
+                <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
+                  Methodology
+                </label>
+                <textarea
+                  placeholder={
+                    "Steps or approach (one per line, e.g.\n1) Recon\n2) Enumeration\n3) Exploitation)"
+                  }
+                  value={formData.methodology}
+                  onChange={(e) =>
+                    setFormData({ ...formData, methodology: e.target.value })
+                  }
+                  rows={3}
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                />
+              </div>
 
               {/* Tools Used Section */}
               <div className="pt-2 pb-2 border-t border-slate-300 dark:border-slate-600">

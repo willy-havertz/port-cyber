@@ -163,6 +163,7 @@ async def create_writeup(
     date: str = Form(...),
     time_spent: str = Form(...),
     summary: Optional[str] = Form(None),
+    methodology: Optional[str] = Form(None),  # Newline/comma-separated
     tools_used: Optional[str] = Form(None),  # Comma-separated tools
     tags: str = Form(""),  # Optional, comma-separated tags
     file: UploadFile = File(...),
@@ -304,6 +305,9 @@ async def create_writeup(
             content_type=content_type,
             thumbnail_url=thumbnail_url,
             tags=tag_objects,
+            methodology=json.dumps([
+                s.strip() for s in re.split(r"[\n,]", methodology or "") if s.strip()
+            ]) if methodology else None,
             tools_used=json.dumps([t.strip() for t in tools_used.split(',') if t.strip()]) if tools_used else None
         )
 
@@ -355,6 +359,15 @@ async def update_writeup(
             update_data['tools_used'] = json.dumps([t.strip() for t in tools_str.split(',') if t.strip()])
         else:
             update_data['tools_used'] = None
+
+    # Handle methodology conversion from newline/comma-separated string to JSON
+    if 'methodology' in update_data:
+        meth_str = update_data['methodology']
+        if meth_str:
+            parts = [s.strip() for s in re.split(r"[\n,]", meth_str) if s.strip()]
+            update_data['methodology'] = json.dumps(parts)
+        else:
+            update_data['methodology'] = None
     
     for field, value in update_data.items():
         setattr(writeup, field, value)
@@ -373,6 +386,8 @@ async def update_writeup_with_file(
     date: Optional[str] = Form(None),
     time_spent: Optional[str] = Form(None),
     summary: Optional[str] = Form(None),
+    methodology: Optional[str] = Form(None),
+    tools_used: Optional[str] = Form(None),
     tags: Optional[str] = Form(None),
     file: Optional[UploadFile] = File(None),
     db: Session = Depends(get_db),
@@ -503,6 +518,14 @@ async def update_writeup_with_file(
             writeup.time_spent = time_spent
         if summary is not None:
             writeup.summary = summary
+        if methodology is not None:
+            writeup.methodology = json.dumps([
+                s.strip() for s in re.split(r"[\n,]", methodology) if s.strip()
+            ]) if methodology else None
+        if tools_used is not None:
+            writeup.tools_used = json.dumps([
+                t.strip() for t in tools_used.split(',') if t.strip()
+            ]) if tools_used else None
         
         # Handle tags
         if tags is not None:
@@ -598,14 +621,21 @@ async def generate_ai_content(
         # Generate AI content
         # Parse existing tools_used from DB (stored as JSON text)
         existing_tools: list[str] = []
+        existing_methodology: list[str] = []
         try:
             if writeup.tools_used:
                 if isinstance(writeup.tools_used, str):
                     existing_tools = json.loads(writeup.tools_used)
                 elif isinstance(writeup.tools_used, list):
                     existing_tools = writeup.tools_used
+            if writeup.methodology:
+                if isinstance(writeup.methodology, str):
+                    existing_methodology = json.loads(writeup.methodology)
+                elif isinstance(writeup.methodology, list):
+                    existing_methodology = writeup.methodology
         except Exception:
             existing_tools = []
+            existing_methodology = []
 
         ai_content = await ai_generator.generate_writeup_content(
             title=writeup.title,
@@ -614,10 +644,15 @@ async def generate_ai_content(
             platform=writeup.platform,
             summary=writeup.summary or "",
             tools_hint=existing_tools,
+            methodology_hint=existing_methodology,
         )
         
         # Store as JSON strings in database
-        writeup.methodology = json.dumps(ai_content['methodology'])
+        # Preserve admin-provided methodology; if none, use AI-generated methodology
+        if existing_methodology:
+            writeup.methodology = json.dumps(existing_methodology)
+        else:
+            writeup.methodology = json.dumps(ai_content['methodology'])
         # Merge existing admin-provided tools with AI-generated tools (dedupe)
         merged_tools: list[str] = []
         seen = set()
