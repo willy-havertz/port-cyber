@@ -596,17 +596,37 @@ async def generate_ai_content(
     
     try:
         # Generate AI content
+        # Parse existing tools_used from DB (stored as JSON text)
+        existing_tools: list[str] = []
+        try:
+            if writeup.tools_used:
+                if isinstance(writeup.tools_used, str):
+                    existing_tools = json.loads(writeup.tools_used)
+                elif isinstance(writeup.tools_used, list):
+                    existing_tools = writeup.tools_used
+        except Exception:
+            existing_tools = []
+
         ai_content = await ai_generator.generate_writeup_content(
             title=writeup.title,
             category=writeup.category,
             difficulty=writeup.difficulty,
             platform=writeup.platform,
-            summary=writeup.summary or ""
+            summary=writeup.summary or "",
+            tools_hint=existing_tools,
         )
         
         # Store as JSON strings in database
         writeup.methodology = json.dumps(ai_content['methodology'])
-        writeup.tools_used = json.dumps(ai_content['tools_used'])
+        # Merge existing admin-provided tools with AI-generated tools (dedupe)
+        merged_tools: list[str] = []
+        seen = set()
+        for t in existing_tools + ai_content['tools_used']:
+            tn = (t or "").strip()
+            if tn and tn.lower() not in seen:
+                merged_tools.append(tn)
+                seen.add(tn.lower())
+        writeup.tools_used = json.dumps(merged_tools)
         writeup.key_findings = json.dumps(ai_content['key_findings'])
         writeup.lessons_learned = json.dumps(ai_content['lessons_learned'])
         
