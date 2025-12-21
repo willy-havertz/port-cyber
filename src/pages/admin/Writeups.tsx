@@ -212,7 +212,11 @@ export default function AdminWriteups() {
       time_spent: writeup.time_spent || "",
       writeup_url: writeup.writeup_url || "",
       summary: writeup.summary || "",
-      tools_used: writeup.tools_used ? (Array.isArray(writeup.tools_used) ? writeup.tools_used.join(", ") : writeup.tools_used) : "",
+      tools_used: writeup.tools_used
+        ? Array.isArray(writeup.tools_used)
+          ? writeup.tools_used.join(", ")
+          : writeup.tools_used
+        : "",
     });
     setEditingId(writeup.id);
     setShowForm(true);
