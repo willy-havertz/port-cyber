@@ -348,10 +348,7 @@ export default function WriteupDetail() {
             Methodology
           </h2>
           <ol className="space-y-3">
-            {(writeup.methodology && writeup.methodology.length > 0
-              ? writeup.methodology
-              : generateMethodology()
-            ).map((step, index) => (
+            {(parseAIField(writeup.methodology) || generateMethodology()).map((step, index) => (
               <li key={index} className="flex items-start">
                 <span className="flex-shrink-0 flex items-center justify-center h-8 w-8 rounded-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold mr-4">
                   {index + 1}
@@ -375,17 +372,19 @@ export default function WriteupDetail() {
             Key Findings
           </h2>
           <ul className="space-y-3">
-            {(parseAIField(writeup.key_findings) || generateKeyFindings()).map((finding, index) => (
-              <li
-                key={index}
-                className="flex items-start p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
-              >
-                <span className="flex-shrink-0 h-2 w-2 rounded-full bg-gray-900 dark:bg-white mt-2 mr-3"></span>
-                <span className="text-slate-700 dark:text-slate-300">
-                  {finding}
-                </span>
-              </li>
-            ))}
+            {(parseAIField(writeup.key_findings) || generateKeyFindings()).map(
+              (finding, index) => (
+                <li
+                  key={index}
+                  className="flex items-start p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                >
+                  <span className="flex-shrink-0 h-2 w-2 rounded-full bg-gray-900 dark:bg-white mt-2 mr-3"></span>
+                  <span className="text-slate-700 dark:text-slate-300">
+                    {finding}
+                  </span>
+                </li>
+              )
+            )}
           </ul>
         </motion.div>
 
@@ -400,19 +399,21 @@ export default function WriteupDetail() {
             Tools Used
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {(parseAIField(writeup.tools_used) || generateTools()).map((tool, index) => (
-              <div
-                key={index}
-                className="flex items-center p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
-              >
-                <span className="text-gray-900 dark:text-white font-semibold mr-3">
-                  ⚙️
-                </span>
-                <span className="text-slate-700 dark:text-slate-300">
-                  {tool}
-                </span>
-              </div>
-            ))}
+            {(parseAIField(writeup.tools_used) || generateTools()).map(
+              (tool, index) => (
+                <div
+                  key={index}
+                  className="flex items-center p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                >
+                  <span className="text-gray-900 dark:text-white font-semibold mr-3">
+                    ⚙️
+                  </span>
+                  <span className="text-slate-700 dark:text-slate-300">
+                    {tool}
+                  </span>
+                </div>
+              )
+            )}
           </div>
         </motion.div>
 
@@ -427,7 +428,9 @@ export default function WriteupDetail() {
             Lessons Learned
           </h2>
           <ul className="space-y-3">
-            {(parseAIField(writeup.lessons_learned) || generateLessonsLearned()).map((lesson, index) => (
+            {(
+              parseAIField(writeup.lessons_learned) || generateLessonsLearned()
+            ).map((lesson, index) => (
               <li
                 key={index}
                 className="flex items-start p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border-l-4 border-blue-500"
