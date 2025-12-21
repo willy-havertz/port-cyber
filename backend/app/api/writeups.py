@@ -4,6 +4,7 @@ from typing import List, Optional
 import os
 import shutil
 import re
+import json
 from datetime import datetime
 
 from app.core.database import get_db
@@ -162,6 +163,7 @@ async def create_writeup(
     date: str = Form(...),
     time_spent: str = Form(...),
     summary: Optional[str] = Form(None),
+    tools_used: Optional[str] = Form(None),  # Comma-separated tools
     tags: str = Form(""),  # Optional, comma-separated tags
     file: UploadFile = File(...),
     db: Session = Depends(get_db),
@@ -301,7 +303,8 @@ async def create_writeup(
             writeup_content=readme_content if is_zip else None,
             content_type=content_type,
             thumbnail_url=thumbnail_url,
-            tags=tag_objects
+            tags=tag_objects,
+            tools_used=json.dumps([t.strip() for t in tools_used.split(',') if t.strip()]) if tools_used else None
         )
 
         db.add(writeup)
@@ -344,6 +347,14 @@ async def update_writeup(
                 db.add(tag)
             tag_objects.append(tag)
         writeup.tags = tag_objects
+    
+    # Handle tools_used conversion from comma-separated string to JSON
+    if 'tools_used' in update_data:
+        tools_str = update_data['tools_used']
+        if tools_str:
+            update_data['tools_used'] = json.dumps([t.strip() for t in tools_str.split(',') if t.strip()])
+        else:
+            update_data['tools_used'] = None
     
     for field, value in update_data.items():
         setattr(writeup, field, value)

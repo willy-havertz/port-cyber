@@ -35,6 +35,7 @@ export default function AdminWriteups() {
     time_spent: "1 hour",
     writeup_url: "/writeups/",
     summary: "",
+    tools_used: "",
   });
 
   useEffect(() => {
@@ -175,6 +176,7 @@ export default function AdminWriteups() {
       time_spent: "1 hour",
       writeup_url: "/writeups/",
       summary: "",
+      tools_used: "",
     });
     setSelectedFile(null);
     setUploadProgress(0);
@@ -210,6 +212,7 @@ export default function AdminWriteups() {
       time_spent: writeup.time_spent || "",
       writeup_url: writeup.writeup_url || "",
       summary: writeup.summary || "",
+      tools_used: writeup.tools_used ? (Array.isArray(writeup.tools_used) ? writeup.tools_used.join(", ") : writeup.tools_used) : "",
     });
     setEditingId(writeup.id);
     setShowForm(true);
@@ -382,6 +385,15 @@ export default function AdminWriteups() {
                   setFormData({ ...formData, summary: e.target.value })
                 }
                 rows={3}
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+              />
+              <textarea
+                placeholder="Tools Used (comma-separated, e.g., nmap, Burp Suite, sqlmap)"
+                value={formData.tools_used}
+                onChange={(e) =>
+                  setFormData({ ...formData, tools_used: e.target.value })
+                }
+                rows={2}
                 className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
               />
 

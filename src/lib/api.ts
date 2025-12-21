@@ -226,6 +226,7 @@ export interface CreateWriteupPayload {
   time_spent: string;
   writeup_url: string;
   summary?: string;
+  tools_used?: string;
 }
 
 export interface UpdateWriteupPayload {
@@ -237,6 +238,7 @@ export interface UpdateWriteupPayload {
   time_spent?: string;
   writeup_url?: string;
   summary?: string;
+  tools_used?: string;
 }
 
 export const uploadWriteupFile = async (

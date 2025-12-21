@@ -45,6 +45,7 @@ class WriteupUpdate(BaseModel):
     date: Optional[str] = None
     time_spent: Optional[str] = None
     summary: Optional[str] = None
+    tools_used: Optional[str] = None
     tags: Optional[List[str]] = None
 
 class Writeup(WriteupBase):
