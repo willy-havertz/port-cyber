@@ -84,7 +84,8 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
             c.id === optimisticComment.id
               ? {
                   ...postedComment,
-                  created_at: postedComment.created_at || new Date().toISOString(),
+                  created_at:
+                    postedComment.created_at || new Date().toISOString(),
                 }
               : c
           )
@@ -94,9 +95,7 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
       console.error("Error submitting comment:", err);
       setError("Error submitting comment. Please try again.");
       // Remove optimistic comment on error
-      setComments((prev) =>
-        prev.filter((c) => c.id !== Date.now())
-      );
+      setComments((prev) => prev.filter((c) => c.id !== Date.now()));
     } finally {
       setSubmitting(false);
     }

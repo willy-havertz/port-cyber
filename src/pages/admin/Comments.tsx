@@ -66,12 +66,21 @@ export default function AdminComments() {
   const handleApprove = async (id: number) => {
     try {
       setError(null);
+      // Update comment immediately (optimistic update)
+      setComments((prev) =>
+        prev.map((comment) =>
+          comment.id === id ? { ...comment, is_approved: true } : comment
+        )
+      );
+
+      // Approve on backend
       await approveComment(id);
       setSuccess("Comment approved!");
-      await load();
     } catch (err) {
       console.error(err);
       setError("Failed to approve comment");
+      // Reload to revert the optimistic update if approval failed
+      await load();
     }
   };
 
@@ -81,12 +90,17 @@ export default function AdminComments() {
 
     try {
       setError(null);
+      // Remove comment immediately from UI (optimistic deletion)
+      setComments((prev) => prev.filter((comment) => comment.id !== id));
+
+      // Delete from backend
       await deleteComment(id);
       setSuccess("Comment deleted!");
-      await load();
     } catch (err) {
       console.error(err);
       setError("Failed to delete comment");
+      // Reload to restore the comment if deletion failed
+      await load();
     }
   };
 
