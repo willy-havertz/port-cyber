@@ -71,19 +71,32 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
       });
 
       // Post to backend
-      await postComment(writeupId, {
+      const postedComment = await postComment(writeupId, {
         user_name: formData.user_name,
         user_email: formData.user_email,
         content: formData.content,
       });
 
-      // Refresh to get real comment from backend
-      await loadComments();
+      // Replace optimistic comment with real one from backend
+      if (postedComment) {
+        setComments((prev) =>
+          prev.map((c) =>
+            c.id === optimisticComment.id
+              ? {
+                  ...postedComment,
+                  created_at: postedComment.created_at || new Date().toISOString(),
+                }
+              : c
+          )
+        );
+      }
     } catch (err) {
       console.error("Error submitting comment:", err);
       setError("Error submitting comment. Please try again.");
-      // Reload to remove optimistic comment on error
-      await loadComments();
+      // Remove optimistic comment on error
+      setComments((prev) =>
+        prev.filter((c) => c.id !== Date.now())
+      );
     } finally {
       setSubmitting(false);
     }
