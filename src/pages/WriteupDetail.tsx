@@ -38,6 +38,26 @@ export default function WriteupDetail() {
     };
 
     load();
+
+    // Poll for updates every 10 seconds to show changes made by admin
+    const pollInterval = setInterval(async () => {
+      try {
+        const updatedData = await fetchWriteup(id);
+        setWriteup((prev) => {
+          // Only update if data has changed to avoid unnecessary re-renders
+          if (JSON.stringify(prev) !== JSON.stringify(updatedData)) {
+            return updatedData;
+          }
+          return prev;
+        });
+      } catch (err) {
+        console.error("Error polling for updates:", err);
+      }
+    }, 10000); // 10 second interval
+
+    return () => {
+      clearInterval(pollInterval);
+    };
   }, [id]);
 
   if (loading) {

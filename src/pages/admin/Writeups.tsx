@@ -83,38 +83,66 @@ export default function AdminWriteups() {
       setIsUploading(true);
 
       if (editingId) {
-        // Update existing writeup
-        if (selectedFile) {
-          // Update with new file
-          await updateWriteupWithFile(
-            editingId,
-            formData,
-            selectedFile,
-            (progress) => {
-              setUploadProgress(progress);
-            }
+        // Update existing writeup - optimistic update
+        const updatedWriteup: Writeup = {
+          ...writeups.find((w) => w.id === editingId)!,
+          ...formData,
+        };
+
+        // Update UI immediately (optimistic)
+        setWriteups((prev) =>
+          prev.map((w) => (w.id === editingId ? updatedWriteup : w))
+        );
+
+        try {
+          if (selectedFile) {
+            // Update with new file
+            await updateWriteupWithFile(
+              editingId,
+              formData,
+              selectedFile,
+              (progress) => {
+                setUploadProgress(progress);
+              }
+            );
+            setSuccess("Writeup updated and file uploaded successfully!");
+          } else {
+            // Update without file
+            const payload: UpdateWriteupPayload = formData;
+            const response = await updateWriteup(editingId, payload);
+            // Replace optimistic update with real data from backend
+            setWriteups((prev) =>
+              prev.map((w) => (w.id === editingId ? response : w))
+            );
+            setSuccess("Writeup updated successfully!");
+          }
+        } catch (err: any) {
+          console.error(err);
+          setError(
+            err.response?.data?.detail ||
+              err.message ||
+              "Failed to update writeup"
           );
-          setSuccess("Writeup updated and file uploaded successfully!");
-        } else {
-          // Update without file
-          const payload: UpdateWriteupPayload = formData;
-          await updateWriteup(editingId, payload);
-          setSuccess("Writeup updated successfully!");
+          // Reload to revert optimistic update on error
+          await load();
         }
       } else if (selectedFile) {
         // Create with file
-        await uploadWriteupFile(formData, selectedFile, (progress) => {
+        const newWriteup = await uploadWriteupFile(formData, selectedFile, (progress) => {
           setUploadProgress(progress);
         });
+        // Add new writeup to list immediately
+        setWriteups((prev) => [newWriteup, ...prev]);
         setSuccess("Writeup created and file uploaded successfully!");
       } else {
         // Create without file (manual URL entry)
-        await createWriteup(formData);
+        const newWriteup = await createWriteup(formData);
+        // Add new writeup to list immediately
+        setWriteups((prev) => [newWriteup, ...prev]);
         setSuccess("Writeup created successfully!");
       }
 
       resetForm();
-      await load();
     } catch (err: any) {
       console.error(err);
       if (err.response?.status === 401) {
@@ -209,12 +237,17 @@ export default function AdminWriteups() {
     try {
       setError(null);
       setGeneratingAI(id);
-      await generateAIContent(id);
+      const updatedWriteup = await generateAIContent(id);
+      // Update UI immediately with generated content
+      setWriteups((prev) =>
+        prev.map((w) => (w.id === id ? { ...w, ...updatedWriteup } : w))
+      );
       setSuccess("AI content generated successfully!");
-      await load();
     } catch (err: any) {
       console.error(err);
       setError(err.response?.data?.detail || "Failed to generate AI content");
+      // Reload to get fresh data on error
+      await load();
     } finally {
       setGeneratingAI(null);
     }
