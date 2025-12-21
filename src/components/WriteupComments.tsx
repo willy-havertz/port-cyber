@@ -48,23 +48,42 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
     try {
       setSubmitting(true);
       setError(null);
-      await postComment(writeupId, {
+
+      // Create optimistic comment (show immediately)
+      const optimisticComment: Comment = {
+        id: Date.now(), // Temporary ID
+        writeup_id: parseInt(writeupId),
         user_name: formData.user_name,
         user_email: formData.user_email,
         content: formData.content,
-      });
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
+      // Add comment to UI immediately
+      setComments((prev) => [optimisticComment, ...prev]);
+
+      // Clear form
       setFormData({
         user_name: "",
         user_email: "",
         content: "",
       });
 
-      // Refresh comments
+      // Post to backend
+      await postComment(writeupId, {
+        user_name: formData.user_name,
+        user_email: formData.user_email,
+        content: formData.content,
+      });
+
+      // Refresh to get real comment from backend
       await loadComments();
     } catch (err) {
       console.error("Error submitting comment:", err);
       setError("Error submitting comment. Please try again.");
+      // Reload to remove optimistic comment on error
+      await loadComments();
     } finally {
       setSubmitting(false);
     }
