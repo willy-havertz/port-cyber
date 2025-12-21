@@ -375,10 +375,7 @@ export default function WriteupDetail() {
             Key Findings
           </h2>
           <ul className="space-y-3">
-            {(writeup.key_findings && writeup.key_findings.length > 0
-              ? writeup.key_findings
-              : generateKeyFindings()
-            ).map((finding, index) => (
+            {(parseAIField(writeup.key_findings) || generateKeyFindings()).map((finding, index) => (
               <li
                 key={index}
                 className="flex items-start p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
@@ -403,10 +400,7 @@ export default function WriteupDetail() {
             Tools Used
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {(writeup.tools_used && writeup.tools_used.length > 0
-              ? writeup.tools_used
-              : generateTools()
-            ).map((tool, index) => (
+            {(parseAIField(writeup.tools_used) || generateTools()).map((tool, index) => (
               <div
                 key={index}
                 className="flex items-center p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
@@ -433,10 +427,7 @@ export default function WriteupDetail() {
             Lessons Learned
           </h2>
           <ul className="space-y-3">
-            {(writeup.lessons_learned && writeup.lessons_learned.length > 0
-              ? writeup.lessons_learned
-              : generateLessonsLearned()
-            ).map((lesson, index) => (
+            {(parseAIField(writeup.lessons_learned) || generateLessonsLearned()).map((lesson, index) => (
               <li
                 key={index}
                 className="flex items-start p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-lg border-l-4 border-blue-500"
