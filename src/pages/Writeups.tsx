@@ -152,11 +152,8 @@ export default function Writeups() {
           {/* Advanced Filters */}
           <FilterBar
             categories={allCategories}
-            technologies={allTags}
             selectedCategories={selectedCategories}
-            selectedTechnologies={selectedTags}
             onCategoryChange={handleCategoryChange}
-            onTechnologyChange={handleTagChange}
             onReset={handleReset}
           />
 
