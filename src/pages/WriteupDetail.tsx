@@ -335,6 +335,12 @@ export default function WriteupDetail() {
             </span>
           </div>
 
+          {writeup.summary && (
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg mb-4">
+              {writeup.summary}
+            </p>
+          )}
+
           <div className="flex flex-wrap gap-6 text-slate-600 dark:text-slate-400">
             <div className="flex items-center">
               <Clock className="h-5 w-5 mr-2" />
