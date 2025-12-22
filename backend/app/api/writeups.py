@@ -352,20 +352,27 @@ async def update_writeup(
             tag_objects.append(tag)
         writeup.tags = tag_objects
     
-    # Handle tools_used conversion from comma-separated string to JSON
+    # Handle tools_used conversion from comma-separated string or list to JSON
     if 'tools_used' in update_data:
-        tools_str = update_data['tools_used']
-        if tools_str:
-            update_data['tools_used'] = json.dumps([t.strip() for t in tools_str.split(',') if t.strip()])
+        tools_val = update_data['tools_used']
+        if tools_val:
+            if isinstance(tools_val, list):
+                parts = [str(t).strip() for t in tools_val if str(t).strip()]
+            else:
+                parts = [t.strip() for t in str(tools_val).split(',') if t.strip()]
+            update_data['tools_used'] = json.dumps(parts) if parts else None
         else:
             update_data['tools_used'] = None
 
-    # Handle methodology conversion from newline/comma-separated string to JSON
+    # Handle methodology conversion from newline/comma-separated string or list to JSON
     if 'methodology' in update_data:
-        meth_str = update_data['methodology']
-        if meth_str:
-            parts = [s.strip() for s in re.split(r"[\n,]", meth_str) if s.strip()]
-            update_data['methodology'] = json.dumps(parts)
+        meth_val = update_data['methodology']
+        if meth_val:
+            if isinstance(meth_val, list):
+                parts = [str(s).strip() for s in meth_val if str(s).strip()]
+            else:
+                parts = [s.strip() for s in re.split(r"[\n,]", str(meth_val)) if s.strip()]
+            update_data['methodology'] = json.dumps(parts) if parts else None
         else:
             update_data['methodology'] = None
     
@@ -522,13 +529,17 @@ async def update_writeup_with_file(
         if summary is not None:
             writeup.summary = summary
         if methodology is not None:
-            writeup.methodology = json.dumps([
-                s.strip() for s in re.split(r"[\n,]", methodology) if s.strip()
-            ]) if methodology else None
+            if isinstance(methodology, list):
+                parts = [str(s).strip() for s in methodology if str(s).strip()]
+            else:
+                parts = [s.strip() for s in re.split(r"[\n,]", str(methodology)) if s.strip()]
+            writeup.methodology = json.dumps(parts) if parts else None
         if tools_used is not None:
-            writeup.tools_used = json.dumps([
-                t.strip() for t in tools_used.split(',') if t.strip()
-            ]) if tools_used else None
+            if isinstance(tools_used, list):
+                tparts = [str(t).strip() for t in tools_used if str(t).strip()]
+            else:
+                tparts = [t.strip() for t in str(tools_used).split(',') if t.strip()]
+            writeup.tools_used = json.dumps(tparts) if tparts else None
         
         # Handle tags
         if tags is not None:
@@ -661,15 +672,13 @@ async def generate_ai_content(
             writeup.methodology = json.dumps(existing_methodology)
         else:
             writeup.methodology = json.dumps(ai_content['methodology'])
-        # Merge existing admin-provided tools with AI-generated tools (dedupe)
-        merged_tools: list[str] = []
-        seen = set()
-        for t in existing_tools + ai_content['tools_used']:
-            tn = (t or "").strip()
-            if tn and tn.lower() not in seen:
-                merged_tools.append(tn)
-                seen.add(tn.lower())
-        writeup.tools_used = json.dumps(merged_tools)
+
+        # Preserve admin-provided tools; if none, use AI-generated tools (no merge)
+        if existing_tools:
+            writeup.tools_used = json.dumps(existing_tools)
+        else:
+            writeup.tools_used = json.dumps(ai_content['tools_used'])
+
         writeup.key_findings = json.dumps(ai_content['key_findings'])
         writeup.lessons_learned = json.dumps(ai_content['lessons_learned'])
         

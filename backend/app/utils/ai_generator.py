@@ -22,7 +22,8 @@ class AIContentGenerator:
     
     def __init__(self):
         if GENAI_AVAILABLE and genai:
-            self.model = genai.GenerativeModel('gemini-pro')
+            # Use a current, supported Gemini model (latest alias)
+            self.model = genai.GenerativeModel('gemini-1.5-pro-latest')
         else:
             self.model = None
     
@@ -91,6 +92,21 @@ class AIContentGenerator:
 {"..." if len(writeup_content) > 8000 else ""}
 
 """
+
+        # Build optional sections outside the main f-string to avoid complex expressions
+        summary_line = f"- Summary: {summary}" if summary else ""
+        tools_section = ""
+        if tools_hint:
+            tools_section = (
+                "Provided Tools (use and prioritize these where relevant):\n"
+                + "\n".join(f"- {t}" for t in tools_hint)
+            )
+        methodology_section = ""
+        if methodology_hint:
+            methodology_section = (
+                "Provided Methodology (derive findings and lessons from these steps):\n"
+                + "\n".join(f"- {m}" for m in methodology_hint)
+            )
         
         return f"""You are a cybersecurity expert writing detailed content for a CTF writeup.
 
@@ -99,10 +115,9 @@ class AIContentGenerator:
 - Category: {category}
 - Difficulty: {difficulty}
 - Platform: {platform}
-{f'- Summary: {summary}' if summary else ''}
-
-{('Provided Tools (use and prioritize these where relevant):\n' + '\n'.join(f'- {t}' for t in tools_hint)) if tools_hint else ''}
-{('Provided Methodology (derive findings and lessons from these steps):\n' + '\n'.join(f'- {m}' for m in methodology_hint)) if methodology_hint else ''}
+{summary_line}
+{tools_section}
+{methodology_section}
 {content_section}
 
 Generate the following sections in JSON format:

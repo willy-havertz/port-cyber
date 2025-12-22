@@ -45,8 +45,10 @@ class WriteupUpdate(BaseModel):
     date: Optional[str] = None
     time_spent: Optional[str] = None
     summary: Optional[str] = None
-    methodology: Optional[str] = None
-    tools_used: Optional[str] = None
+    # Accept either a string (newline/comma-separated) or a list of steps
+    methodology: Optional[List[str] | str] = None
+    # Accept either a string (comma-separated) or a list of tools
+    tools_used: Optional[List[str] | str] = None
     tags: Optional[List[str]] = None
 
 class Writeup(WriteupBase):
