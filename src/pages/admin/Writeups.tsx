@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit2, Trash2, AlertCircle, X, Sparkles } from "lucide-react";
+import { Plus, Edit2, Trash2, AlertCircle, X, Sparkles, RefreshCw } from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
@@ -327,9 +327,21 @@ export default function AdminWriteups() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg"
+            className="flex items-center justify-between gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg"
           >
             <p className="text-green-600 dark:text-green-400">{success}</p>
+            <button
+              type="button"
+              onClick={async () => {
+                setSuccess(null);
+                await load();
+              }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
+              title="Refresh list"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh
+            </button>
           </motion.div>
         )}
 
