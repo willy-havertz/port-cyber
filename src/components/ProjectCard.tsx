@@ -84,7 +84,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
+              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-cyan-600 dark:bg-cyan-700 rounded-md hover:bg-cyan-700 dark:hover:bg-cyan-600 transition-colors"
             >
               <ExternalLink className="h-4 w-4 mr-1" />
               Live Demo
