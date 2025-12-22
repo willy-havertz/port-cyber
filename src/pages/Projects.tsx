@@ -25,12 +25,12 @@ export default function Projects() {
     {
       title: "Automated Vulnerability Scanner",
       description:
-        "Custom vulnerability scanning tool built with Python that automates the detection of common web application vulnerabilities and generates detailed reports.",
-      technologies: ["Python", "Flask", "SQLite", "Docker", "REST API"],
+        "Python/FastAPI scanner with SSRF-safe target validation, header/XSS/SQLi checks, optional nmap port sweep, CORS/directory-listing detection, and per-user rate limiting.",
+      technologies: ["Python", "FastAPI", "Nmap", "Requests", "Docker"],
       imageUrl:
         "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com",
-      liveUrl: "https://owasp.org/www-community/Vulnerability_Scanning_Tools",
+      githubUrl: "https://github.com/willy-havertz/port-cyber",
+      liveUrl: "https://github.com/willy-havertz/port-cyber/tree/main/backend#readme",
       date: "Nov 2024",
       category: "Tool Development",
     },
