@@ -169,13 +169,18 @@ export const fetchWriteups = async () => {
   return [];
 };
 
-export const fetchWriteup = async (id: string | number) => {
+export const fetchWriteup = async (
+  id: string | number,
+  opts?: { refresh?: boolean }
+) => {
   const cacheKey = `writeup_${id}`;
 
   // Check cache first
-  const cached = getCachedData<Writeup>(cacheKey);
-  if (cached) {
-    return cached;
+  if (!opts?.refresh) {
+    const cached = getCachedData<Writeup>(cacheKey);
+    if (cached) {
+      return cached;
+    }
   }
 
   // Fetch from API

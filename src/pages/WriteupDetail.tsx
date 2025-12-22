@@ -26,7 +26,7 @@ export default function WriteupDetail() {
       try {
         setLoading(true);
         setError(null);
-        const data = await fetchWriteup(id);
+        const data = await fetchWriteup(id, { refresh: true });
         setWriteup(data);
       } catch (err) {
         console.error(err);
@@ -42,7 +42,7 @@ export default function WriteupDetail() {
     // Poll for updates every 10 seconds to show changes made by admin
     const pollInterval = setInterval(async () => {
       try {
-        const updatedData = await fetchWriteup(id);
+        const updatedData = await fetchWriteup(id, { refresh: true });
         setWriteup((prev) => {
           // Only update if data has changed to avoid unnecessary re-renders
           if (JSON.stringify(prev) !== JSON.stringify(updatedData)) {
