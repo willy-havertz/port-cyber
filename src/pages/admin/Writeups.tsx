@@ -651,7 +651,8 @@ export default function AdminWriteups() {
                       </span>
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                      {writeup.methodology && Array.isArray(writeup.methodology) ? (
+                      {writeup.methodology &&
+                      Array.isArray(writeup.methodology) ? (
                         <div className="max-w-xs">
                           <div className="font-medium text-slate-900 dark:text-white mb-1">
                             {writeup.methodology.length} steps
@@ -669,12 +670,15 @@ export default function AdminWriteups() {
                             )}
                           </div>
                         </div>
-                      ) : writeup.methodology && typeof writeup.methodology === 'string' ? (
+                      ) : writeup.methodology &&
+                        typeof writeup.methodology === "string" ? (
                         <div className="max-w-xs text-xs truncate">
                           {writeup.methodology}
                         </div>
                       ) : (
-                        <span className="text-slate-400 dark:text-slate-600 italic">Not set</span>
+                        <span className="text-slate-400 dark:text-slate-600 italic">
+                          Not set
+                        </span>
                       )}
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 flex gap-1 sm:gap-2">
