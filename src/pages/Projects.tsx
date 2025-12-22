@@ -25,12 +25,13 @@ export default function Projects() {
     {
       title: "Automated Vulnerability Scanner",
       description:
-        "Python/FastAPI scanner with SSRF-safe target validation, header/XSS/SQLi checks, optional nmap port sweep, CORS/directory-listing detection, and per-user rate limiting.",
-      technologies: ["Python", "FastAPI", "Nmap", "Requests", "Docker"],
+        "Production-ready FastAPI scanner with SSRF-safe IP validation, security header audits, XSS/SQLi detection, CORS analysis, per-user rate limiting, and Docker deployment.",
+      technologies: ["Python", "FastAPI", "Docker", "JWT", "SQLAlchemy"],
       imageUrl:
         "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber/tree/main/backend/app/api/scanner.py",
-      date: "Nov 2024",
+      githubUrl:
+        "https://github.com/willy-havertz/port-cyber-scanner",
+      date: "Dec 2024",
       category: "Tool Development",
     },
     {
