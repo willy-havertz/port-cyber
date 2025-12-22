@@ -1,11 +1,15 @@
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from pydantic import BaseModel, HttpUrl
 from typing import List, Dict, Any
+from datetime import datetime, timedelta
+import ipaddress
+import socket
 import nmap
 import requests
 from urllib.parse import urlparse
 
 from app.core.security import get_current_user
+from app.core.config import settings
 from app.models.user import User
 
 router = APIRouter()
@@ -23,6 +27,33 @@ class ScanResult(BaseModel):
 
 # Rate limiting: Track scans per user
 scan_history = {}
+scan_window = timedelta(minutes=settings.SCANNER_RATE_WINDOW_MINUTES)
+
+
+def _resolve_ip(hostname: str) -> str:
+    """Resolve hostname to IPv4/IPv6 string or raise."""
+    try:
+        return socket.gethostbyname(hostname)
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Could not resolve target host"
+        )
+
+
+def _is_private_or_local(ip_str: str) -> bool:
+    """Return True if IP is private, loopback, link-local, or reserved."""
+    try:
+        ip_obj = ipaddress.ip_address(ip_str)
+        return (
+            ip_obj.is_private
+            or ip_obj.is_loopback
+            or ip_obj.is_link_local
+            or ip_obj.is_reserved
+            or ip_obj.is_multicast
+        )
+    except ValueError:
+        return True
 
 def perform_port_scan(target: str) -> Dict[str, Any]:
     """Perform nmap port scan"""
@@ -117,8 +148,30 @@ def check_headers(url: str) -> Dict[str, Any]:
                     'header': header,
                     'description': f'Missing {header} header'
                 })
-        
-        return {'headers': missing_headers}
+
+        cors_findings = []
+        allow_origin = headers.get('Access-Control-Allow-Origin')
+        allow_creds = headers.get('Access-Control-Allow-Credentials')
+        if allow_origin == "*" and allow_creds and allow_creds.lower() == "true":
+            cors_findings.append({
+                'type': 'CORS Misconfiguration',
+                'severity': 'Medium',
+                'description': 'Access-Control-Allow-Origin is * with credentials allowed; browsers will refuse but indicates lax policy'
+            })
+
+        directory_listing = []
+        if response.status_code == 200 and "Index of /" in response.text:
+            directory_listing.append({
+                'type': 'Directory Listing',
+                'severity': 'Low',
+                'description': 'Directory listing appears enabled on root'
+            })
+
+        return {
+            'headers': missing_headers,
+            'cors': cors_findings,
+            'directory_listing': directory_listing
+        }
     except Exception as e:
         return {'error': str(e)}
 
@@ -133,6 +186,39 @@ async def scan_target(
     
     **Warning**: Only scan targets you have permission to test!
     """
+    parsed_url = urlparse(str(scan_request.target_url))
+    if parsed_url.scheme not in {"http", "https"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only http and https targets are supported"
+        )
+
+    hostname = parsed_url.hostname or parsed_url.netloc or parsed_url.path
+    if not hostname:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid target host"
+        )
+
+    resolved_ip = _resolve_ip(hostname)
+    if _is_private_or_local(resolved_ip) and not settings.SCANNER_ALLOW_PRIVATE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Target resolves to a private or local address; scanning blocked"
+        )
+
+    # Sliding window rate limit per user
+    user_scans = scan_history.get(current_user.username, [])
+    now = datetime.now()
+    user_scans = [t for t in user_scans if now - t < scan_window]
+    if len(user_scans) >= settings.SCANNER_MAX_SCANS_PER_USER:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Scan limit exceeded. Please try again later."
+        )
+
+    target = str(scan_request.target_url)
+    scan_history[current_user.username] = user_scans
     # Rate limiting check
     user_scans = scan_history.get(current_user.username, [])
     if len(user_scans) >= 5:
@@ -141,10 +227,6 @@ async def scan_target(
             detail="Scan limit exceeded. Please try again later."
         )
     
-    target = str(scan_request.target_url)
-    parsed_url = urlparse(target)
-    hostname = parsed_url.netloc or parsed_url.path
-    
     vulnerabilities = []
     
     try:
@@ -152,6 +234,10 @@ async def scan_target(
         header_results = check_headers(target)
         if 'headers' in header_results:
             vulnerabilities.extend(header_results['headers'])
+        if 'cors' in header_results:
+            vulnerabilities.extend(header_results['cors'])
+        if 'directory_listing' in header_results:
+            vulnerabilities.extend(header_results['directory_listing'])
         
         # Basic SQL injection check (limited payloads)
         if scan_request.scan_type in ['full', 'aggressive']:
@@ -179,10 +265,15 @@ async def scan_target(
                                 'service': port_info['service'],
                                 'description': f"Port {port_info['port']} is open running {port_info['service']}"
                             })
+            else:
+                vulnerabilities.append({
+                    'type': 'Port Scan Error',
+                    'severity': 'Info',
+                    'description': port_results.get('error', 'Port scan failed')
+                })
         
         # Update scan history
-        from datetime import datetime
-        scan_history.setdefault(current_user.username, []).append(datetime.now())
+        scan_history.setdefault(current_user.username, []).append(now)
         
         return ScanResult(
             target=target,

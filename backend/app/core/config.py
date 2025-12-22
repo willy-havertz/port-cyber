@@ -51,6 +51,11 @@ class Settings(BaseSettings):
     # AI Content Generation
     GEMINI_API_KEY: str = Field(default="")
     AI_GENERATION_ENABLED: bool = Field(default=False)
+
+    # Scanner
+    SCANNER_ALLOW_PRIVATE: bool = False
+    SCANNER_MAX_SCANS_PER_USER: int = 5
+    SCANNER_RATE_WINDOW_MINUTES: int = 60
     
     class Config:
         env_file = ".env"
