@@ -7,9 +7,7 @@ import FilterBar from "../components/FilterBar";
 
 export default function Projects() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-  const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>(
-    []
-  );
+  const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>([]);
 
   const projects = useMemo(
     () => [
@@ -27,6 +25,7 @@ export default function Projects() {
         imageUrl:
           "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         githubUrl: "https://github.com/willy-havertz/port-cyber-network-security",
+        liveUrl: "https://port-cyber-experiments.onrender.com?tab=network",
         date: "Dec 2024",
         category: "Penetration Testing",
       },
@@ -38,6 +37,7 @@ export default function Projects() {
         imageUrl:
           "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
+        liveUrl: "https://port-cyber-scanner.onrender.com",
         date: "Dec 2024",
         category: "Tool Development",
       },
@@ -54,6 +54,7 @@ export default function Projects() {
         imageUrl:
           "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         githubUrl: "https://github.com/willy-havertz/port-cyber-incident-response",
+        liveUrl: "https://port-cyber-experiments.onrender.com?tab=incident",
         date: "Dec 2024",
         category: "Incident Response",
       },
@@ -65,6 +66,7 @@ export default function Projects() {
         imageUrl:
           "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
+        liveUrl: "https://port-cyber-experiments.onrender.com?tab=threat",
         date: "Dec 2024",
         category: "Threat Intelligence",
       },
@@ -82,6 +84,7 @@ export default function Projects() {
         imageUrl:
           "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         githubUrl: "https://github.com/willy-havertz/port-cyber-code-review",
+        liveUrl: "https://port-cyber-experiments.onrender.com?tab=code",
         date: "Dec 2024",
         category: "Secure Development",
       },
@@ -99,6 +102,7 @@ export default function Projects() {
         imageUrl:
           "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
         githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
+        liveUrl: "https://port-cyber-experiments.onrender.com?tab=phishing",
         date: "Dec 2024",
         category: "Machine Learning",
       },
@@ -204,7 +208,8 @@ export default function Projects() {
                 className="col-span-full text-center py-12"
               >
                 <p className="text-lg text-slate-600 dark:text-slate-400">
-                  No projects match your filters. Try adjusting your selection.
+                  No projects match your filters. Try adjusting your
+                  selection.
                 </p>
               </motion.div>
             )}

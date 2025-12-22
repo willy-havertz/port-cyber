@@ -67,7 +67,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
           ))}
         </div>
 
-        <div className="flex space-x-3">
+        <div className="flex space-x-2 flex-wrap">
           {githubUrl && (
             <a
               href={githubUrl}
@@ -76,7 +76,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               className="flex items-center px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 bg-slate-100 dark:bg-slate-700 rounded-md hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
             >
               <Github className="h-4 w-4 mr-1" />
-              Code
+              GitHub
             </a>
           )}
           {liveUrl && (
@@ -84,10 +84,10 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
               href={liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-gray-900 dark:bg-white dark:text-gray-900 rounded-md hover:bg-black dark:hover:bg-gray-100 transition-colors"
+              className="flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 dark:bg-blue-700 rounded-md hover:bg-blue-700 dark:hover:bg-blue-600 transition-colors"
             >
               <ExternalLink className="h-4 w-4 mr-1" />
-              Live
+              Live Demo
             </a>
           )}
         </div>
