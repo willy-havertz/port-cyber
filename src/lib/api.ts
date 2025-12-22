@@ -283,6 +283,14 @@ export const updateWriteup = async (
   payload: UpdateWriteupPayload
 ) => {
   const { data } = await api.put(`/writeups/${id}`, payload);
+  // Clear cache so polling fetches fresh data
+  const cacheKey = `writeup_${id}`;
+  cache.delete(cacheKey);
+  try {
+    localStorage.removeItem(cacheKey);
+  } catch (e) {
+    // Ignore
+  }
   return data as Writeup;
 };
 
@@ -313,6 +321,14 @@ export const updateWriteupWithFile = async (
       }
     },
   });
+  // Clear cache so polling fetches fresh data
+  const cacheKey = `writeup_${id}`;
+  cache.delete(cacheKey);
+  try {
+    localStorage.removeItem(cacheKey);
+  } catch (e) {
+    // Ignore
+  }
   return data as Writeup;
 };
 
