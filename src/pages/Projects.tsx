@@ -10,7 +10,8 @@ export default function Projects() {
   const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>(
     []
   );
-  const projects = [
+  
+  const projects = useMemo(() => [
     {
       title: "Enterprise Network Security Assessment",
       description:
@@ -29,8 +30,7 @@ export default function Projects() {
       technologies: ["Python", "FastAPI", "Docker", "JWT", "SQLAlchemy"],
       imageUrl:
         "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl:
-        "https://github.com/willy-havertz/port-cyber-scanner",
+      githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
       date: "Dec 2024",
       category: "Tool Development",
     },
@@ -90,11 +90,10 @@ export default function Projects() {
       date: "Jul 2024",
       category: "Machine Learning",
     },
-  ];
+  ], []);
 
-  // Extract unique categories and technologies
+  // Extract unique categories
   const allCategories = [...new Set(projects.map((p) => p.category))];
-  const allTechnologies = [...new Set(projects.flatMap((p) => p.technologies))];
 
   // Filter logic
   const filteredProjects = useMemo(() => {
@@ -110,19 +109,13 @@ export default function Projects() {
 
       return categoryMatch && techMatch;
     });
-  }, [selectedCategories, selectedTechnologies]);
+  }, [projects, selectedCategories, selectedTechnologies]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
         : [...prev, category]
-    );
-  };
-
-  const handleTechnologyChange = (tech: string) => {
-    setSelectedTechnologies((prev) =>
-      prev.includes(tech) ? prev.filter((t) => t !== tech) : [...prev, tech]
     );
   };
 
