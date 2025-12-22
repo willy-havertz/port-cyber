@@ -372,6 +372,9 @@ async def update_writeup(
     for field, value in update_data.items():
         setattr(writeup, field, value)
     
+    # Update timestamp to track edits
+    writeup.updated_at = datetime.now()
+
     db.commit()
     db.refresh(writeup)
     return writeup

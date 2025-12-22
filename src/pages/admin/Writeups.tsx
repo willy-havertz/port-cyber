@@ -120,6 +120,8 @@ export default function AdminWriteups() {
               }
             );
             setSuccess("Writeup updated and file uploaded successfully!");
+            // Reload list to ensure freshest data (bypass cache)
+            await load();
           } else {
             // Update without file
             const payload: UpdateWriteupPayload = formData;
@@ -129,6 +131,8 @@ export default function AdminWriteups() {
               prev.map((w) => (w.id === editingId ? response : w))
             );
             setSuccess("Writeup updated successfully!");
+            // Reload list to ensure freshest data (bypass cache)
+            await load();
           }
         } catch (err: any) {
           console.error(err);
