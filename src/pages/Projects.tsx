@@ -10,87 +10,101 @@ export default function Projects() {
   const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>(
     []
   );
-  
-  const projects = useMemo(() => [
-    {
-      title: "Enterprise Network Security Assessment",
-      description:
-        "Comprehensive security assessment of a Fortune 500 company's network infrastructure, identifying critical vulnerabilities and providing remediation strategies.",
-      technologies: ["Nmap", "Metasploit", "Burp Suite", "Wireshark", "Python"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com",
-      date: "Dec 2024",
-      category: "Penetration Testing",
-    },
-    {
-      title: "Automated Vulnerability Scanner",
-      description:
-        "Production-ready FastAPI scanner with SSRF-safe IP validation, security header audits, XSS/SQLi detection, CORS analysis, per-user rate limiting, and Docker deployment.",
-      technologies: ["Python", "FastAPI", "Docker", "JWT", "SQLAlchemy"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
-      date: "Dec 2024",
-      category: "Tool Development",
-    },
-    {
-      title: "Incident Response Playbook",
-      description:
-        "Comprehensive incident response framework and playbook for handling various types of security incidents, including malware infections and data breaches.",
-      technologies: ["MITRE ATT&CK", "NIST Framework", "PowerShell", "Splunk"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com",
-      date: "Oct 2024",
-      category: "Incident Response",
-    },
-    {
-      title: "Threat Intelligence Platform",
-      description:
-        "Real-time threat intelligence aggregation platform that collects, analyzes, and correlates threat data from multiple sources to provide actionable insights.",
-      technologies: ["Python", "Elasticsearch", "Kibana", "Redis", "Docker"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com",
-      date: "Sep 2024",
-      category: "Threat Intelligence",
-    },
-    {
-      title: "Secure Code Review Framework",
-      description:
-        "Automated static code analysis framework for identifying security vulnerabilities in web applications during the development lifecycle.",
-      technologies: [
-        "SonarQube",
-        "OWASP ZAP",
-        "Jenkins",
-        "Python",
-        "JavaScript",
-      ],
-      imageUrl:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com",
-      date: "Aug 2024",
-      category: "Secure Development",
-    },
-    {
-      title: "Phishing Detection System",
-      description:
-        "Machine learning-based system for detecting and classifying phishing emails using natural language processing and behavioral analysis techniques.",
-      technologies: [
-        "Python",
-        "TensorFlow",
-        "scikit-learn",
-        "NLTK",
-        "PostgreSQL",
-      ],
-      imageUrl:
-        "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com",
-      date: "Jul 2024",
-      category: "Machine Learning",
-    },
-  ], []);
+
+  const projects = useMemo(
+    () => [
+      {
+        title: "Enterprise Network Security Assessment",
+        description:
+          "Comprehensive security assessment of a Fortune 500 company's network infrastructure, identifying critical vulnerabilities and providing remediation strategies.",
+        technologies: [
+          "Nmap",
+          "Metasploit",
+          "Burp Suite",
+          "Wireshark",
+          "Python",
+        ],
+        imageUrl:
+          "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        githubUrl: "https://github.com",
+        date: "Dec 2024",
+        category: "Penetration Testing",
+      },
+      {
+        title: "Automated Vulnerability Scanner",
+        description:
+          "Production-ready FastAPI scanner with SSRF-safe IP validation, security header audits, XSS/SQLi detection, CORS analysis, per-user rate limiting, and Docker deployment.",
+        technologies: ["Python", "FastAPI", "Docker", "JWT", "SQLAlchemy"],
+        imageUrl:
+          "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
+        date: "Dec 2024",
+        category: "Tool Development",
+      },
+      {
+        title: "Incident Response Playbook",
+        description:
+          "Comprehensive incident response framework and playbook for handling various types of security incidents, including malware infections and data breaches.",
+        technologies: [
+          "MITRE ATT&CK",
+          "NIST Framework",
+          "PowerShell",
+          "Splunk",
+        ],
+        imageUrl:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        githubUrl: "https://github.com",
+        date: "Oct 2024",
+        category: "Incident Response",
+      },
+      {
+        title: "Threat Intelligence Platform",
+        description:
+          "Real-time threat intelligence aggregation platform that collects, analyzes, and correlates threat data from multiple sources to provide actionable insights.",
+        technologies: ["Python", "Elasticsearch", "Kibana", "Redis", "Docker"],
+        imageUrl:
+          "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        githubUrl: "https://github.com",
+        date: "Sep 2024",
+        category: "Threat Intelligence",
+      },
+      {
+        title: "Secure Code Review Framework",
+        description:
+          "Automated static code analysis framework for identifying security vulnerabilities in web applications during the development lifecycle.",
+        technologies: [
+          "SonarQube",
+          "OWASP ZAP",
+          "Jenkins",
+          "Python",
+          "JavaScript",
+        ],
+        imageUrl:
+          "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        githubUrl: "https://github.com",
+        date: "Aug 2024",
+        category: "Secure Development",
+      },
+      {
+        title: "Phishing Detection System",
+        description:
+          "Machine learning-based system for detecting and classifying phishing emails using natural language processing and behavioral analysis techniques.",
+        technologies: [
+          "Python",
+          "TensorFlow",
+          "scikit-learn",
+          "NLTK",
+          "PostgreSQL",
+        ],
+        imageUrl:
+          "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+        githubUrl: "https://github.com",
+        date: "Jul 2024",
+        category: "Machine Learning",
+      },
+    ],
+    []
+  );
 
   // Extract unique categories
   const allCategories = [...new Set(projects.map((p) => p.category))];
