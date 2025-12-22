@@ -622,6 +622,7 @@ async def generate_ai_content(
         # Parse existing tools_used from DB (stored as JSON text)
         existing_tools: list[str] = []
         existing_methodology: list[str] = []
+        writeup_text = ""
         try:
             if writeup.tools_used:
                 if isinstance(writeup.tools_used, str):
@@ -633,6 +634,9 @@ async def generate_ai_content(
                     existing_methodology = json.loads(writeup.methodology)
                 elif isinstance(writeup.methodology, list):
                     existing_methodology = writeup.methodology
+            # Extract writeup content for context
+            if writeup.writeup_content:
+                writeup_text = writeup.writeup_content
         except Exception:
             existing_tools = []
             existing_methodology = []
@@ -645,6 +649,7 @@ async def generate_ai_content(
             summary=writeup.summary or "",
             tools_hint=existing_tools,
             methodology_hint=existing_methodology,
+            writeup_content=writeup_text,
         )
         
         # Store as JSON strings in database

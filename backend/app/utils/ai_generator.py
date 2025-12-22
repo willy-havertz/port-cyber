@@ -35,9 +35,13 @@ class AIContentGenerator:
         summary: str = "",
         tools_hint: List[str] | None = None,
         methodology_hint: List[str] | None = None,
+        writeup_content: str = "",
     ) -> Dict[str, List[str]]:
         """
         Generate all writeup content sections using AI
+        
+        Args:
+            writeup_content: Full text of PDF or markdown content for context
         
         Returns:
             Dict with keys: methodology, tools_used, key_findings, lessons_learned
@@ -52,7 +56,7 @@ class AIContentGenerator:
         
         try:
             prompt = self._build_comprehensive_prompt(
-                title, category, difficulty, platform, summary, tools_hint or [], methodology_hint or []
+                title, category, difficulty, platform, summary, tools_hint or [], methodology_hint or [], writeup_content
             )
             
             response = self.model.generate_content(prompt)
@@ -74,8 +78,20 @@ class AIContentGenerator:
         summary: str,
         tools_hint: List[str],
         methodology_hint: List[str],
+        writeup_content: str = "",
     ) -> str:
         """Build detailed prompt for Gemini"""
+        content_section = ""
+        if writeup_content:
+            # Truncate to first 8000 chars to avoid excessive token usage
+            truncated = writeup_content[:8000]
+            content_section = f"""
+**Writeup Content (for context):**
+{truncated}
+{"..." if len(writeup_content) > 8000 else ""}
+
+"""
+        
         return f"""You are a cybersecurity expert writing detailed content for a CTF writeup.
 
 **Writeup Details:**
@@ -87,21 +103,23 @@ class AIContentGenerator:
 
 {('Provided Tools (use and prioritize these where relevant):\n' + '\n'.join(f'- {t}' for t in tools_hint)) if tools_hint else ''}
 {('Provided Methodology (derive findings and lessons from these steps):\n' + '\n'.join(f'- {m}' for m in methodology_hint)) if methodology_hint else ''}
+{content_section}
 
 Generate the following sections in JSON format:
 
-1. **methodology**: List 5-7 specific, actionable steps that would typically be followed in this type of challenge. Be technical and specific to {category} challenges.
+1. **methodology**: List 5-7 specific, actionable steps that would typically be followed in this type of challenge. Be technical and specific to {category} challenges.{' Use the provided methodology if available.' if methodology_hint else ''}
 
-2. **tools_used**: List 8-12 cybersecurity tools commonly used for {category} challenges. Include both common tools and category-specific ones. If a list of tools is provided above, incorporate and prioritize those tools when appropriate.
+2. **tools_used**: List 8-12 cybersecurity tools commonly used for {category} challenges. Include both common tools and category-specific ones. If a list of tools is provided above, incorporate and prioritize those tools when appropriate.{' Extract any tools mentioned in the writeup content.' if writeup_content else ''}
 
-3. **key_findings**: List 4-6 technical findings or vulnerabilities that are typical for {difficulty} difficulty {category} challenges. If a methodology is provided above, derive the findings directly from those steps and their likely outcomes.
+3. **key_findings**: List 4-6 technical findings or vulnerabilities.{f' Based on the writeup content provided, extract the actual vulnerabilities and security issues found in this challenge.' if writeup_content else f' Typical for {difficulty} difficulty {category} challenges.'}{' If a methodology is provided, derive findings from those steps.' if methodology_hint else ''}
 
-4. **lessons_learned**: List 5-7 educational takeaways about security best practices, prevention techniques, or insights gained from this type of challenge. If a methodology is provided, align lessons with those steps and what they teach.
+4. **lessons_learned**: List 5-7 educational takeaways about security best practices, prevention techniques, or insights gained.{f' Base these on the actual content and techniques discussed in the writeup.' if writeup_content else ''}{' If a methodology is provided, align lessons with those steps.' if methodology_hint else ''}
 
 **Important:** 
 - Be specific to {category} and {difficulty} level
 - Use technical terminology
-- Focus on practical, realistic steps
+- Focus on practical, realistic findings and lessons
+- If writeup content is provided, prioritize extracting real details from it
 - Output ONLY valid JSON with no markdown formatting
 
 Output format:
