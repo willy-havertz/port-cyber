@@ -278,6 +278,116 @@ Output format:
                 f"{difficulty} Windows challenges require OS-specific knowledge"
             ]
         
+        elif "forensic" in category_lower:
+            methodology = [
+                "Preserve evidence and verify hashes of acquired data",
+                "Perform triage to locate volatile and high-value artifacts",
+                "Analyze memory image for processes, network, and handles",
+                "Extract timeline of file/system activity for correlation",
+                "Hunt for malicious indicators (strings, YARA, persistence)",
+                "Carve files and recover artifacts of interest",
+                "Document findings with hashes, paths, and timestamps"
+            ]
+            tools = [
+                "Volatility", "Autopsy", "The Sleuth Kit", "YARA",
+                "strings", "foremost", "bulk_extractor", "exiftool",
+                "Wireshark", "hashdeep", "plaso/log2timeline"
+            ]
+            findings = [
+                "Suspicious process and injected module identified in memory",
+                "Persistence mechanism discovered in user run keys/scheduled task",
+                "Recovered exfiltration archive from temp directory",
+                "Network IOCs observed communicating with external C2 endpoint",
+                "Timestamps show execution sequence matching intrusion window"
+            ]
+            lessons = [
+                "Maintain evidence integrity with proper hashing and chain of custody",
+                "Volatile data often contains the most actionable indicators",
+                "Timelining multiple sources helps validate and correlate events",
+                "Proactive YARA rules greatly speed up indicator discovery",
+                "Comprehensive documentation enables reproducible analysis"
+            ]
+        elif "crypt" in category_lower:
+            methodology = [
+                "Identify cipher family, encoding, and data characteristics",
+                "Check for key/IV reuse and weak/random parameters",
+                "Attempt classical attacks (frequency/Kasiski/known-plaintext)",
+                "Probe implementation for padding-oracle or timing issues",
+                "Validate decrypted output and iterate on hypotheses",
+                "Document working decryption pipeline and constraints"
+            ]
+            tools = [
+                "CyberChef", "OpenSSL", "hashcat", "John the Ripper",
+                "SageMath", "RsaCtfTool", "gmpy2", "pycryptodome"
+            ]
+            findings = [
+                "Weak key management led to feasible key recovery",
+                "IV/nonce reuse enabled keystream reuse and plaintext inference",
+                "Use of ECB exposed structural patterns in ciphertext",
+                "Padding oracle permitted decryption without key",
+                "Predictable RNG compromised cryptographic strength"
+            ]
+            lessons = [
+                "Use AEAD modes (e.g., GCM/ChaCha20-Poly1305) with unique nonces",
+                "Derive keys with modern KDFs (Argon2, scrypt, PBKDF2)",
+                "Never reuse IVs/nonces; ensure high-entropy randomness",
+                "Avoid ECB; prefer authenticated encryption",
+                "Threat-model implementation flaws, not just algorithms"
+            ]
+        elif "reverse" in category_lower or "revers" in category_lower:
+            methodology = [
+                "Perform static triage (strings, headers, packers, sections)",
+                "Load into disassembler for control/data-flow understanding",
+                "Identify obfuscation/anti-debug and implement bypasses",
+                "Run under debugger/sandbox to observe runtime behavior",
+                "Trace APIs and decrypt/deserialize hidden data",
+                "Extract IOCs and reconstruct key logic/algorithms"
+            ]
+            tools = [
+                "Ghidra", "IDA", "radare2", "x64dbg", "Frida",
+                "strace/ltrace", "Detect It Easy", "capa", "strings"
+            ]
+            findings = [
+                "Hardcoded credentials/keys discovered in binary",
+                "Custom crypto routine implemented insecurely",
+                "Anti-debug/anti-VM checks identified and neutralized",
+                "Network IOCs and command protocol reverse-engineered",
+                "Licensing/feature flags controlled by predictable checks"
+            ]
+            lessons = [
+                "Do not embed secrets in binaries; use secure storage",
+                "Security-by-obscurity fails against basic reversing",
+                "Code signing and integrity checks reduce tampering",
+                "Telemetry helps detect misuse and suspicious behavior",
+                "Defensive obfuscation should be paired with real controls"
+            ]
+        elif "osint" in category_lower:
+            methodology = [
+                "Define targets and scope; enumerate identifiers and assets",
+                "Pivot across platforms to build profiles and relationships",
+                "Harvest metadata from public content and documents",
+                "Enumerate domains/subdomains, buckets, and exposed services",
+                "Correlate findings to map risks and likely entry points",
+                "Document sources, timestamps, and verification steps"
+            ]
+            tools = [
+                "theHarvester", "Maltego", "Recon-ng", "Amass",
+                "Shodan", "crt.sh", "exiftool", "Google dorks"
+            ]
+            findings = [
+                "Publicly exposed credentials and API keys discovered",
+                "Sensitive documents leaked via misconfigured storage",
+                "High-value subdomains with outdated software identified",
+                "Linked personas enable spear-phishing and social engineering",
+                "Metadata reveals internal tooling and environment details"
+            ]
+            lessons = [
+                "Reduce public footprint and enforce data handling policies",
+                "Continuously monitor for exposed assets and credentials",
+                "Harden external attack surface and decommission stale hosts",
+                "Train staff on phishing and operational security",
+                "Sanitize metadata before publishing documents"
+            ]
         else:
             # Generic fallback
             methodology = [
