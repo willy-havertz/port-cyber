@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit2, Trash2, AlertCircle, X, Sparkles, RefreshCw } from "lucide-react";
+import {
+  Plus,
+  Edit2,
+  Trash2,
+  AlertCircle,
+  X,
+  Sparkles,
+  RefreshCw,
+} from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
