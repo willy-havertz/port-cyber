@@ -119,12 +119,19 @@ export default function WriteupDetail() {
     if (!field) return null;
     if (Array.isArray(field)) return field;
     if (typeof field === "string") {
+      // Try JSON first
       try {
         const parsed = JSON.parse(field);
-        return Array.isArray(parsed) ? parsed : null;
+        if (Array.isArray(parsed)) return parsed;
       } catch {
-        return null;
+        // ignore parse errors and fall back to splitting
       }
+      // Fallback: split plain string by newline or comma
+      const parts = field
+        .split(/\r?\n|,/) // newline or comma
+        .map((s) => s.trim())
+        .filter(Boolean);
+      return parts.length ? parts : null;
     }
     return null;
   };
