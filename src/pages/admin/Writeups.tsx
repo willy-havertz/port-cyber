@@ -128,8 +128,6 @@ export default function AdminWriteups() {
               }
             );
             setSuccess("Writeup updated and file uploaded successfully!");
-            // Reload list to ensure freshest data (bypass cache)
-            await load();
           } else {
             // Update without file
             const payload: UpdateWriteupPayload = formData;
@@ -139,9 +137,10 @@ export default function AdminWriteups() {
               prev.map((w) => (w.id === editingId ? response : w))
             );
             setSuccess("Writeup updated successfully!");
-            // Reload list to ensure freshest data (bypass cache)
-            await load();
           }
+          // Reload list to ensure freshest data and close form
+          await load();
+          resetForm();
         } catch (err: any) {
           console.error(err);
           setError(
@@ -617,6 +616,9 @@ export default function AdminWriteups() {
                     Difficulty
                   </th>
                   <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
+                    Methodology
+                  </th>
+                  <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                     Actions
                   </th>
                 </tr>
@@ -647,6 +649,33 @@ export default function AdminWriteups() {
                       >
                         {writeup.difficulty}
                       </span>
+                    </td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+                      {writeup.methodology && Array.isArray(writeup.methodology) ? (
+                        <div className="max-w-xs">
+                          <div className="font-medium text-slate-900 dark:text-white mb-1">
+                            {writeup.methodology.length} steps
+                          </div>
+                          <div className="space-y-1 text-xs">
+                            {writeup.methodology.slice(0, 2).map((step, i) => (
+                              <div key={i} className="truncate">
+                                {i + 1}. {step}
+                              </div>
+                            ))}
+                            {writeup.methodology.length > 2 && (
+                              <div className="text-slate-500 dark:text-slate-500 italic">
+                                +{writeup.methodology.length - 2} more...
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ) : writeup.methodology && typeof writeup.methodology === 'string' ? (
+                        <div className="max-w-xs text-xs truncate">
+                          {writeup.methodology}
+                        </div>
+                      ) : (
+                        <span className="text-slate-400 dark:text-slate-600 italic">Not set</span>
+                      )}
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 flex gap-1 sm:gap-2">
                       <button
