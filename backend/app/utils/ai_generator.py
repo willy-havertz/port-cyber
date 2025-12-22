@@ -388,6 +388,87 @@ Output format:
                 "Train staff on phishing and operational security",
                 "Sanitize metadata before publishing documents"
             ]
+        elif "stego" in category_lower or "steganograph" in category_lower:
+            methodology = [
+                "Validate container format and file integrity; inspect headers",
+                "Extract and review metadata (EXIF, ID3, container tags)",
+                "Scan for appended archives and embedded sections",
+                "Analyze color channels/LSB patterns and bit planes",
+                "Run format-specific tools (images/audio/video) to detect payloads",
+                "Carve and decode discovered artifacts; verify hashes"
+            ]
+            tools = [
+                "exiftool", "binwalk", "strings", "steghide", "zsteg",
+                "stegsolve", "ffmpeg", "audacity", "foremost", "xxd"
+            ]
+            findings = [
+                "Hidden payload discovered via LSB manipulation in PNG",
+                "EXIF comment contained base64-encoded secret",
+                "ZIP archive appended to JPEG trailer recovered",
+                "Audio spectrogram revealed concealed Morse/code message",
+                "Corrupted header signature indicated tampering and embedded data"
+            ]
+            lessons = [
+                "Always check metadata and validate true file types",
+                "Use multiple detection techniques; single tools miss payloads",
+                "Bit-plane and channel analysis is effective for images",
+                "Spectral views help uncover audio concealment",
+                "Preserve originals and document extraction steps"
+            ]
+        elif "pwn" in category_lower or "exploit" in category_lower:
+            methodology = [
+                "Perform binary triage (protections, sections, imports, packers)",
+                "Identify vulnerability class (overflow/format/logic/UAF)",
+                "Construct exploit primitives and leak required addresses",
+                "Build ROP chain/shellcode; bypass mitigations (ASLR/DEP)",
+                "Automate interaction and payload with scripting framework",
+                "Stabilize and validate exploit behavior across runs"
+            ]
+            tools = [
+                "pwntools", "gdb (GEF/PEDA)", "radare2", "IDA/Ghidra",
+                "one_gadget", "ROPgadget", "angr", "objdump/readelf"
+            ]
+            findings = [
+                "Stack buffer overflow enabling control of return address",
+                "Format string vulnerability leaking libc addresses",
+                "Unsafe use of strcpy/gets led to memory corruption",
+                "Partial RELRO and non-PIE increased exploitability",
+                "Predictable heap layout enabled primitive construction"
+            ]
+            lessons = [
+                "Enable full RELRO, PIE, stack canaries, and NX to reduce risk",
+                "Avoid unsafe C library calls; validate bounds",
+                "Fuzzing and sanitizers expose memory errors earlier",
+                "Treat leaked pointers and info disclosures as high risk",
+                "Exploit stability depends on deterministic state and robust IO"
+            ]
+        elif "threat" in category_lower and "hunt" in category_lower:
+            methodology = [
+                "Form hypotheses based on TTPs and environment baseline",
+                "Query telemetry (EDR/SIEM/NetFlow) for anomaly indicators",
+                "Correlate events across hosts/users/services",
+                "Identify persistence, lateral movement, and exfil paths",
+                "Scope impact and recommend containment/remediation",
+                "Document findings and detection gaps for engineering"
+            ]
+            tools = [
+                "Sigma", "KQL/Splunk", "ELK", "osquery", "Sysmon",
+                "Zeek", "YARA", "MITRE ATT&CK mappings"
+            ]
+            findings = [
+                "Unusual parent-child process lineage indicative of injection",
+                "Persistence via scheduled task/registry run keys",
+                "Anomalous DNS and beaconing patterns detected",
+                "Data exfiltration over encrypted channel identified",
+                "Lateral movement via stolen credentials correlated"
+            ]
+            lessons = [
+                "Establish behavioral baselines to improve anomaly detection",
+                "Map detections to ATT&CK to track coverage",
+                "Enrich telemetry with context (users, assets, criticality)",
+                "Contain fast; follow with eradication and recovery",
+                "Iterate hunts to close detection gaps and improve resilience"
+            ]
         else:
             # Generic fallback
             methodology = [
