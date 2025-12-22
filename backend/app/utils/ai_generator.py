@@ -293,6 +293,21 @@ Output format:
                 "netcat", "python", "bash scripting", "curl",
                 "gobuster", "nikto", "SQLmap", "john"
             ]
+            findings = [
+                f"{difficulty} difficulty challenge requiring technical analysis",
+                "Multiple security vulnerabilities discovered during assessment",
+                "Insufficient access controls and weak authentication mechanisms",
+                "Misconfigured services exposing sensitive information",
+                "Successful exploitation path identified and validated"
+            ]
+            lessons = [
+                "Thorough reconnaissance is essential for successful exploitation",
+                "Always validate findings with multiple testing methods",
+                "Document all steps for reproducibility and reporting",
+                "Understanding the target environment is crucial",
+                "Security best practices should be consistently applied",
+                f"{difficulty} challenges require persistence and methodology"
+            ]
 
         # If tools_hint provided, merge and prioritize provided tools at the front (dedup preserving order)
         if tools_hint:
@@ -311,16 +326,8 @@ Output format:
                     seen.add(t.lower())
             tools = merged
         
-        # If methodology_hint provided, derive generic findings/lessons from steps
-        if methodology_hint:
-            steps = [s.strip() for s in methodology_hint if isinstance(s, str) and s.strip()]
-            if steps:
-                findings = [
-                    f"Outcome from step: {step}" for step in steps[:5]
-                ]
-                lessons = [
-                    f"Lesson from step: {step}" for step in steps[:6]
-                ]
+        # Don't override findings/lessons with generic placeholders
+        # The category-specific ones above are better
         
         return {
             "methodology": methodology,
