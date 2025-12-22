@@ -26,7 +26,7 @@ export default function Projects() {
         ],
         imageUrl:
           "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        githubUrl: "https://github.com",
+        githubUrl: "https://github.com/willy-havertz/port-cyber-network-security",
         date: "Dec 2024",
         category: "Penetration Testing",
       },
@@ -53,8 +53,8 @@ export default function Projects() {
         ],
         imageUrl:
           "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        githubUrl: "https://github.com",
-        date: "Oct 2024",
+        githubUrl: "https://github.com/willy-havertz/port-cyber-incident-response",
+        date: "Dec 2024",
         category: "Incident Response",
       },
       {
@@ -64,8 +64,8 @@ export default function Projects() {
         technologies: ["Python", "Elasticsearch", "Kibana", "Redis", "Docker"],
         imageUrl:
           "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        githubUrl: "https://github.com",
-        date: "Sep 2024",
+        githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
+        date: "Dec 2024",
         category: "Threat Intelligence",
       },
       {
@@ -81,8 +81,8 @@ export default function Projects() {
         ],
         imageUrl:
           "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        githubUrl: "https://github.com",
-        date: "Aug 2024",
+        githubUrl: "https://github.com/willy-havertz/port-cyber-code-review",
+        date: "Dec 2024",
         category: "Secure Development",
       },
       {
@@ -98,8 +98,8 @@ export default function Projects() {
         ],
         imageUrl:
           "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        githubUrl: "https://github.com",
-        date: "Jul 2024",
+        githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
+        date: "Dec 2024",
         category: "Machine Learning",
       },
     ],
