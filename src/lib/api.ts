@@ -127,13 +127,15 @@ export interface CreateCommentPayload {
   content: string;
 }
 
-export const fetchWriteups = async () => {
+export const fetchWriteups = async (opts?: { refresh?: boolean }) => {
   const cacheKey = "writeups_list";
 
   // Check cache first
-  const cached = getCachedData<Writeup[]>(cacheKey);
-  if (cached) {
-    return cached;
+  if (!opts?.refresh) {
+    const cached = getCachedData<Writeup[]>(cacheKey);
+    if (cached) {
+      return cached;
+    }
   }
 
   const maxRetries = 3;
@@ -296,6 +298,12 @@ export const updateWriteup = async (
   } catch (e) {
     // Ignore
   }
+  // Also clear the writeups list cache
+  const listKey = "writeups_list";
+  cache.delete(listKey);
+  try {
+    localStorage.removeItem(listKey);
+  } catch (e) {}
   return data as Writeup;
 };
 
@@ -334,6 +342,12 @@ export const updateWriteupWithFile = async (
   } catch (e) {
     // Ignore
   }
+  // Also clear the writeups list cache
+  const listKey = "writeups_list";
+  cache.delete(listKey);
+  try {
+    localStorage.removeItem(listKey);
+  } catch (e) {}
   return data as Writeup;
 };
 

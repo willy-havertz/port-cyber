@@ -46,7 +46,7 @@ export default function AdminWriteups() {
   const load = async () => {
     try {
       setLoading(true);
-      const data = await fetchWriteups();
+      const data = await fetchWriteups({ refresh: true });
       setWriteups(data);
     } catch (err) {
       console.error(err);
