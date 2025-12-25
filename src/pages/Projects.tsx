@@ -294,7 +294,11 @@ export default function Projects() {
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
                 >
-                  <ProjectCard {...project} />
+                  <ProjectCard
+                    {...project}
+                    date={project.date ?? ""}
+                    category={project.category ?? ""}
+                  />
                 </motion.div>
               ))
             ) : (
