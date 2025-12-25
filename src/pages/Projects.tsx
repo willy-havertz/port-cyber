@@ -1,91 +1,139 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
-  // Default/local projects used as fallback while fetching real metadata
-  const defaultProjects = [
-    {
-      title: "Enterprise Network Security Assessment",
-      description:
-        "Comprehensive security assessment of a Fortune 500 company's network infrastructure, identifying critical vulnerabilities and providing remediation strategies.",
-      technologies: ["Nmap", "Metasploit", "Burp Suite", "Wireshark", "Python"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber-network-security",
-      liveUrl: "https://port-cyber-experiments.onrender.com?tab=network",
-      import Header from "../components/Header";
-      import Footer from "../components/Footer";
-      import ProjectCard from "../components/ProjectCard";
-      import FilterBar from "../components/FilterBar";
-      category: "Penetration Testing",
-    },
-    {
-      title: "Automated Vulnerability Scanner",
-      description:
-        "Production-ready FastAPI scanner with SSRF-safe IP validation, security header audits, XSS/SQLi detection, CORS analysis, per-user rate limiting, and Docker deployment.",
-      technologies: ["Python", "FastAPI", "Docker", "JWT", "SQLAlchemy"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
-      liveUrl: "https://port-cyber-scanner.onrender.com",
-      date: "Dec 2024",
-      category: "Tool Development",
-    },
-    {
-      title: "Incident Response Playbook",
-      description:
-        "Comprehensive incident response framework and playbook for handling various types of security incidents, including malware infections and data breaches.",
-      technologies: ["MITRE ATT&CK", "NIST Framework", "PowerShell", "Splunk"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber-incident-response",
-      liveUrl: "https://port-cyber-experiments.onrender.com?tab=incident",
-      date: "Dec 2024",
-      category: "Incident Response",
-    },
-    {
-      title: "Threat Intelligence Platform",
-      description:
-        "Real-time threat intelligence aggregation platform that collects, analyzes, and correlates threat data from multiple sources to provide actionable insights.",
-      technologies: ["Python", "Elasticsearch", "Kibana", "Redis", "Docker"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
-      liveUrl: "https://port-cyber-experiments.onrender.com?tab=threat",
-      date: "Dec 2024",
-      category: "Threat Intelligence",
-    },
-    {
-      title: "Secure Code Review Framework",
-      description:
-        "Automated static code analysis framework for identifying security vulnerabilities in web applications during the development lifecycle.",
-      technologies: ["SonarQube", "OWASP ZAP", "Jenkins", "Python", "JavaScript"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber-code-review",
-      liveUrl: "https://port-cyber-experiments.onrender.com?tab=code",
-      date: "Dec 2024",
-      category: "Secure Development",
-    },
-    {
-      title: "Phishing Detection System",
-      description:
-        "Machine learning-based system for detecting and classifying phishing emails using natural language processing and behavioral analysis techniques.",
-      technologies: ["Python", "TensorFlow", "scikit-learn", "NLTK", "PostgreSQL"],
-      imageUrl:
-        "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-      githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
-      liveUrl: "https://port-cyber-experiments.onrender.com?tab=phishing",
-      date: "Dec 2024",
-      category: "Machine Learning",
-    },
-  ];
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import ProjectCard from "../components/ProjectCard";
+import FilterBar from "../components/FilterBar";
 
-  // Use state so we can replace dummy data with real metadata fetched from GitHub
-  const [projects, setProjects] = useState(() => defaultProjects);
+type Project = {
+  title: string;
+  description: string;
+  technologies: string[];
+  imageUrl: string;
+  githubUrl?: string;
+  liveUrl?: string;
+  date?: string;
+  category?: string;
+  stars?: number;
+  updated_at?: string;
+};
+
+const CACHE_KEY = "pc_projects_cache_v1";
+const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
+
+const defaultProjects: Project[] = [
+  {
+    title: "Enterprise Network Security Assessment",
+    description:
+      "Comprehensive security assessment of a Fortune 500 company's network infrastructure, identifying critical vulnerabilities and providing remediation strategies.",
+    technologies: ["Nmap", "Metasploit", "Burp Suite", "Wireshark", "Python"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-network-security",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=network",
+    date: "Dec 2024",
+    category: "Penetration Testing",
+  },
+  {
+    title: "Automated Vulnerability Scanner",
+    description:
+      "Production-ready FastAPI scanner with SSRF-safe IP validation, security header audits, XSS/SQLi detection, CORS analysis, per-user rate limiting, and Docker deployment.",
+    technologies: ["Python", "FastAPI", "Docker", "JWT", "SQLAlchemy"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=scanner",
+    date: "Dec 2024",
+    category: "Tool Development",
+  },
+  {
+    title: "Incident Response Playbook",
+    description:
+      "Comprehensive incident response framework and playbook for handling various types of security incidents, including malware infections and data breaches.",
+    technologies: ["MITRE ATT&CK", "NIST Framework", "PowerShell", "Splunk"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-incident-response",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=incident",
+    date: "Dec 2024",
+    category: "Incident Response",
+  },
+  {
+    title: "Threat Intelligence Platform",
+    description:
+      "Real-time threat intelligence aggregation platform that collects, analyzes, and correlates threat data from multiple sources to provide actionable insights.",
+    technologies: ["Python", "Elasticsearch", "Kibana", "Redis", "Docker"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=threat",
+    date: "Dec 2024",
+    category: "Threat Intelligence",
+  },
+  {
+    title: "Secure Code Review Framework",
+    description:
+      "Automated static code analysis framework for identifying security vulnerabilities in web applications during the development lifecycle.",
+    technologies: ["SonarQube", "OWASP ZAP", "Jenkins", "Python", "JavaScript"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-code-review",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=code",
+    date: "Dec 2024",
+    category: "Secure Development",
+  },
+  {
+    title: "Phishing Detection System",
+    description:
+      "Machine learning-based system for detecting and classifying phishing emails using natural language processing and behavioral analysis techniques.",
+    technologies: [
+      "Python",
+      "TensorFlow",
+      "scikit-learn",
+      "NLTK",
+      "PostgreSQL",
+    ],
+    imageUrl:
+      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=phishing",
+    date: "Dec 2024",
+    category: "Machine Learning",
+  },
+];
+
+export default function Projects() {
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>(
+    []
+  );
+
+  const [projects, setProjects] = useState<Project[]>(() => {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (
+          parsed?.ts &&
+          Date.now() - parsed.ts < CACHE_TTL_MS &&
+          Array.isArray(parsed.data)
+        ) {
+          return parsed.data as Project[];
+        }
+      }
+    } catch (e) {
+      // ignore cache errors
+    }
+    return defaultProjects;
+  });
+
   const [loadingProjects, setLoadingProjects] = useState(false);
   const [projectsError, setProjectsError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fetch repository metadata from GitHub for each project that has a githubUrl
+    let cancelled = false;
+    const token = (import.meta.env as any).VITE_GITHUB_TOKEN;
+
     const load = async () => {
       setLoadingProjects(true);
       try {
@@ -96,56 +144,84 @@ import { motion } from "framer-motion";
             if (!m) return p;
             const repo = m[1];
             try {
-              const res = await fetch(`https://api.github.com/repos/${repo}`);
+              const headers: Record<string, string> = {
+                Accept: "application/vnd.github.v3+json",
+              };
+              if (token) headers["Authorization"] = `token ${token}`;
+              const res = await fetch(`https://api.github.com/repos/${repo}`, {
+                headers,
+              });
               if (!res.ok) return p;
               const data = await res.json();
-              return {
+              const merged: Project = {
                 ...p,
                 description: data.description || p.description,
                 githubUrl: data.html_url || p.githubUrl,
                 stars: data.stargazers_count,
                 updated_at: data.updated_at,
               };
+              return merged;
             } catch (e) {
               return p;
             }
           })
         );
-        setProjects(updated);
+
+        if (!cancelled) {
+          setProjects(updated);
+          try {
+            localStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ ts: Date.now(), data: updated })
+            );
+          } catch (_) {
+            // ignore localStorage errors
+          }
+        }
       } catch (e: any) {
-        setProjectsError(e?.message || "Failed to load project metadata");
+        if (!cancelled)
+          setProjectsError(e?.message || "Failed to load project metadata");
       } finally {
-        setLoadingProjects(false);
+        if (!cancelled) setLoadingProjects(false);
       }
     };
 
-    load();
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      const needRefresh = (() => {
+        if (!raw) return true;
+        try {
+          const parsed = JSON.parse(raw);
+          return !(parsed?.ts && Date.now() - parsed.ts < CACHE_TTL_MS);
+        } catch {
+          return true;
+        }
+      })();
+      if (needRefresh) load();
+    } catch {
+      load();
+    }
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
-          "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
-        liveUrl: "https://port-cyber-experiments.onrender.com?tab=phishing",
-        date: "Dec 2024",
-        category: "Machine Learning",
-      },
-    ],
-    []
+
+  const allCategories = useMemo(
+    () => [...new Set(projects.map((p) => p.category).filter(Boolean))],
+    [projects]
   );
 
-  // Extract unique categories
-  const allCategories = [...new Set(projects.map((p) => p.category))];
-
-  // Filter logic
   const filteredProjects = useMemo(() => {
     return projects.filter((project) => {
       const categoryMatch =
         selectedCategories.length === 0 ||
-        selectedCategories.includes(project.category);
+        (project.category && selectedCategories.includes(project.category));
       const techMatch =
         selectedTechnologies.length === 0 ||
         selectedTechnologies.some((tech) =>
           project.technologies.includes(tech)
         );
-
       return categoryMatch && techMatch;
     });
   }, [projects, selectedCategories, selectedTechnologies]);
@@ -190,14 +266,13 @@ import { motion } from "framer-motion";
             </p>
           </motion.div>
 
-          {/* Advanced Filters */}
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <FilterBar
-              categories={allCategories}
+              categories={allCategories as string[]}
               selectedCategories={selectedCategories}
               onCategoryChange={handleCategoryChange}
               onReset={handleReset}
@@ -229,8 +304,7 @@ import { motion } from "framer-motion";
                 className="col-span-full text-center py-12"
               >
                 <p className="text-lg text-slate-600 dark:text-slate-400">
-                  No projects match your filters. Try adjusting your
-                  selection.
+                  No projects match your filters. Try adjusting your selection.
                 </p>
               </motion.div>
             )}
