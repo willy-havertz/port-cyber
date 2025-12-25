@@ -9,6 +9,22 @@ from pathlib import Path
 from datetime import datetime
 
 
+def safe_int_input(prompt: str, default: int = 0) -> int:
+    """Safely convert user input to integer with validation"""
+    try:
+        value = input(prompt)
+        return int(value) if value else default
+    except ValueError:
+        print(f"  ⚠️  Invalid number, using default: {default}")
+        return default
+
+
+def safe_string_input(prompt: str, default: str = "") -> str:
+    """Safely get user string input with validation"""
+    value = input(prompt).strip()
+    return value if value else default
+
+
 def update_stats_manually():
     """Interactive tool to manually update CTF stats"""
     
@@ -28,12 +44,12 @@ def update_stats_manually():
     if htb_enabled:
         htb_stats = {
             "name": "Hack The Box",
-            "username": input("  HTB Username: ") or "anonymous",
-            "rank": input("  HTB Rank: ") or "Beginner",
-            "points": int(input("  HTB Points: ") or "0"),
-            "owns": int(input("  Machines Owned: ") or "0"),
-            "respect": int(input("  Respect Points: ") or "0"),
-            "ranking": int(input("  Global Ranking: ") or "0"),
+            "username": safe_string_input("  HTB Username: ", "anonymous"),
+            "rank": safe_string_input("  HTB Rank: ", "Beginner"),
+            "points": safe_int_input("  HTB Points: ", 0),
+            "owns": safe_int_input("  Machines Owned: ", 0),
+            "respect": safe_int_input("  Respect Points: ", 0),
+            "ranking": safe_int_input("  Global Ranking: ", 0),
             "avatar": "",
         }
     
@@ -45,14 +61,14 @@ def update_stats_manually():
     if thm_enabled:
         thm_stats = {
             "name": "Try Hack Me",
-            "username": input("  THM Username [Hackertz]: ") or "Hackertz",
-            "rank": input("  THM Rank: ") or "Regular",
-            "level": int(input("  THM Level: ") or "0"),
-            "points": int(input("  THM Points: ") or "0"),
-            "roomsCompleted": int(input("  Rooms Completed: ") or "0"),
-            "badges": int(input("  Badges Earned: ") or "0"),
-            "streak": int(input("  Current Streak (days): ") or "0"),
-            "ranking": int(input("  Global Ranking: ") or "0"),
+            "username": safe_string_input("  THM Username [Hackertz]: ", "Hackertz"),
+            "rank": safe_string_input("  THM Rank: ", "Regular"),
+            "level": safe_int_input("  THM Level: ", 0),
+            "points": safe_int_input("  THM Points: ", 0),
+            "roomsCompleted": safe_int_input("  Rooms Completed: ", 0),
+            "badges": safe_int_input("  Badges Earned: ", 0),
+            "streak": safe_int_input("  Current Streak (days): ", 0),
+            "ranking": safe_int_input("  Global Ranking: ", 0),
             "avatar": "",
         }
     
