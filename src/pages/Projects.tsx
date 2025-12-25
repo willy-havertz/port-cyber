@@ -18,7 +18,7 @@ type Project = {
   updated_at?: string;
 };
 
-const CACHE_KEY = "pc_projects_cache_v1";
+const CACHE_KEY = "pc_projects_cache_v2"; // bump to invalidate stale caches
 const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
 const defaultProjects: Project[] = [
@@ -113,12 +113,20 @@ export default function Projects() {
       const raw = localStorage.getItem(CACHE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        if (
-          parsed?.ts &&
-          Date.now() - parsed.ts < CACHE_TTL_MS &&
-          Array.isArray(parsed.data)
-        ) {
-          return parsed.data as Project[];
+        const isFresh = parsed?.ts && Date.now() - parsed.ts < CACHE_TTL_MS;
+        if (isFresh && Array.isArray(parsed.data)) {
+          // merge cached projects with defaults to ensure baseline items exist
+          const byKey = new Map<string, Project>();
+          for (const p of defaultProjects) {
+            const key = p.githubUrl || p.title;
+            byKey.set(key, p);
+          }
+          for (const p of parsed.data as Project[]) {
+            const key = p.githubUrl || p.title;
+            const base = byKey.get(key) || p;
+            byKey.set(key, { ...base, ...p });
+          }
+          return Array.from(byKey.values());
         }
       }
     } catch (e) {
@@ -192,7 +200,15 @@ export default function Projects() {
         if (!raw) return true;
         try {
           const parsed = JSON.parse(raw);
-          return !(parsed?.ts && Date.now() - parsed.ts < CACHE_TTL_MS);
+          const fresh = parsed?.ts && Date.now() - parsed.ts < CACHE_TTL_MS;
+          const cached: Project[] = Array.isArray(parsed?.data)
+            ? (parsed.data as Project[])
+            : [];
+          const lengthMismatch = cached.length < defaultProjects.length;
+          const hasScanner = cached.some(
+            (p) => p.title === "Automated Vulnerability Scanner"
+          );
+          return !fresh || lengthMismatch || !hasScanner;
         } catch {
           return true;
         }
