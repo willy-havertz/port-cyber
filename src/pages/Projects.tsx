@@ -23,6 +23,25 @@ const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
 const defaultProjects: Project[] = [
   {
+    title: "Advanced Security Tools Suite",
+    description:
+      "Comprehensive suite of interactive security testing tools: Password strength analyzer with breach detection, Phishing email detector, SSL/TLS certificate analyzer, Code review scanner, Network security assessment, Threat intelligence CVE dashboard, API audit platform, and Incident response orchestrator. All tools feature real-time toast notifications and are fully functional with live backend integration.",
+    technologies: [
+      "React",
+      "FastAPI",
+      "Python",
+      "TypeScript",
+      "Tailwind CSS",
+      "sonner",
+    ],
+    imageUrl:
+      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-experiments",
+    liveUrl: "https://port-cyber-experiments.onrender.com",
+    date: "Dec 2025",
+    category: "Tool Development",
+  },
+  {
     title: "Enterprise Network Security Assessment",
     description:
       "Comprehensive security assessment of a Fortune 500 company's network infrastructure, identifying critical vulnerabilities and providing remediation strategies.",
