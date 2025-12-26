@@ -1,7 +1,6 @@
 import axios from "axios";
 
 // Cache configuration
-const CACHE_KEY = "writeups_cache";
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 interface CacheEntry<T> {
@@ -33,7 +32,7 @@ const getCachedData = <T>(key: string): T | null => {
       }
       localStorage.removeItem(key);
     }
-  } catch (e) {
+  } catch {
     // Ignore cache read errors
   }
 
@@ -50,7 +49,7 @@ const setCachedData = <T>(key: string, data: T): void => {
   cache.set(key, entry);
   try {
     localStorage.setItem(key, JSON.stringify(entry));
-  } catch (e) {
+  } catch {
     // Ignore cache write errors
   }
 };
@@ -295,7 +294,7 @@ export const updateWriteup = async (
   cache.delete(cacheKey);
   try {
     localStorage.removeItem(cacheKey);
-  } catch (e) {
+  } catch {
     // Ignore
   }
   // Also clear the writeups list cache
@@ -303,7 +302,9 @@ export const updateWriteup = async (
   cache.delete(listKey);
   try {
     localStorage.removeItem(listKey);
-  } catch (e) {}
+  } catch {
+    // Ignore
+  }
   return data as Writeup;
 };
 
@@ -339,7 +340,7 @@ export const updateWriteupWithFile = async (
   cache.delete(cacheKey);
   try {
     localStorage.removeItem(cacheKey);
-  } catch (e) {
+  } catch {
     // Ignore
   }
   // Also clear the writeups list cache
@@ -347,7 +348,9 @@ export const updateWriteupWithFile = async (
   cache.delete(listKey);
   try {
     localStorage.removeItem(listKey);
-  } catch (e) {}
+  } catch {
+    // Ignore
+  }
   return data as Writeup;
 };
 
@@ -385,10 +388,100 @@ export const generateAIContent = async (writeupId: number) => {
   cache.delete(cacheKey);
   try {
     localStorage.removeItem(cacheKey);
-  } catch (e) {
+  } catch {
     // Ignore
   }
   return data as Writeup;
+};
+
+// Security tools
+export interface AdvancedFinding {
+  type: string;
+  severity: string;
+  description: string;
+  [key: string]: any;
+}
+
+export interface AdvancedScanResponse {
+  target: string;
+  status: string;
+  findings: AdvancedFinding[];
+  metadata: Record<string, any>;
+  timestamp: string;
+}
+
+export interface ApiAuditProbe {
+  endpoint: string;
+  method: string;
+  url: string;
+  status_code?: number;
+  content_type?: string;
+  allow_methods?: string;
+  error?: string;
+}
+
+export interface ApiAuditResponse {
+  target: string;
+  probes: ApiAuditProbe[];
+  findings: AdvancedFinding[];
+  timestamp: string;
+}
+
+export interface CveSearchResultItem {
+  id: string;
+  description: string;
+  published: string | null;
+  modified: string | null;
+  severity?: string | null;
+  score?: number | null;
+}
+
+export interface CveSearchResponse {
+  query: string;
+  count: number;
+  source?: string;
+  results: CveSearchResultItem[];
+  error?: string;
+  timestamp: string;
+}
+
+export const runAdvancedScan = async (params: {
+  target_url: string;
+  include_port_scan?: boolean;
+  scan_type?: "advanced" | "aggressive";
+}) => {
+  const { data } = await api.post("/scanner/advanced-scan", {
+    scan_type: params.scan_type || "advanced",
+    target_url: params.target_url,
+    include_port_scan: params.include_port_scan ?? false,
+  });
+  return data as AdvancedScanResponse;
+};
+
+export const runApiAudit = async (payload: {
+  base_url: string;
+  endpoints?: { path: string; method?: string }[];
+  include_options_probe?: boolean;
+}) => {
+  const { data } = await api.post("/scanner/api-audit", {
+    base_url: payload.base_url,
+    include_options_probe:
+      payload.include_options_probe === undefined
+        ? true
+        : payload.include_options_probe,
+    endpoints: (payload.endpoints || []).map((ep) => ({
+      path: ep.path,
+      method: (ep.method || "GET").toUpperCase(),
+    })),
+  });
+  return data as ApiAuditResponse;
+};
+
+export const searchCVEs = async (query: string) => {
+  const { data } = await api.get("/scanner/cve/search", {
+    params: { q: query },
+  });
+  return data as CveSearchResponse;
 };
 
 export const loginAdmin = async (username: string, password: string) => {

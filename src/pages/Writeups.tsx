@@ -64,19 +64,6 @@ export default function Writeups() {
     () => [...new Set(writeups.map((w) => w.category).filter(Boolean))].sort(),
     [writeups]
   );
-  const allTags = useMemo(() => {
-    const tags = new Set<string>();
-    writeups.forEach((w) => {
-      if (w.tags && Array.isArray(w.tags)) {
-        w.tags.forEach((tag) => {
-          if (tag && typeof tag === "string") {
-            tags.add(tag);
-          }
-        });
-      }
-    });
-    return Array.from(tags).sort();
-  }, [writeups]);
 
   const filteredWriteups = useMemo(() => {
     return writeups.filter((writeup) => {
@@ -98,12 +85,6 @@ export default function Writeups() {
       prev.includes(category)
         ? prev.filter((c) => c !== category)
         : [...prev, category]
-    );
-  };
-
-  const handleTagChange = (tag: string) => {
-    setSelectedTags((prev) =>
-      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
 

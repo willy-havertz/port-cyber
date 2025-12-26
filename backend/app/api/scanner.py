@@ -1,12 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
-from pydantic import BaseModel, HttpUrl
-from typing import List, Dict, Any
+from pydantic import BaseModel, HttpUrl, Field
+from typing import List, Dict, Any, Optional
 from datetime import datetime, timedelta
 import ipaddress
 import socket
 import nmap
 import requests
-from urllib.parse import urlparse
+import ssl
+from urllib.parse import urlparse, urljoin
 
 from app.core.security import get_current_user
 from app.core.config import settings
@@ -24,6 +25,23 @@ class ScanResult(BaseModel):
     vulnerabilities: List[Dict[str, Any]]
     scan_type: str
     timestamp: str
+
+
+class AdvancedScanRequest(BaseModel):
+    target_url: HttpUrl
+    include_port_scan: bool = False
+    scan_type: str = Field(default="advanced", pattern="^(advanced|aggressive)$")
+
+
+class ApiEndpointTest(BaseModel):
+    path: str
+    method: str = Field(default="GET", pattern="^(GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS)$")
+
+
+class ApiAuditRequest(BaseModel):
+    base_url: HttpUrl
+    endpoints: List[ApiEndpointTest] = Field(default_factory=list)
+    include_options_probe: bool = True
 
 # Rate limiting: Track scans per user
 scan_history = {}
@@ -54,6 +72,41 @@ def _is_private_or_local(ip_str: str) -> bool:
         )
     except ValueError:
         return True
+
+
+def _get_tls_details(hostname: str, port: int = 443) -> Dict[str, Any]:
+    """Inspect TLS handshake for basic certificate and protocol details."""
+    context = ssl.create_default_context()
+    try:
+        with socket.create_connection((hostname, port), timeout=5) as sock:
+            with context.wrap_socket(sock, server_hostname=hostname) as ssock:
+                cert = ssock.getpeercert()
+                proto = ssock.version() or "unknown"
+                issuer = dict(x[0] for x in cert.get("issuer", [])) if cert else {}
+                subject = dict(x[0] for x in cert.get("subject", [])) if cert else {}
+                return {
+                    "protocol": proto,
+                    "issuer": issuer.get("organizationName", "unknown"),
+                    "subject": subject.get("commonName", hostname),
+                    "notBefore": cert.get("notBefore") if cert else None,
+                    "notAfter": cert.get("notAfter") if cert else None,
+                }
+    except Exception as exc:
+        return {"error": str(exc)}
+
+
+def _safe_request(method: str, url: str, timeout: int = 8, allow_redirects: bool = True) -> Dict[str, Any]:
+    try:
+        response = requests.request(
+            method,
+            url,
+            timeout=timeout,
+            allow_redirects=allow_redirects,
+            headers={"User-Agent": "PortCyberScanner/1.0"},
+        )
+        return {"response": response}
+    except Exception as exc:
+        return {"error": str(exc)}
 
 def perform_port_scan(target: str) -> Dict[str, Any]:
     """Perform nmap port scan"""
@@ -174,6 +227,316 @@ def check_headers(url: str) -> Dict[str, Any]:
         }
     except Exception as e:
         return {'error': str(e)}
+
+
+@router.post("/advanced-scan")
+async def advanced_scan(
+    scan_request: AdvancedScanRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Safer advanced web scan with TLS inspection and optional port scan."""
+    parsed_url = urlparse(str(scan_request.target_url))
+    if parsed_url.scheme not in {"http", "https"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only http and https targets are supported"
+        )
+
+    hostname = parsed_url.hostname or parsed_url.netloc or parsed_url.path
+    if not hostname:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid target host"
+        )
+
+    resolved_ip = _resolve_ip(hostname)
+    if _is_private_or_local(resolved_ip) and not settings.SCANNER_ALLOW_PRIVATE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Target resolves to a private or local address; scanning blocked"
+        )
+
+    # Sliding window rate limit per user
+    user_scans = scan_history.get(current_user.username, [])
+    now = datetime.now()
+    user_scans = [t for t in user_scans if now - t < scan_window]
+    if len(user_scans) >= settings.SCANNER_MAX_SCANS_PER_USER:
+        raise HTTPException(
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Scan limit exceeded. Please try again later."
+        )
+    scan_history[current_user.username] = user_scans + [now]
+
+    target = str(scan_request.target_url)
+    findings: List[Dict[str, Any]] = []
+    metadata: Dict[str, Any] = {"target": target, "host": hostname}
+
+    primary = _safe_request("GET", target)
+    if "error" in primary:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Target unreachable: {primary['error']}"
+        )
+
+    resp = primary["response"]
+    metadata.update(
+        {
+            "status_code": resp.status_code,
+            "final_url": str(resp.url),
+            "redirects": len(resp.history),
+            "server": resp.headers.get("Server"),
+            "powered_by": resp.headers.get("X-Powered-By"),
+            "content_type": resp.headers.get("Content-Type"),
+        }
+    )
+
+    # Transport findings
+    if parsed_url.scheme != "https":
+        findings.append(
+            {
+                "type": "Insecure Transport",
+                "severity": "Medium",
+                "description": "Target served over HTTP; enable HTTPS with HSTS",
+            }
+        )
+    elif metadata.get("redirects") and str(resp.url).startswith("http://"):
+        findings.append(
+            {
+                "type": "Redirect Downgrade",
+                "severity": "High",
+                "description": "Redirect chain ends on HTTP; enforce HTTPS redirects",
+            }
+        )
+
+    # Header-based checks
+    header_results = check_headers(target)
+    if isinstance(header_results, dict):
+        for bucket in ("headers", "cors", "directory_listing"):
+            if header_results.get(bucket):
+                findings.extend(header_results[bucket])
+
+    # Cookie flags
+    for cookie in resp.cookies:
+        if not cookie.secure:
+            findings.append(
+                {
+                    "type": "Cookie Missing Secure Flag",
+                    "severity": "Medium",
+                    "description": f"Cookie '{cookie.name}' is not marked Secure",
+                }
+            )
+        if not cookie.has_nonstandard_attr("HttpOnly"):
+            findings.append(
+                {
+                    "type": "Cookie Missing HttpOnly",
+                    "severity": "Medium",
+                    "description": f"Cookie '{cookie.name}' is not HttpOnly",
+                }
+            )
+
+    cache_control = resp.headers.get("Cache-Control")
+    if parsed_url.scheme == "https" and not cache_control:
+        findings.append(
+            {
+                "type": "Missing Cache-Control",
+                "severity": "Low",
+                "description": "Cache-Control header absent; set caching policy for sensitive responses",
+            }
+        )
+
+    if "server" in metadata and metadata["server"]:
+        findings.append(
+            {
+                "type": "Server Banner Exposed",
+                "severity": "Info",
+                "description": f"Server header reveals '{metadata['server']}'",
+            }
+        )
+
+    # OPTIONS probe
+    options_probe = _safe_request("OPTIONS", target, allow_redirects=False)
+    if "response" in options_probe:
+        allow_header = options_probe["response"].headers.get("Allow")
+        metadata["allow_methods"] = allow_header
+        if allow_header and any(m in allow_header for m in ["PUT", "DELETE", "TRACE"]):
+            findings.append(
+                {
+                    "type": "Excessive Methods",
+                    "severity": "Medium",
+                    "description": f"OPTIONS advertises risky methods: {allow_header}",
+                }
+            )
+
+    # TLS details
+    if parsed_url.scheme == "https":
+        tls_info = _get_tls_details(hostname)
+        metadata["tls"] = tls_info
+        proto = tls_info.get("protocol") if isinstance(tls_info, dict) else None
+        if proto in {"TLSv1", "TLSv1.1"}:
+            findings.append(
+                {
+                    "type": "Deprecated TLS",
+                    "severity": "High",
+                    "description": f"TLS protocol {proto} in use; upgrade to TLS 1.2+",
+                }
+            )
+
+    # Optional port scan (quick)
+    if scan_request.include_port_scan:
+        port_results = perform_port_scan(hostname)
+        if "error" not in port_results:
+            for host, data in port_results.items():
+                for port_info in data.get("ports", []):
+                    if port_info.get("state") == "open":
+                        findings.append(
+                            {
+                                "type": "Open Port",
+                                "severity": "Info",
+                                "description": f"Port {port_info.get('port')} open ({port_info.get('service')}) on {host}",
+                            }
+                        )
+        else:
+            findings.append(
+                {
+                    "type": "Port Scan Error",
+                    "severity": "Info",
+                    "description": port_results.get("error", "Port scan failed"),
+                }
+            )
+
+    return {
+        "target": target,
+        "status": "completed",
+        "findings": findings,
+        "metadata": metadata,
+        "timestamp": datetime.now().isoformat(),
+    }
+
+
+@router.post("/api-audit")
+async def api_audit(
+    audit_request: ApiAuditRequest,
+    current_user: User = Depends(get_current_user)
+):
+    """Lightweight API security audit for a base URL and endpoints."""
+    parsed_url = urlparse(str(audit_request.base_url))
+    if parsed_url.scheme not in {"http", "https"}:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Only http and https targets are supported"
+        )
+
+    hostname = parsed_url.hostname or parsed_url.netloc or parsed_url.path
+    if not hostname:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid target host"
+        )
+
+    resolved_ip = _resolve_ip(hostname)
+    if _is_private_or_local(resolved_ip) and not settings.SCANNER_ALLOW_PRIVATE:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Target resolves to a private or local address; scanning blocked"
+        )
+
+    target = str(audit_request.base_url).rstrip("/") + "/"
+    endpoints = audit_request.endpoints or [
+        ApiEndpointTest(path="/", method="GET"),
+        ApiEndpointTest(path="/health", method="GET"),
+        ApiEndpointTest(path="/docs", method="GET"),
+    ]
+
+    findings: List[Dict[str, Any]] = []
+    probes: List[Dict[str, Any]] = []
+
+    for ep in endpoints:
+        full_url = urljoin(target, ep.path.lstrip("/"))
+        probe_result: Dict[str, Any] = {"endpoint": ep.path, "method": ep.method, "url": full_url}
+
+        result = _safe_request(ep.method, full_url, allow_redirects=False)
+        if "error" in result:
+            findings.append(
+                {
+                    "type": "Endpoint Unreachable",
+                    "severity": "Medium",
+                    "description": f"{ep.path} unreachable: {result['error']}",
+                }
+            )
+            probe_result["error"] = result["error"]
+            probes.append(probe_result)
+            continue
+
+        resp = result["response"]
+        probe_result["status_code"] = resp.status_code
+        probe_result["content_type"] = resp.headers.get("Content-Type")
+
+        # Basic auth/transport checks
+        if parsed_url.scheme != "https":
+            findings.append(
+                {
+                    "type": "API over HTTP",
+                    "severity": "Medium",
+                    "description": f"{ep.path} served over HTTP; prefer HTTPS",
+                }
+            )
+
+        if resp.status_code >= 500:
+            findings.append(
+                {
+                    "type": "Server Error",
+                    "severity": "High",
+                    "description": f"{ep.path} returned {resp.status_code}",
+                }
+            )
+
+        body_snippet = ""
+        try:
+            body_snippet = resp.text[:300]
+        except Exception:
+            body_snippet = ""
+
+        if "traceback" in body_snippet.lower() or "exception" in body_snippet.lower():
+            findings.append(
+                {
+                    "type": "Stack Trace Leakage",
+                    "severity": "High",
+                    "description": f"{ep.path} appears to expose stack traces",
+                }
+            )
+
+        if audit_request.include_options_probe:
+            opt = _safe_request("OPTIONS", full_url, allow_redirects=False)
+            allow_header = opt.get("response").headers.get("Allow") if opt.get("response") else None
+            probe_result["allow_methods"] = allow_header
+            if allow_header and any(m in allow_header for m in ["PUT", "DELETE", "TRACE"]):
+                findings.append(
+                    {
+                        "type": "Excessive Methods",
+                        "severity": "Medium",
+                        "description": f"{ep.path} advertises risky methods: {allow_header}",
+                    }
+                )
+
+            cors_origin = opt.get("response").headers.get("Access-Control-Allow-Origin") if opt.get("response") else None
+            cors_creds = opt.get("response").headers.get("Access-Control-Allow-Credentials") if opt.get("response") else None
+            if cors_origin == "*" and cors_creds and cors_creds.lower() == "true":
+                findings.append(
+                    {
+                        "type": "CORS Wildcard with Credentials",
+                        "severity": "High",
+                        "description": f"{ep.path} allows * origin with credentials",
+                    }
+                )
+
+        probes.append(probe_result)
+
+    return {
+        "target": target,
+        "probes": probes,
+        "findings": findings,
+        "timestamp": datetime.now().isoformat(),
+    }
 
 @router.post("/scan", response_model=ScanResult)
 async def scan_target(
@@ -301,4 +664,74 @@ async def get_disclaimer():
             "Rate limits apply: 5 scans per user session",
             "Results are basic and may contain false positives/negatives"
         ]
+    }
+
+
+def _fetch_cve_results(query: str, limit: int = 8) -> Dict[str, Any]:
+    endpoint = "https://services.nvd.nist.gov/rest/json/cves/2.0"
+    params = {"keywordSearch": query, "resultsPerPage": limit}
+    try:
+        resp = requests.get(
+            endpoint,
+            params=params,
+            timeout=8,
+            headers={"User-Agent": "PortCyberScanner/1.0"},
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        vulns = data.get("vulnerabilities", [])
+        results = []
+        for item in vulns:
+            cve = item.get("cve", {})
+            metrics = cve.get("metrics", {})
+            cvss = None
+            for key in ["cvssMetricV31", "cvssMetricV30", "cvssMetricV2"]:
+                if metrics.get(key):
+                    cvss = metrics[key][0].get("cvssData", {})
+                    break
+            results.append(
+                {
+                    "id": cve.get("id"),
+                    "description": (cve.get("descriptions") or [{}])[0].get("value", ""),
+                    "published": cve.get("published"),
+                    "modified": cve.get("lastModified"),
+                    "severity": cvss.get("baseSeverity") if cvss else None,
+                    "score": cvss.get("baseScore") if cvss else None,
+                }
+            )
+        return {"source": "nvd", "results": results}
+    except Exception as exc:
+        return {
+            "source": "fallback",
+            "error": str(exc),
+            "results": [
+                {
+                    "id": "CVE-2023-0000",
+                    "description": "Sample CVE when upstream NVD is unreachable",
+                    "published": None,
+                    "modified": None,
+                    "severity": "Medium",
+                    "score": 5.0,
+                }
+            ],
+        }
+
+
+@router.get("/cve/search")
+async def search_cves(q: str):
+    query = q.strip()
+    if len(query) < 3:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Query must be at least 3 characters",
+        )
+
+    data = _fetch_cve_results(query)
+    return {
+        "query": query,
+        "count": len(data.get("results", [])),
+        "source": data.get("source"),
+        "results": data.get("results", []),
+        "error": data.get("error"),
+        "timestamp": datetime.now().isoformat(),
     }

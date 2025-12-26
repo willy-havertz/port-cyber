@@ -31,7 +31,7 @@ const defaultProjects: Project[] = [
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-network-security",
     liveUrl: "https://port-cyber-experiments.onrender.com?tab=network",
-    date: "Dec 2024",
+    date: "Dec 2025",
     category: "Penetration Testing",
   },
   {
@@ -43,7 +43,7 @@ const defaultProjects: Project[] = [
       "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
     liveUrl: "https://port-cyber-experiments.onrender.com?tab=scanner",
-    date: "Dec 2024",
+    date: "Dec 2025",
     category: "Tool Development",
   },
   {
@@ -55,7 +55,7 @@ const defaultProjects: Project[] = [
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-incident-response",
     liveUrl: "https://port-cyber-experiments.onrender.com?tab=incident",
-    date: "Dec 2024",
+    date: "Dec 2025",
     category: "Incident Response",
   },
   {
@@ -67,7 +67,7 @@ const defaultProjects: Project[] = [
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
     liveUrl: "https://port-cyber-experiments.onrender.com?tab=threat",
-    date: "Dec 2024",
+    date: "Dec 2025",
     category: "Threat Intelligence",
   },
   {
@@ -79,7 +79,7 @@ const defaultProjects: Project[] = [
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-code-review",
     liveUrl: "https://port-cyber-experiments.onrender.com?tab=code",
-    date: "Dec 2024",
+    date: "Dec 2025",
     category: "Secure Development",
   },
   {
@@ -97,8 +97,68 @@ const defaultProjects: Project[] = [
       "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
     liveUrl: "https://port-cyber-experiments.onrender.com?tab=phishing",
-    date: "Dec 2024",
+    date: "Dec 2025",
     category: "Machine Learning",
+  },
+  {
+    title: "Advanced Web Vulnerability Scanner",
+    description:
+      "Enterprise-grade web application security scanner with TLS/SSL inspection, security header analysis, cookie security flags, OPTIONS method probing, and optional nmap integration for comprehensive vulnerability detection.",
+    technologies: ["FastAPI", "Python", "SSL/TLS", "Nmap", "React"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-advanced-scanner",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=scanner",
+    date: "Dec 2025",
+    category: "Tool Development",
+  },
+  {
+    title: "API Security Audit Tool",
+    description:
+      "Lightweight API security audit platform for testing endpoint authentication, HTTP/HTTPS enforcement, CORS configuration, excessive HTTP methods, and stack trace leakage detection.",
+    technologies: ["FastAPI", "Python", "HTTP Methods", "CORS", "React"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-api-audit",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=api-audit",
+    date: "Dec 2025",
+    category: "Tool Development",
+  },
+  {
+    title: "CVE Intelligence Dashboard",
+    description:
+      "Real-time CVE search and intelligence platform with NVD API integration, CVSS severity scoring, publication tracking, and intelligent fallback for offline environments.",
+    technologies: ["Python", "NVD API", "FastAPI", "React", "TypeScript"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-cve-intel",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=cve",
+    date: "Dec 2025",
+    category: "Threat Intelligence",
+  },
+  {
+    title: "SSL/TLS Certificate Analyzer",
+    description:
+      "Deep inspection tool for SSL/TLS certificate validation, chain analysis, expiration tracking, signature verification, and modern protocol enforcement (TLS 1.2+).",
+    technologies: ["Python", "OpenSSL", "FastAPI", "React", "Cryptography"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-cert-analyzer",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=certificate",
+    date: "Dec 2025",
+    category: "Security Analysis",
+  },
+  {
+    title: "Password Strength Analyzer",
+    description:
+      "Advanced password security assessment tool with entropy calculation, pattern detection, breach database checking, policy compliance validation, and NIST guidelines alignment.",
+    technologies: ["Python", "FastAPI", "Regex", "ZXCVBN", "React"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber-password-analyzer",
+    liveUrl: "https://port-cyber-experiments.onrender.com?tab=password",
+    date: "Dec 2025",
+    category: "Security Analysis",
   },
 ];
 
@@ -129,26 +189,22 @@ export default function Projects() {
           return Array.from(byKey.values());
         }
       }
-    } catch (e) {
+    } catch {
       // ignore cache errors
     }
     return defaultProjects;
   });
-
-  const [loadingProjects, setLoadingProjects] = useState(false);
-  const [projectsError, setProjectsError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const token = (import.meta.env as any).VITE_GITHUB_TOKEN;
 
     const load = async () => {
-      setLoadingProjects(true);
       try {
         const updated = await Promise.all(
           defaultProjects.map(async (p) => {
             if (!p.githubUrl) return p;
-            const m = p.githubUrl.match(/github.com\/([^\/]+\/[^\/]+)(?:\/|$)/);
+            const m = p.githubUrl.match(/github\.com\/([^/]+\/[^/]+)(?:\/|$)/);
             if (!m) return p;
             const repo = m[1];
             try {
@@ -169,7 +225,7 @@ export default function Projects() {
                 updated_at: data.updated_at,
               };
               return merged;
-            } catch (e) {
+            } catch {
               return p;
             }
           })
@@ -182,15 +238,12 @@ export default function Projects() {
               CACHE_KEY,
               JSON.stringify({ ts: Date.now(), data: updated })
             );
-          } catch (_) {
+          } catch {
             // ignore localStorage errors
           }
         }
-      } catch (e: any) {
-        if (!cancelled)
-          setProjectsError(e?.message || "Failed to load project metadata");
-      } finally {
-        if (!cancelled) setLoadingProjects(false);
+      } catch {
+        // Ignore fetch/metadata loading errors
       }
     };
 

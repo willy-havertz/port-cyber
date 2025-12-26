@@ -8,6 +8,7 @@ import {
   FileText,
   MessageSquare,
   BarChart3,
+  Shield,
 } from "lucide-react";
 import { logoutAdmin } from "../lib/api";
 
@@ -24,6 +25,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     { icon: BarChart3, label: "Dashboard", path: "/admin" },
     { icon: FileText, label: "Writeups", path: "/admin/writeups" },
     { icon: MessageSquare, label: "Comments", path: "/admin/comments" },
+    { icon: Shield, label: "Security Tools", path: "/admin/security-tools" },
   ];
 
   const handleLogout = () => {

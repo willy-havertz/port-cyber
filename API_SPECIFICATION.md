@@ -363,6 +363,129 @@ Response: 200 OK
 }
 ```
 
+### Advanced Web Scan
+
+```http
+POST /scanner/advanced-scan
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "target_url": "https://example.com",
+  "include_port_scan": false,
+  "scan_type": "advanced"
+}
+
+Response: 200 OK
+{
+  "target": "https://example.com",
+  "status": "completed",
+  "findings": [
+    {
+      "type": "Missing Security Header",
+      "severity": "Low",
+      "description": "Missing Strict-Transport-Security header"
+    },
+    {
+      "type": "Cookie Missing HttpOnly",
+      "severity": "Medium",
+      "description": "Cookie 'sessionid' is not HttpOnly"
+    }
+  ],
+  "metadata": {
+    "status_code": 200,
+    "final_url": "https://example.com/",
+    "redirects": 0,
+    "server": "nginx",
+    "powered_by": "Express",
+    "content_type": "text/html",
+    "tls": { "protocol": "TLSv1.3" },
+    "allow_methods": "GET, HEAD, OPTIONS"
+  },
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+Notes:
+
+- Blocks private/loopback targets unless `SCANNER_ALLOW_PRIVATE=true`.
+- Per-user rate limit: `SCANNER_MAX_SCANS_PER_USER` within `SCANNER_RATE_WINDOW_MINUTES`.
+- `include_port_scan` triggers quick nmap `-sV -sC` scan.
+
+### API Security Audit
+
+```http
+POST /scanner/api-audit
+Authorization: Bearer {token}
+Content-Type: application/json
+
+{
+  "base_url": "https://api.example.com",
+  "endpoints": [
+    { "path": "/", "method": "GET" },
+    { "path": "/health", "method": "GET" },
+    { "path": "/users", "method": "GET" }
+  ],
+  "include_options_probe": true
+}
+
+Response: 200 OK
+{
+  "target": "https://api.example.com/",
+  "probes": [
+    { "endpoint": "/", "method": "GET", "status_code": 200 },
+    { "endpoint": "/users", "method": "GET", "status_code": 500 },
+    { "endpoint": "/users", "method": "OPTIONS", "allow_methods": "GET,HEAD,OPTIONS" }
+  ],
+  "findings": [
+    {
+      "type": "Server Error",
+      "severity": "High",
+      "description": "/users returned 500"
+    },
+    {
+      "type": "CORS Wildcard with Credentials",
+      "severity": "High",
+      "description": "/users allows * origin with credentials"
+    }
+  ],
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+Notes:
+
+- Blocks private/loopback targets unless `SCANNER_ALLOW_PRIVATE=true`.
+- Adds OPTIONS probe when `include_options_probe` is true.
+
+### CVE Search
+
+```http
+GET /scanner/cve/search?q=openssl
+
+Response: 200 OK
+{
+  "query": "openssl",
+  "count": 2,
+  "source": "nvd",
+  "results": [
+    {
+      "id": "CVE-2024-12345",
+      "description": "Sample OpenSSL buffer overflow vulnerability.",
+      "published": "2024-09-01",
+      "modified": "2024-09-05",
+      "severity": "High",
+      "score": 8.2
+    }
+  ],
+  "timestamp": "2024-01-01T00:00:00Z"
+}
+```
+
+Notes:
+
+- Uses NVD public API; falls back to a sample response if upstream is unavailable.
+
 ### Get Scanner Disclaimer
 
 ```http
