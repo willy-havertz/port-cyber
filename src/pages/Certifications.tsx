@@ -6,6 +6,7 @@ import Footer from "../components/Footer";
 import CertificateModal from "../components/CertificateModal";
 
 // Import certificate images
+import adventCert from "../assets/advent_cert.pdf";
 import ethicalHackerCert from "../assets/ethical_hacker_cert-1.png";
 import mernStackCert1 from "../assets/mern_stack_cert-1.png";
 
@@ -28,6 +29,16 @@ export default function Certifications() {
   }, []);
 
   const certificates = [
+    {
+      title: "Advent of Cyber 2025",
+      issuer: "TryHackMe",
+      date: "Dec 2025",
+      description:
+        "Completed TryHackMe's Advent of Cyber 2025 event - 24 days of hands-on cybersecurity challenges covering OPSEC, log analysis, SIEM, RCE, atomic red team, XXE, sandboxes, AWS, shellcodes, GRC, phishing, Wi-Fi attacks, race conditions, WebSockets, Active Directory, Azure, Kubernetes DFIR, reverse engineering, hash cracking, and more.",
+      imageUrls: [adventCert],
+      color: "from-red-500 to-green-600",
+      icon: Award,
+    },
     {
       title: "Ethical Hacker",
       issuer: "Cisco Networking Academy",
