@@ -23,25 +23,6 @@ const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
 const defaultProjects: Project[] = [
   {
-    title: "Advanced Security Tools Suite",
-    description:
-      "Comprehensive suite of interactive security testing tools: Password strength analyzer with breach detection, Phishing email detector, SSL/TLS certificate analyzer, Code review scanner, Network security assessment, Threat intelligence CVE dashboard, API audit platform, and Incident response orchestrator. All tools feature real-time toast notifications and are fully functional with live backend integration.",
-    technologies: [
-      "React",
-      "FastAPI",
-      "Python",
-      "TypeScript",
-      "Tailwind CSS",
-      "sonner",
-    ],
-    imageUrl:
-      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    githubUrl: "https://github.com/willy-havertz/port-cyber-experiments",
-    liveUrl: "https://port-cyber-experiments.onrender.com",
-    date: "Dec 2025",
-    category: "Tool Development",
-  },
-  {
     title: "Enterprise Network Security Assessment",
     description:
       "Comprehensive security assessment of a Fortune 500 company's network infrastructure, identifying critical vulnerabilities and providing remediation strategies.",
@@ -120,18 +101,6 @@ const defaultProjects: Project[] = [
     category: "Machine Learning",
   },
   {
-    title: "Advanced Web Vulnerability Scanner",
-    description:
-      "Enterprise-grade web application security scanner with TLS/SSL inspection, security header analysis, cookie security flags, OPTIONS method probing, and optional nmap integration for comprehensive vulnerability detection.",
-    technologies: ["FastAPI", "Python", "SSL/TLS", "Nmap", "React"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    githubUrl: "https://github.com/willy-havertz/port-cyber-advanced-scanner",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=scanner",
-    date: "Dec 2025",
-    category: "Tool Development",
-  },
-  {
     title: "API Security Audit Tool",
     description:
       "Lightweight API security audit platform for testing endpoint authentication, HTTP/HTTPS enforcement, CORS configuration, excessive HTTP methods, and stack trace leakage detection.",
@@ -142,18 +111,6 @@ const defaultProjects: Project[] = [
     liveUrl: "https://port-cyber-experiments.onrender.com?tab=api-audit",
     date: "Dec 2025",
     category: "Tool Development",
-  },
-  {
-    title: "CVE Intelligence Dashboard",
-    description:
-      "Real-time CVE search and intelligence platform with NVD API integration, CVSS severity scoring, publication tracking, and intelligent fallback for offline environments.",
-    technologies: ["Python", "NVD API", "FastAPI", "React", "TypeScript"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-    githubUrl: "https://github.com/willy-havertz/port-cyber-cve-intel",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=cve",
-    date: "Dec 2025",
-    category: "Threat Intelligence",
   },
   {
     title: "SSL/TLS Certificate Analyzer",
