@@ -144,7 +144,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber",
-    liveUrl: "https://port-cyber.onrender.com/admin/security-tools",
+    liveUrl: "https://port-cyber-experiments.onrender.com",
     date: "Dec 2025",
     category: "Security Testing",
   },
