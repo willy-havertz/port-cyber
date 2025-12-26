@@ -258,7 +258,7 @@ export default function Projects() {
   );
 
   const filteredProjects = useMemo(() => {
-    return projects.filter((project) => {
+    const filtered = projects.filter((project) => {
       const categoryMatch =
         selectedCategories.length === 0 ||
         (project.category && selectedCategories.includes(project.category));
@@ -269,6 +269,8 @@ export default function Projects() {
         );
       return categoryMatch && techMatch;
     });
+    // Reverse to show newest projects first
+    return filtered.reverse();
   }, [projects, selectedCategories, selectedTechnologies]);
 
   const handleCategoryChange = (category: string) => {
