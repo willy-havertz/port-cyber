@@ -6,7 +6,7 @@ import Footer from "../components/Footer";
 import CertificateModal from "../components/CertificateModal";
 
 // Import certificate images
-import adventCert from "../assets/advent_cert.pdf";
+import adventCert from "../assets/advent_cert.png";
 import ethicalHackerCert from "../assets/ethical_hacker_cert-1.png";
 import mernStackCert1 from "../assets/mern_stack_cert-1.png";
 
