@@ -18,7 +18,7 @@ type Project = {
   updated_at?: string;
 };
 
-const CACHE_KEY = "pc_projects_cache_v2"; // bump to invalidate stale caches
+const CACHE_KEY = "pc_projects_cache_v3"; // bump to invalidate stale caches
 const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
 const defaultProjects: Project[] = [
@@ -59,10 +59,10 @@ const defaultProjects: Project[] = [
     category: "Incident Response",
   },
   {
-    title: "Threat Intelligence Platform",
+    title: "CVE Intelligence Dashboard",
     description:
-      "Real-time threat intelligence aggregation platform that collects, analyzes, and correlates threat data from multiple sources to provide actionable insights.",
-    technologies: ["Python", "Elasticsearch", "Kibana", "Redis", "Docker"],
+      "Real-time CVE monitoring and alerting with severity breakdowns and quick drill-down into affected products; aggregates latest CVEs for actionable remediation.",
+    technologies: ["NVD API", "React", "TypeScript", "Elasticsearch", "Docker"],
     imageUrl:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
@@ -159,8 +159,10 @@ export default function Projects() {
           }
           for (const p of parsed.data as Project[]) {
             const key = p.githubUrl || p.title;
-            const base = byKey.get(key) || p;
-            byKey.set(key, { ...base, ...p });
+            if (byKey.has(key)) {
+              const base = byKey.get(key)!;
+              byKey.set(key, { ...base, ...p });
+            } // ignore unknown projects from cache to prevent duplicates
           }
           return Array.from(byKey.values());
         }
