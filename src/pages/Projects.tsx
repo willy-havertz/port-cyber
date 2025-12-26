@@ -18,7 +18,7 @@ type Project = {
   updated_at?: string;
 };
 
-const CACHE_KEY = "pc_projects_cache_v3"; // bump to invalidate stale caches
+const CACHE_KEY = "pc_projects_cache_v4"; // bump to invalidate stale caches
 const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
 const defaultProjects: Project[] = [
