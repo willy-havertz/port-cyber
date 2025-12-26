@@ -37,6 +37,7 @@ console.log("Secret key:", SECRET_KEY);
 ### Setup Instructions:
 
 **For New Developers:**
+
 ```bash
 # 1. Copy example files
 cp .env.example .env.local
@@ -47,6 +48,7 @@ cp backend/.env.example backend/.env
 ```
 
 **For CI/CD Deployments:**
+
 ```yaml
 # Use GitHub Secrets for sensitive data
 # Settings → Secrets and variables → Actions
@@ -62,6 +64,7 @@ env:
 ## 2. API Key Rotation
 
 ### When to Rotate:
+
 - ✅ **Immediately** if you suspect exposure
 - ✅ **Quarterly** for production keys
 - ✅ **After** any security incident
@@ -70,6 +73,7 @@ env:
 ### How to Rotate:
 
 **Google Gemini API:**
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Select your project
 3. API & Services → Credentials
@@ -78,18 +82,21 @@ env:
 6. Update `.env` files
 
 **Supabase Keys:**
+
 1. Go to Supabase Dashboard
 2. Project Settings → API
 3. Copy new anon key
 4. Update `.env` files
 
 **Cloudinary:**
+
 1. Go to Cloudinary Dashboard
 2. Account Settings → Security
 3. Regenerate API Secret
 4. Update `.env` files
 
 **PostgreSQL:**
+
 ```bash
 # Connect to database as admin
 ALTER USER portcyber WITH PASSWORD 'new_strong_password';
@@ -115,6 +122,7 @@ git ls-files | grep -E "\.(env|key|secret|pem)$"
 ### Pre-commit Hook (Optional):
 
 Create `.git/hooks/pre-commit`:
+
 ```bash
 #!/bin/bash
 # Prevent committing .env files
@@ -127,6 +135,7 @@ fi
 ```
 
 Make it executable:
+
 ```bash
 chmod +x .git/hooks/pre-commit
 ```
@@ -136,6 +145,7 @@ chmod +x .git/hooks/pre-commit
 ## 4. Frontend Security
 
 ### XSS Prevention:
+
 ```typescript
 // ✅ Safe - React escapes by default
 <div>{userInput}</div>
@@ -149,26 +159,30 @@ import ReactMarkdown from 'react-markdown'
 ```
 
 ### CSRF Protection:
+
 ```typescript
 // ✅ Always send CSRF tokens with state-changing requests
-const response = await fetch('/api/writeups', {
-  method: 'POST',
-  credentials: 'include',  // Include cookies
+const response = await fetch("/api/writeups", {
+  method: "POST",
+  credentials: "include", // Include cookies
   headers: {
-    'X-CSRF-Token': csrfToken,
+    "X-CSRF-Token": csrfToken,
   },
   body: JSON.stringify(data),
-})
+});
 ```
 
 ### Content Security Policy:
+
 ```html
 <!-- In index.html -->
-<meta http-equiv="Content-Security-Policy" 
-      content="default-src 'self'; 
+<meta
+  http-equiv="Content-Security-Policy"
+  content="default-src 'self'; 
                script-src 'self' https://apis.google.com; 
                img-src 'self' https:; 
-               style-src 'self' 'unsafe-inline'">
+               style-src 'self' 'unsafe-inline'"
+/>
 ```
 
 ---
@@ -176,6 +190,7 @@ const response = await fetch('/api/writeups', {
 ## 5. Backend Security
 
 ### SQL Injection Prevention:
+
 ```python
 # ✅ Safe - Use parameterized queries
 user = session.query(User).filter(User.id == user_id).first()
@@ -185,6 +200,7 @@ user = session.execute(f"SELECT * FROM users WHERE id = {user_id}")
 ```
 
 ### Authentication:
+
 ```python
 # ✅ Use JWT with strong secret
 SECRET_KEY = "generate-with: python -c \"import secrets; print(secrets.token_urlsafe(32))\""
@@ -201,6 +217,7 @@ user.password = raw_password  # WRONG!
 ```
 
 ### File Upload Security:
+
 ```python
 # ✅ Validate file types and size
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'txt'}
@@ -218,6 +235,7 @@ filename = secure_filename(file.filename)
 ```
 
 ### Rate Limiting:
+
 ```python
 # ✅ Implement rate limiting on sensitive endpoints
 from slowapi import Limiter
@@ -235,6 +253,7 @@ async def login(credentials: LoginRequest):
 ## 6. Deployment Security
 
 ### Docker Security:
+
 ```dockerfile
 # ✅ Use specific versions, not 'latest'
 FROM python:3.11-slim
@@ -251,6 +270,7 @@ USER appuser
 ```
 
 ### Environment Variables in Production:
+
 ```bash
 # ✅ Use platform-provided secret management
 
@@ -271,6 +291,7 @@ USER appuser
 ## 7. Monitoring & Logging
 
 ### What to Log:
+
 ```python
 # ✅ Log security events
 logger.info(f"User {user_id} login successful")
@@ -283,6 +304,7 @@ logger.debug(f"API Key: {api_key}")  # WRONG!
 ```
 
 ### Sensitive Data in Errors:
+
 ```python
 # ❌ Don't expose sensitive data in error messages
 try:
@@ -301,21 +323,25 @@ except Exception:
 ## 8. Regular Security Tasks
 
 ### Weekly:
+
 - [ ] Review recent commits for potential secret leaks
 - [ ] Check error logs for suspicious activity
 
 ### Monthly:
+
 - [ ] Update dependencies (`npm audit`, `pip audit`)
 - [ ] Review access controls and permissions
 - [ ] Test rate limiting and DDoS protections
 
 ### Quarterly:
+
 - [ ] Rotate API keys
 - [ ] Audit database access logs
 - [ ] Review user account activity
 - [ ] Penetration testing
 
 ### Annually:
+
 - [ ] Full security audit
 - [ ] Code review for vulnerabilities
 - [ ] Update security policies
@@ -328,12 +354,14 @@ except Exception:
 ### If Secrets Are Leaked:
 
 1. **IMMEDIATELY:**
+
    ```bash
    # Stop all services
    docker-compose down
    ```
 
 2. **Rotate all exposed keys:**
+
    - Google Gemini API
    - Supabase tokens
    - Cloudinary credentials
@@ -341,18 +369,20 @@ except Exception:
    - JWT secrets
 
 3. **Investigate:**
+
    ```bash
    # Check git history
    git log --all -p | grep -i "AIzaSy"
-   
+
    # Check containers
    docker logs [container] | grep -i "password"
-   
+
    # Check environment
    env | grep -i "secret"
    ```
 
 4. **Notify:**
+
    - Team members
    - Users (if PII affected)
    - Cloud provider

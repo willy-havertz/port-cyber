@@ -298,7 +298,7 @@ export default function WriteupDetail() {
     >
       <Header />
 
-      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main className="flex-1 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 pt-16 md:pt-12">
         {/* Back Button */}
         <Link
           to="/writeups"

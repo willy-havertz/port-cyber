@@ -95,7 +95,7 @@ export default function Home() {
     >
       <Header />
 
-      <main>
+      <main className="pt-16 md:pt-0">
         {/* Hero Section */}
         <section className="relative bg-white dark:bg-slate-900 text-slate-900 dark:text-white py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

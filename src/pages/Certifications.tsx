@@ -54,7 +54,7 @@ export default function Certifications() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
       <Header />
 
-      <main className="py-12">
+      <main className="py-12 pt-16 md:pt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
           <motion.div

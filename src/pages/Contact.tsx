@@ -219,7 +219,7 @@ export default function Contact() {
     >
       <Header />
 
-      <main className="py-12">
+      <main className="py-12 pt-16 md:pt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 50, opacity: 0 }}

@@ -28,7 +28,7 @@ const Header = () => {
 
   return (
     <header
-      className={`bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-50 transition-colors`}
+      className={`bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 fixed md:sticky top-0 left-0 right-0 md:left-auto md:right-auto z-50 transition-colors w-full`}
     >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
