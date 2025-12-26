@@ -136,6 +136,18 @@ const defaultProjects: Project[] = [
     date: "Dec 2025",
     category: "Security Analysis",
   },
+  {
+    title: "Security Tools Suite",
+    description:
+      "Comprehensive suite with 3 integrated tools: Advanced Web Scan (TLS/headers/cookies), API Security Audit (endpoint testing), and CVE Intelligence (NVD integration). All tools with mock data fallback.",
+    technologies: ["Python", "FastAPI", "OpenSSL", "NVD API", "React"],
+    imageUrl:
+      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    githubUrl: "https://github.com/willy-havertz/port-cyber",
+    liveUrl: "https://port-cyber.onrender.com/admin/security-tools",
+    date: "Dec 2025",
+    category: "Security Testing",
+  },
 ];
 
 export default function Projects() {
