@@ -30,7 +30,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-network-security",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=network",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=network",
     date: "Dec 2025",
     category: "Penetration Testing",
   },
@@ -42,7 +42,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=scanner",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=scanner",
     date: "Dec 2025",
     category: "Tool Development",
   },
@@ -54,7 +54,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-incident-response",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=incident",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=incident",
     date: "Dec 2025",
     category: "Incident Response",
   },
@@ -66,7 +66,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=threat",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=threat",
     date: "Dec 2025",
     category: "Threat Intelligence",
   },
@@ -78,7 +78,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-code-review",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=code",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=code",
     date: "Dec 2025",
     category: "Secure Development",
   },
@@ -96,7 +96,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=phishing",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=phishing",
     date: "Dec 2025",
     category: "Machine Learning",
   },
@@ -108,7 +108,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-api-audit",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=api-audit",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=api-audit",
     date: "Dec 2025",
     category: "Tool Development",
   },
@@ -120,7 +120,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-cert-analyzer",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=certificate",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=certificate",
     date: "Dec 2025",
     category: "Security Analysis",
   },
@@ -132,7 +132,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber-password-analyzer",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=password",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=password",
     date: "Dec 2025",
     category: "Security Analysis",
   },
@@ -144,7 +144,7 @@ const defaultProjects: Project[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
     githubUrl: "https://github.com/willy-havertz/port-cyber",
-    liveUrl: "https://port-cyber-experiments.onrender.com?tab=security-tools",
+    liveUrl: "https://port-cyber-experiments.vercel.app?tab=security-tools",
     date: "Dec 2025",
     category: "Security Testing",
   },
