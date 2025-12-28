@@ -6,9 +6,11 @@ import Footer from "../components/Footer";
 import CertificateModal from "../components/CertificateModal";
 
 // Import certificate images
+
 import adventCert from "../assets/advent_cert.png";
 import ethicalHackerCert from "../assets/ethical_hacker_cert-1.png";
 import mernStackCert1 from "../assets/mern_stack_cert-1.png";
+import virtualAssistantCert from "../assets/virtual-assistant-certificate-wiltord-ichingwa.png";
 
 export default function Certifications() {
   const [selectedCertificate, setSelectedCertificate] = useState<{
@@ -28,7 +30,17 @@ export default function Certifications() {
     };
   }, []);
 
-  const certificates = [
+  type Certificate = {
+    title: string;
+    issuer: string;
+    date: string;
+    description: string;
+    imageUrls: string[];
+    color: string;
+    icon: typeof Award;
+  };
+
+  const certificatesData: Certificate[] = [
     {
       title: "Advent of Cyber 2025",
       issuer: "TryHackMe",
@@ -42,7 +54,7 @@ export default function Certifications() {
     {
       title: "Ethical Hacker",
       issuer: "Cisco Networking Academy",
-      date: "2025",
+      date: "Dec 2025",
       description:
         "Comprehensive 12-week training covering ethical hacking methodologies, penetration testing, and cybersecurity fundamentals.",
       imageUrls: [ethicalHackerCert],
@@ -50,16 +62,36 @@ export default function Certifications() {
       icon: Shield,
     },
     {
-      title: "Full-Stack Development - MERN Stack",
+      title: "Software Engineering",
       issuer: "Power Learn Project",
-      date: "2025",
+      date: "Nov 2025",
       description:
-        "14-week intensive program covering MongoDB, Express.js, React, and Node.js for full-stack web application development.",
+        "Successfully completed a 16-week program in Software Development covering Python, Web Technologies, Database Management, Startup Building & Employability and Software Engineering Essentials, with a specialization in Full-Stack Development MERN Stack.",
       imageUrls: [mernStackCert1],
-      color: "from-blue-500 to-indigo-600",
+      color: "from-yellow-500 to-orange-600",
+      icon: Award,
+    },
+    {
+      title: "Virtual Assistance",
+      issuer: "ALX Africa",
+      date: "Nov 2024",
+      description:
+        "For successfully completing a 10-week programme in Virtual Assistance Skills in the Digital Age.",
+      imageUrls: [virtualAssistantCert],
+      color: "from-cyan-500 via-green-400 to-blue-700",
       icon: Award,
     },
   ];
+
+  // Sort certificates by date descending
+  const certificates = certificatesData.slice().sort((a, b) => {
+    const parse = (d: string) => {
+      const [month, year] = d.split(" ");
+      const monthNum = new Date(Date.parse(month + " 1, 2000")).getMonth() + 1;
+      return new Date(Number(year), monthNum - 1, 1).getTime();
+    };
+    return parse(b.date) - parse(a.date);
+  });
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">

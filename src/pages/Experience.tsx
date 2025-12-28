@@ -108,14 +108,19 @@ export default function Experience() {
       year: "2023 - 2027",
     },
     {
-      degree: "Ethical Hacker (Cisco Academy)",
+      degree: "Ethical Hacker",
       school: "Cisco Academy",
       year: "12 weeks",
     },
     {
-      degree: "Software Engineering (Power Learn Project)",
+      degree: "Software Engineering",
       school: "Power Learn Project",
-      year: "14 weeks",
+      year: "16 weeks",
+    },
+    {
+      degree: "Virtual Assistance",
+      school: "ALX Africa",
+      year: "10 weeks",
     },
   ];
 
