@@ -20,6 +20,7 @@ config = context.config
 
 # Set database URL from settings
 settings = get_settings()
+print(f"[DEBUG] Alembic using DATABASE_URL: {settings.DATABASE_URL}")
 config.set_main_option('sqlalchemy.url', settings.DATABASE_URL)
 
 # Interpret the config file for Python logging.
