@@ -15,6 +15,8 @@ import WriteupDetail from "./src/pages/WriteupDetail";
 import Contact from "./src/pages/Contact";
 import Certifications from "./src/pages/Certifications";
 import NotFound from "./src/pages/NotFound";
+import Blog from "./src/pages/Blog";
+import BlogDetail from "./src/pages/BlogDetail";
 import AdminLogin from "./src/pages/admin/Login.tsx";
 import AdminDashboard from "./src/pages/admin/Dashboard.tsx";
 import AdminWriteups from "./src/pages/admin/Writeups.tsx";
@@ -37,6 +39,10 @@ const App: React.FC = () => {
               <Route path="/writeups/:id" element={<WriteupDetail />} />
               <Route path="/certifications" element={<Certifications />} />
               <Route path="/contact" element={<Contact />} />
+
+              {/* Blog Routes */}
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:id" element={<BlogDetail />} />
 
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />

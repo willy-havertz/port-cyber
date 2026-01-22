@@ -1,13 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Shield,
-  Code,
-  Search,
-  Users,
-  ExternalLink,
-  Download,
-  Eye,
-} from "lucide-react";
+import { Shield, Code, Search, Users, ExternalLink, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -16,7 +8,6 @@ import FeaturedCarousel from "../components/FeaturedCarousel";
 import { Link } from "react-router-dom";
 import CTFStatsDashboard from "../components/CTFStatsDashboard";
 import { fetchWriteups, type Writeup } from "../lib/api";
-import homepic from "../assets/homepic.png";
 
 export default function Home() {
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
@@ -128,11 +119,14 @@ export default function Home() {
                     View Projects
                     <ExternalLink className="ml-2 h-5 w-5" />
                   </Link>
+                  <Link
+                    to="/blog"
+                    className="inline-flex items-center px-6 py-3 border-2 border-gray-900 dark:border-white text-gray-900 dark:text-white font-semibold rounded-lg hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors shadow-sm"
+                    style={{ marginTop: "0.5rem" }}
+                  >
+                    Visit Blog
+                  </Link>
                   <div className="flex gap-2">
-                    <button className="inline-flex items-center px-6 py-3 border-2 border-gray-900 text-gray-900 dark:border-white dark:text-white font-semibold rounded-lg hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors">
-                      <Download className="mr-2 h-5 w-5" />
-                      Download CV
-                    </button>
                     <button
                       onClick={() => setIsCVModalOpen(true)}
                       className="inline-flex items-center px-6 py-3 border-2 border-gray-900 text-gray-900 dark:border-white dark:text-white font-semibold rounded-lg hover:bg-gray-900 hover:text-white dark:hover:bg-white dark:hover:text-slate-900 transition-colors"
@@ -143,21 +137,21 @@ export default function Home() {
                   </div>
                 </div>
               </motion.div>
+              {/* 3D Cybersecurity Spline Embed */}
               <motion.div
                 initial={{ x: 50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
-                className="relative"
+                transition={{ duration: 0.6 }}
+                className="flex justify-center items-center w-full h-[350px] md:h-[450px] lg:h-[500px]"
               >
-                <img
-                  src={homepic}
-                  alt="Cybersecurity professional workspace"
-                  className="rounded-lg shadow-2xl w-full select-none"
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
-                  style={{ userSelect: "none", WebkitUserSelect: "none" }}
-                  draggable={false}
-                />
+                <iframe
+                  src="https://my.spline.design/genkubgreetingrobot-LfKBHI4bGfDtr3cw5ycRxoa7/"
+                  frameBorder="0"
+                  width="100%"
+                  height="100%"
+                  className="w-full h-full rounded-xl shadow-lg border border-slate-200 dark:border-slate-700"
+                  style={{ minHeight: 300, background: "transparent" }}
+                ></iframe>
               </motion.div>
             </div>
           </div>
