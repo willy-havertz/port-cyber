@@ -25,5 +25,6 @@ RUN mkdir -p uploads/writeups
 # Expose port
 EXPOSE 8000
 
-# Run migrations and seed on startup, then start the app
-CMD alembic upgrade head && python seed_writeups.py && uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
+# Start the app without migrations (use Supabase SQL Editor for schema)
+# If migrations fail, the app will still start
+CMD uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}
