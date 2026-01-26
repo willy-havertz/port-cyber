@@ -58,7 +58,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       >
         {/* Header */}
         <div className="p-4 border-b border-slate-700/50 flex items-center justify-between">
-          {sidebarOpen && <h1 className="text-xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Admin</h1>}
+          {sidebarOpen && (
+            <h1 className="text-xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+              Admin
+            </h1>
+          )}
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-1 hover:bg-slate-800 rounded"

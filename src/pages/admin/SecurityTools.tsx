@@ -176,7 +176,7 @@ export default function SecurityTools() {
       setAdvResult(data);
     } catch (err: any) {
       setAdvError(
-        err?.response?.data?.detail || err?.message || "Advanced scan failed"
+        err?.response?.data?.detail || err?.message || "Advanced scan failed",
       );
       if (useMock) {
         setAdvResult(sampleAdvanced);
@@ -200,7 +200,7 @@ export default function SecurityTools() {
       setApiResult(data);
     } catch (err: any) {
       setApiError(
-        err?.response?.data?.detail || err?.message || "API audit failed"
+        err?.response?.data?.detail || err?.message || "API audit failed",
       );
       if (useMock) {
         setApiResult(sampleAudit);
@@ -218,7 +218,7 @@ export default function SecurityTools() {
       setCveResult(data);
     } catch (err: any) {
       setCveError(
-        err?.response?.data?.detail || err?.message || "CVE search failed"
+        err?.response?.data?.detail || err?.message || "CVE search failed",
       );
       if (useMock) {
         setCveResult(sampleCve);
@@ -231,7 +231,7 @@ export default function SecurityTools() {
   const updateEndpoint = (
     index: number,
     field: keyof EndpointRow,
-    value: string
+    value: string,
   ) => {
     setEndpoints((prev) => {
       const copy = [...prev];
@@ -387,7 +387,7 @@ export default function SecurityTools() {
                       >
                         <span
                           className={`px-2 py-1 rounded text-xs font-semibold ${severityColor(
-                            finding.severity
+                            finding.severity,
                           )}`}
                         >
                           {finding.severity || "Info"}
@@ -539,7 +539,7 @@ export default function SecurityTools() {
                       >
                         <span
                           className={`px-2 py-1 rounded text-xs font-semibold ${severityColor(
-                            finding.severity
+                            finding.severity,
                           )}`}
                         >
                           {finding.severity || "Info"}
@@ -676,7 +676,7 @@ export default function SecurityTools() {
                         {item.severity && (
                           <span
                             className={`px-2 py-1 rounded text-xs font-semibold ${severityColor(
-                              item.severity
+                              item.severity,
                             )}`}
                           >
                             {item.severity}{" "}

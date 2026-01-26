@@ -113,7 +113,7 @@ export default function AdminWriteups() {
 
         // Update UI immediately (optimistic)
         setWriteups((prev) =>
-          prev.map((w) => (w.id === editingId ? updatedWriteup : w))
+          prev.map((w) => (w.id === editingId ? updatedWriteup : w)),
         );
 
         try {
@@ -125,7 +125,7 @@ export default function AdminWriteups() {
               selectedFile,
               (progress) => {
                 setUploadProgress(progress);
-              }
+              },
             );
             setSuccess("Writeup updated and file uploaded successfully!");
           } else {
@@ -134,7 +134,7 @@ export default function AdminWriteups() {
             const response = await updateWriteup(editingId, payload);
             // Replace optimistic update with real data from backend
             setWriteups((prev) =>
-              prev.map((w) => (w.id === editingId ? response : w))
+              prev.map((w) => (w.id === editingId ? response : w)),
             );
             setSuccess("Writeup updated successfully!");
           }
@@ -146,7 +146,7 @@ export default function AdminWriteups() {
           setError(
             err.response?.data?.detail ||
               err.message ||
-              "Failed to update writeup"
+              "Failed to update writeup",
           );
           // Reload to revert optimistic update on error
           await load();
@@ -158,7 +158,7 @@ export default function AdminWriteups() {
           selectedFile,
           (progress) => {
             setUploadProgress(progress);
-          }
+          },
         );
         // Add new writeup to list immediately
         setWriteups((prev) => [newWriteup, ...prev]);
@@ -181,7 +181,7 @@ export default function AdminWriteups() {
         }, 2000);
       } else {
         setError(
-          err.response?.data?.detail || err.message || "Failed to save writeup"
+          err.response?.data?.detail || err.message || "Failed to save writeup",
         );
       }
     } finally {
@@ -270,7 +270,7 @@ export default function AdminWriteups() {
   const handleGenerateAI = async (id: number) => {
     if (
       !window.confirm(
-        "Generate AI content for this writeup? This may take a few seconds."
+        "Generate AI content for this writeup? This may take a few seconds.",
       )
     )
       return;
@@ -281,7 +281,7 @@ export default function AdminWriteups() {
       const updatedWriteup = await generateAIContent(id);
       // Update UI immediately with generated content
       setWriteups((prev) =>
-        prev.map((w) => (w.id === id ? { ...w, ...updatedWriteup } : w))
+        prev.map((w) => (w.id === id ? { ...w, ...updatedWriteup } : w)),
       );
       setSuccess("AI content generated successfully!");
     } catch (err: any) {
@@ -496,8 +496,8 @@ export default function AdminWriteups() {
                       {selectedFile
                         ? selectedFile.name
                         : editingId
-                        ? "Click to upload new file (PDF or ZIP)"
-                        : "Click to select PDF or ZIP file"}
+                          ? "Click to upload new file (PDF or ZIP)"
+                          : "Click to select PDF or ZIP file"}
                     </span>
                   </label>
                 </div>
@@ -578,8 +578,8 @@ export default function AdminWriteups() {
                   {isUploading
                     ? "Uploading..."
                     : editingId
-                    ? "Update"
-                    : "Create"}
+                      ? "Update"
+                      : "Create"}
                 </button>
                 <button
                   type="button"
@@ -641,10 +641,10 @@ export default function AdminWriteups() {
                           writeup.difficulty === "Easy"
                             ? "bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300"
                             : writeup.difficulty === "Medium"
-                            ? "bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300"
-                            : writeup.difficulty === "Hard"
-                            ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300"
-                            : "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300"
+                              ? "bg-yellow-100 dark:bg-yellow-900 text-yellow-700 dark:text-yellow-300"
+                              : writeup.difficulty === "Hard"
+                                ? "bg-orange-100 dark:bg-orange-900 text-orange-700 dark:text-orange-300"
+                                : "bg-red-100 dark:bg-red-900 text-red-700 dark:text-red-300"
                         }`}
                       >
                         {writeup.difficulty}

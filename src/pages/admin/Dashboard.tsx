@@ -5,6 +5,7 @@ import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
   fetchComments,
+  getSubscriberCount,
   type Writeup,
   type Comment,
 } from "../../lib/api";
@@ -37,27 +38,9 @@ export default function AdminDashboard() {
         }
         setComments(allComments);
 
-        // Fetch newsletter subscriber count (only if authenticated)
-        const token = localStorage.getItem("auth_token");
-        if (token) {
-          try {
-            const apiUrl =
-              import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-            const response = await fetch(
-              `${apiUrl}/newsletter/subscribers/count`,
-              {
-                headers: { Authorization: `Bearer ${token}` },
-              },
-            );
-            if (response.ok) {
-              const data = await response.json();
-              setSubscriberCount(data.active_subscribers || 0);
-            }
-            // Silently ignore 401/403 - user may not be authenticated
-          } catch {
-            // Silently fail - subscriber count is not critical
-          }
-        }
+        // Fetch newsletter subscriber count using API helper
+        const count = await getSubscriberCount();
+        setSubscriberCount(count);
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
       } finally {

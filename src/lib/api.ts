@@ -504,4 +504,14 @@ export const logoutAdmin = () => {
   localStorage.removeItem("auth_token");
 };
 
+export const getSubscriberCount = async (): Promise<number> => {
+  try {
+    const { data } = await api.get("/newsletter/subscribers/count");
+    return data.active_subscribers || 0;
+  } catch {
+    // Return 0 on any error (including 401)
+    return 0;
+  }
+};
+
 export default api;
