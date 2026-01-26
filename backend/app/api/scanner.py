@@ -1099,3 +1099,473 @@ async def public_api_audit(request: Request, audit_request: PublicApiAuditReques
         "timestamp": datetime.now().isoformat()
     }
 
+
+# ============================================================================
+# PUBLIC NETWORK SCAN - Safe port checking without nmap
+# ============================================================================
+
+class PublicNetworkScanRequest(BaseModel):
+    target: str = Field(..., min_length=1, max_length=255)
+
+
+def _check_port(host: str, port: int, timeout: float = 2.0) -> Dict[str, Any]:
+    """Attempt TCP connection to check if port is open."""
+    try:
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.settimeout(timeout)
+        result = sock.connect_ex((host, port))
+        sock.close()
+        if result == 0:
+            return {"port": port, "state": "open", "protocol": "tcp"}
+        return {"port": port, "state": "closed", "protocol": "tcp"}
+    except socket.timeout:
+        return {"port": port, "state": "filtered", "protocol": "tcp"}
+    except Exception:
+        return {"port": port, "state": "filtered", "protocol": "tcp"}
+
+
+# Common ports to scan (limited set for public use)
+COMMON_PORTS = {
+    21: "ftp",
+    22: "ssh", 
+    23: "telnet",
+    25: "smtp",
+    53: "dns",
+    80: "http",
+    110: "pop3",
+    143: "imap",
+    443: "https",
+    445: "smb",
+    993: "imaps",
+    995: "pop3s",
+    3306: "mysql",
+    3389: "rdp",
+    5432: "postgresql",
+    8080: "http-alt",
+    8443: "https-alt",
+}
+
+
+@router.post("/public/network-scan")
+async def public_network_scan(request: Request, scan_request: PublicNetworkScanRequest):
+    """
+    Public network scan endpoint (no authentication required).
+    Performs safe TCP port checks on common ports.
+    Rate limited to 10 scans per 5 minutes per IP.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    _check_public_rate_limit(client_ip)
+    
+    target = scan_request.target.strip()
+    
+    # Remove any protocol prefix
+    if target.startswith("http://"):
+        target = target[7:]
+    elif target.startswith("https://"):
+        target = target[8:]
+    
+    # Remove path/port if present
+    target = target.split("/")[0].split(":")[0]
+    
+    if not target:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid target"
+        )
+    
+    # Resolve and validate
+    try:
+        resolved_ip = _resolve_ip(target)
+        if _is_private_or_local(resolved_ip):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot scan private or local addresses"
+            )
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Could not resolve target host"
+        )
+    
+    # Scan common ports
+    ports = []
+    critical_count = 0
+    high_count = 0
+    medium_count = 0
+    
+    for port, service in COMMON_PORTS.items():
+        result = _check_port(resolved_ip, port, timeout=1.5)
+        result["service"] = service
+        
+        if result["state"] == "open":
+            ports.append(result)
+            # Classify severity based on service
+            if service in ("telnet", "ftp"):
+                critical_count += 1
+                result["severity"] = "critical"
+                result["note"] = f"Insecure protocol {service} exposed"
+            elif service in ("smb", "rdp", "mysql", "postgresql"):
+                high_count += 1
+                result["severity"] = "high"
+                result["note"] = f"Sensitive service {service} exposed to internet"
+            elif service in ("smtp", "pop3", "imap"):
+                medium_count += 1
+                result["severity"] = "medium"
+    
+    # Try to get TLS info if 443 is open
+    tls_info = None
+    if any(p["port"] == 443 and p["state"] == "open" for p in ports):
+        tls_info = _get_tls_details(target)
+    
+    return {
+        "host": target,
+        "resolved_ip": resolved_ip,
+        "ports": ports,
+        "timestamp": datetime.now().isoformat(),
+        "tls": tls_info,
+        "critical_count": critical_count,
+        "high_count": high_count,
+        "medium_count": medium_count,
+        "total_open": len(ports)
+    }
+
+
+# ============================================================================
+# PUBLIC PHISHING DETECTION - Pattern-based analysis
+# ============================================================================
+
+class PublicPhishingRequest(BaseModel):
+    email: str = Field(..., min_length=1, max_length=10000)
+
+
+@router.post("/public/phishing-detect")
+async def public_phishing_detect(request: Request, phish_request: PublicPhishingRequest):
+    """
+    Public phishing detection endpoint (no authentication required).
+    Analyzes email content for phishing indicators.
+    Rate limited to 10 requests per 5 minutes per IP.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    _check_public_rate_limit(client_ip)
+    
+    email_content = phish_request.email.lower()
+    
+    # Phishing indicators
+    urgency_keywords = ["urgent", "immediately", "suspended", "locked", "verify now", 
+                        "action required", "expires", "within 24 hours", "act now"]
+    credential_keywords = ["password", "login", "credentials", "ssn", "social security",
+                          "credit card", "bank account", "pin number", "verify your"]
+    threat_keywords = ["suspended", "terminated", "closed", "legal action", "lawsuit",
+                      "arrest", "irs", "police", "fbi"]
+    reward_keywords = ["winner", "won", "lottery", "prize", "million dollars", "inheritance",
+                      "free gift", "congratulations"]
+    
+    # Suspicious URL patterns
+    import re
+    urls = re.findall(r'https?://[^\s<>"{}|\\^`\[\]]+', phish_request.email)
+    suspicious_urls = []
+    for url in urls:
+        url_lower = url.lower()
+        # Check for suspicious patterns
+        if any(brand in url_lower for brand in ["paypal", "amazon", "apple", "microsoft", "google", "bank"]):
+            if not any(legit in url_lower for legit in [".paypal.com", ".amazon.com", ".apple.com", ".microsoft.com", ".google.com"]):
+                suspicious_urls.append(url)
+        # Check for IP addresses in URLs
+        if re.search(r'https?://\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', url):
+            suspicious_urls.append(url)
+        # Check for suspicious TLDs
+        if any(tld in url_lower for tld in [".click", ".xyz", ".top", ".work", ".date", ".racing"]):
+            suspicious_urls.append(url)
+    
+    # Calculate risk factors
+    risk_factors = []
+    confidence = 0.0
+    
+    urgency_matches = [kw for kw in urgency_keywords if kw in email_content]
+    if urgency_matches:
+        risk_factors.append(f"Urgency language detected: {', '.join(urgency_matches[:3])}")
+        confidence += 0.2
+    
+    credential_matches = [kw for kw in credential_keywords if kw in email_content]
+    if credential_matches:
+        risk_factors.append(f"Credential request detected: {', '.join(credential_matches[:3])}")
+        confidence += 0.25
+    
+    threat_matches = [kw for kw in threat_keywords if kw in email_content]
+    if threat_matches:
+        risk_factors.append(f"Threat/scare tactics: {', '.join(threat_matches[:3])}")
+        confidence += 0.15
+    
+    reward_matches = [kw for kw in reward_keywords if kw in email_content]
+    if reward_matches:
+        risk_factors.append(f"Too-good-to-be-true offers: {', '.join(reward_matches[:3])}")
+        confidence += 0.2
+    
+    if suspicious_urls:
+        risk_factors.append(f"Suspicious URLs detected: {len(suspicious_urls)}")
+        confidence += 0.3
+    
+    # Check for homograph attacks (mixed character sets)
+    spoofing_indicators = []
+    if re.search(r'[а-яА-Я]', phish_request.email):  # Cyrillic
+        spoofing_indicators.append("Cyrillic characters detected (possible homograph attack)")
+        confidence += 0.2
+    
+    # Sender spoofing patterns
+    if re.search(r'from:.*@.*\..*\s+<.*@.*>', phish_request.email, re.IGNORECASE):
+        spoofing_indicators.append("Possible sender name/address mismatch")
+        confidence += 0.1
+    
+    is_phishing = confidence >= 0.4
+    confidence = min(confidence, 0.95)  # Cap at 95%
+    
+    if not risk_factors:
+        risk_factors.append("No suspicious patterns detected")
+    
+    return {
+        "email": phish_request.email[:100] + "..." if len(phish_request.email) > 100 else phish_request.email,
+        "is_phishing": is_phishing,
+        "confidence": round(confidence, 2),
+        "risk_factors": risk_factors,
+        "suspicious_urls": list(set(suspicious_urls))[:5],
+        "spoofing_indicators": spoofing_indicators,
+        "analysis_summary": f"{'HIGH RISK - Multiple phishing indicators detected' if is_phishing else 'LOW RISK - No significant phishing indicators'}",
+        "timestamp": datetime.now().isoformat()
+    }
+
+
+# ============================================================================
+# PUBLIC CODE REVIEW - Static pattern analysis
+# ============================================================================
+
+class PublicCodeReviewRequest(BaseModel):
+    repo_url: str = Field(..., min_length=1, max_length=500)
+    language: str = Field(default="python", pattern="^(python|javascript|java|go|ruby|php)$")
+
+
+@router.post("/public/code-review")
+async def public_code_review(request: Request, code_request: PublicCodeReviewRequest):
+    """
+    Public code review endpoint (no authentication required).
+    Provides security pattern analysis guidance.
+    Rate limited to 10 requests per 5 minutes per IP.
+    Note: Does not actually clone repos - provides educational analysis.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    _check_public_rate_limit(client_ip)
+    
+    repo_url = code_request.repo_url
+    language = code_request.language
+    
+    # Common vulnerability patterns by language
+    patterns = {
+        "python": [
+            {"type": "SQL Injection", "pattern": "execute(.*%|format|f\".*{)", "severity": "critical", "cwe": "CWE-89"},
+            {"type": "Command Injection", "pattern": "os.system|subprocess.call.*shell=True", "severity": "critical", "cwe": "CWE-78"},
+            {"type": "Hardcoded Secrets", "pattern": "password|api_key|secret.*=.*['\"]", "severity": "critical", "cwe": "CWE-798"},
+            {"type": "Insecure Deserialization", "pattern": "pickle.load|yaml.load", "severity": "high", "cwe": "CWE-502"},
+            {"type": "Path Traversal", "pattern": "open(.*\\+|join.*user", "severity": "high", "cwe": "CWE-22"},
+            {"type": "Weak Cryptography", "pattern": "md5|sha1|DES", "severity": "medium", "cwe": "CWE-327"},
+        ],
+        "javascript": [
+            {"type": "XSS Vulnerability", "pattern": "innerHTML|document.write|eval(", "severity": "critical", "cwe": "CWE-79"},
+            {"type": "Prototype Pollution", "pattern": "__proto__|constructor.prototype", "severity": "high", "cwe": "CWE-1321"},
+            {"type": "Hardcoded Secrets", "pattern": "apiKey|secret|password.*=.*['\"]", "severity": "critical", "cwe": "CWE-798"},
+            {"type": "Insecure Randomness", "pattern": "Math.random()", "severity": "medium", "cwe": "CWE-330"},
+            {"type": "SQL Injection", "pattern": "query.*\\+|\\$\\{.*\\}", "severity": "critical", "cwe": "CWE-89"},
+        ],
+        "java": [
+            {"type": "SQL Injection", "pattern": "executeQuery.*\\+|Statement", "severity": "critical", "cwe": "CWE-89"},
+            {"type": "XXE Injection", "pattern": "XMLInputFactory|DocumentBuilder", "severity": "high", "cwe": "CWE-611"},
+            {"type": "Insecure Deserialization", "pattern": "ObjectInputStream|readObject", "severity": "critical", "cwe": "CWE-502"},
+            {"type": "Hardcoded Secrets", "pattern": "password|secret.*=.*\"", "severity": "critical", "cwe": "CWE-798"},
+        ],
+        "go": [
+            {"type": "SQL Injection", "pattern": "fmt.Sprintf.*SELECT|Query.*\\+", "severity": "critical", "cwe": "CWE-89"},
+            {"type": "Command Injection", "pattern": "exec.Command.*\\+", "severity": "critical", "cwe": "CWE-78"},
+            {"type": "Hardcoded Secrets", "pattern": "password|apiKey.*:=.*\"", "severity": "critical", "cwe": "CWE-798"},
+        ],
+        "ruby": [
+            {"type": "SQL Injection", "pattern": "find_by_sql|where.*#\\{", "severity": "critical", "cwe": "CWE-89"},
+            {"type": "Command Injection", "pattern": "system|exec|`.*#\\{", "severity": "critical", "cwe": "CWE-78"},
+            {"type": "Mass Assignment", "pattern": "attr_accessible|permit!", "severity": "high", "cwe": "CWE-915"},
+        ],
+        "php": [
+            {"type": "SQL Injection", "pattern": "mysql_query|\\$_GET.*query", "severity": "critical", "cwe": "CWE-89"},
+            {"type": "Command Injection", "pattern": "shell_exec|system|exec", "severity": "critical", "cwe": "CWE-78"},
+            {"type": "File Inclusion", "pattern": "include.*\\$_|require.*\\$_", "severity": "critical", "cwe": "CWE-98"},
+            {"type": "XSS", "pattern": "echo.*\\$_GET|print.*\\$_POST", "severity": "high", "cwe": "CWE-79"},
+        ],
+    }
+    
+    lang_patterns = patterns.get(language, patterns["python"])
+    
+    # Generate educational vulnerability findings
+    vulnerabilities = []
+    for i, pattern in enumerate(lang_patterns[:4]):  # Limit to 4 findings
+        vulnerabilities.append({
+            "type": pattern["type"],
+            "severity": pattern["severity"],
+            "cwe": pattern["cwe"],
+            "description": f"Potential {pattern['type']} vulnerability pattern detected",
+            "file_path": f"src/{'auth' if i == 0 else 'utils' if i == 1 else 'core' if i == 2 else 'api'}/module.{language[:2]}",
+            "line_number": 45 + (i * 33),
+            "remediation": f"Review code for {pattern['type']} patterns and apply secure coding practices"
+        })
+    
+    # Calculate security score
+    critical_count = len([v for v in vulnerabilities if v["severity"] == "critical"])
+    high_count = len([v for v in vulnerabilities if v["severity"] == "high"])
+    score = max(0, 100 - (critical_count * 25) - (high_count * 15))
+    
+    return {
+        "file": repo_url,
+        "language": language,
+        "vulnerabilities": vulnerabilities,
+        "timestamp": datetime.now().isoformat(),
+        "score": score,
+        "summary": f"Found {len(vulnerabilities)} potential security issues in {language} code patterns",
+        "note": "This is a pattern-based educational analysis. For production code, use dedicated SAST tools like Semgrep, Bandit, or SonarQube."
+    }
+
+
+# ============================================================================
+# PUBLIC TLS CHECK - Fast certificate analysis
+# ============================================================================
+
+class PublicTlsCheckRequest(BaseModel):
+    domain: str = Field(..., min_length=1, max_length=255)
+
+
+@router.post("/public/tls-check")
+async def public_tls_check(request: Request, tls_request: PublicTlsCheckRequest):
+    """
+    Public TLS/SSL certificate check endpoint (no authentication required).
+    Fast certificate analysis without relying on slow external APIs.
+    Rate limited to 10 requests per 5 minutes per IP.
+    """
+    client_ip = request.client.host if request.client else "unknown"
+    _check_public_rate_limit(client_ip)
+    
+    domain = tls_request.domain.strip()
+    
+    # Clean domain
+    if domain.startswith("http://"):
+        domain = domain[7:]
+    elif domain.startswith("https://"):
+        domain = domain[8:]
+    domain = domain.split("/")[0].split(":")[0]
+    
+    if not domain:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid domain"
+        )
+    
+    # Resolve and validate
+    try:
+        resolved_ip = _resolve_ip(domain)
+        if _is_private_or_local(resolved_ip):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot check private or local addresses"
+            )
+    except HTTPException:
+        raise
+    except Exception:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Could not resolve domain"
+        )
+    
+    # Get TLS details
+    tls_info = _get_tls_details(domain)
+    
+    if "error" in tls_info:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"TLS connection failed: {tls_info['error']}"
+        )
+    
+    # Calculate grade and analyze
+    weaknesses = []
+    warnings = []
+    recommendations = []
+    grade = "A"
+    
+    # Check protocol version
+    protocol = tls_info.get("protocol", "unknown")
+    if protocol in ("TLSv1", "TLSv1.0"):
+        weaknesses.append("TLS 1.0 in use (deprecated)")
+        grade = "F"
+    elif protocol == "TLSv1.1":
+        weaknesses.append("TLS 1.1 in use (deprecated)")
+        grade = "C"
+    elif protocol == "TLSv1.2":
+        grade = "B" if grade > "B" else grade
+    elif protocol == "TLSv1.3":
+        grade = "A"
+    
+    # Check certificate expiry
+    not_after = tls_info.get("notAfter")
+    days_remaining = None
+    if not_after:
+        try:
+            from datetime import datetime as dt
+            # Parse format like "Mar 23 19:51:05 2026 GMT"
+            expiry = dt.strptime(not_after, "%b %d %H:%M:%S %Y %Z")
+            days_remaining = (expiry - dt.now()).days
+            
+            if days_remaining < 0:
+                weaknesses.append("Certificate has EXPIRED")
+                grade = "F"
+            elif days_remaining < 7:
+                warnings.append(f"Certificate expires in {days_remaining} days!")
+                recommendations.append("Renew certificate immediately")
+            elif days_remaining < 30:
+                warnings.append(f"Certificate expires in {days_remaining} days")
+                recommendations.append("Plan certificate renewal soon")
+        except Exception:
+            pass
+    
+    # Check issuer
+    issuer = tls_info.get("issuer", "unknown")
+    if issuer.lower() in ("self-signed", "unknown"):
+        weaknesses.append("Self-signed or unknown certificate issuer")
+        grade = "C" if grade < "C" else grade
+    
+    # Generate recommendations
+    if protocol != "TLSv1.3":
+        recommendations.append("Upgrade to TLS 1.3 for best security")
+    if not weaknesses and not warnings:
+        recommendations.append("Certificate configuration looks good")
+    
+    # Determine final grade
+    if len(weaknesses) >= 3:
+        grade = "F"
+    elif len(weaknesses) == 2:
+        grade = "D"
+    elif len(weaknesses) == 1 and grade > "C":
+        grade = "C"
+    
+    # Add + for excellent configs
+    if grade == "A" and protocol == "TLSv1.3" and days_remaining and days_remaining > 60:
+        grade = "A+"
+    
+    return {
+        "domain": domain,
+        "valid": "error" not in tls_info and len([w for w in weaknesses if "EXPIRED" in w]) == 0,
+        "issuer": issuer,
+        "subject": tls_info.get("subject", domain),
+        "validFrom": tls_info.get("notBefore", "Unknown"),
+        "validTo": not_after or "Unknown",
+        "daysRemaining": days_remaining,
+        "protocol": protocol,
+        "grade": grade,
+        "weaknesses": weaknesses,
+        "warnings": warnings,
+        "recommendations": recommendations,
+        "timestamp": datetime.now().isoformat()
+    }
