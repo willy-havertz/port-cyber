@@ -69,6 +69,9 @@ async def subscribe_newsletter(request: NewsletterCreate, background_tasks: Back
         background_tasks.add_task(send_welcome_email, request.email)
         
         return newsletter
+    except HTTPException:
+        # Re-raise HTTP exceptions as-is
+        raise
     except IntegrityError:
         db.rollback()
         raise HTTPException(
