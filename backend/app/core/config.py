@@ -6,6 +6,9 @@ import os
 class Settings(BaseSettings):
     # Database
     DATABASE_URL: str
+    # Environment
+    ENVIRONMENT: str = "development"
+    PORT: int = 8000
     
     # JWT
     SECRET_KEY: str = Field(default="")
