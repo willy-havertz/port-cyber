@@ -225,6 +225,22 @@ export default function Writeups() {
             onReset={handleReset}
           />
 
+          {/* Results Count */}
+          {!loading && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`mb-6 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}
+            >
+              {filteredWriteups.length}{" "}
+              {filteredWriteups.length === 1 ? "writeup" : "writeups"} found
+              {selectedPlatform !== "All" && ` from ${selectedPlatform}`}
+              {selectedCategories.length > 0 &&
+                ` in ${selectedCategories.join(", ")}`}
+              {searchQuery && ` matching "${searchQuery}"`}
+            </motion.p>
+          )}
+
           {loading ? (
             <div className="text-center py-12 text-slate-600 dark:text-slate-400">
               Loading writeups...
@@ -235,20 +251,26 @@ export default function Writeups() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredWriteups.length > 0 ? (
                   filteredWriteups
                     .slice(0, visibleCount)
-                    .map((writeup) => (
-                      <WriteupCard
+                    .map((writeup, index) => (
+                      <motion.div
                         key={writeup.id}
-                        {...writeup}
-                        date={writeup.date || "Unknown"}
-                        timeSpent={writeup.timeSpent || "Unknown"}
-                        writeupUrl={writeup.writeupUrl || "#"}
-                        thumbnailUrl={writeup.thumbnailUrl}
-                        summary={writeup.summary}
-                      />
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.4, delay: index * 0.05 }}
+                      >
+                        <WriteupCard
+                          {...writeup}
+                          date={writeup.date || "Unknown"}
+                          timeSpent={writeup.timeSpent || "Unknown"}
+                          writeupUrl={writeup.writeupUrl || "#"}
+                          thumbnailUrl={writeup.thumbnailUrl}
+                          summary={writeup.summary}
+                        />
+                      </motion.div>
                     ))
                 ) : (
                   <div className="col-span-full text-center py-12">
