@@ -401,20 +401,32 @@ export default function Projects() {
             />
           </motion.div>
 
+          {/* Results Count */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`mb-6 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}
+          >
+            {filteredProjects.length}{" "}
+            {filteredProjects.length === 1 ? "project" : "projects"} found
+            {selectedCategories.length > 0 &&
+              ` in ${selectedCategories.join(", ")}`}
+            {searchQuery && ` matching "${searchQuery}"`}
+          </motion.p>
+
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {filteredProjects.length > 0 ? (
               filteredProjects.map((project, index) => (
                 <motion.div
                   key={index}
-                  initial={{ y: 50, opacity: 0 }}
-                  whileInView={{ y: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.05 }}
                 >
                   <ProjectCard
                     {...project}
