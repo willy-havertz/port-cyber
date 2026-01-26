@@ -1,20 +1,59 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from typing import List
-from supabase import create_client, Client
+import logging
+ # from supabase import create_client, Client
 
 from app.core.database import get_db
 from app.core.security import get_current_admin_user
 from app.core.config import settings
 from app.models.comment import Comment
 from app.models.user import User
-from app.schemas.comment import CommentCreate, Comment as CommentSchema, CommentUpdate
+from app.schemas.comment import CommentCreate, CommentReply, Comment as CommentSchema, CommentUpdate
 from app.utils.spam_filter import is_spam
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
-# Initialize Supabase client
-supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_KEY)
+ # Supabase integration disabled for Neon-only backend
+supabase = None
+
+# Initialize Resend client
+try:
+    from resend import Resend
+    RESEND_CLIENT = Resend(api_key=settings.RESEND_API_KEY)
+except Exception as e:
+    logger.warning(f"Resend client initialization failed: {e}")
+    RESEND_CLIENT = None
+
+
+async def send_reply_notification(recipient_email: str, commenter_name: str, reply_preview: str, writeup_id: str):
+    """Send email notification when someone replies to a comment"""
+    if RESEND_CLIENT and settings.ADMIN_EMAIL:
+        try:
+            RESEND_CLIENT.emails.send({
+                "from": "devhavertz@gmail.com",
+                "to": recipient_email,
+                "subject": f"New reply from {commenter_name}",
+                "html": f"""
+                <h2>Someone replied to your comment!</h2>
+                <p><strong>{commenter_name}</strong> replied to your comment on the writeup.</p>
+                <blockquote style="border-left: 3px solid #ddd; padding-left: 15px; color: #666;">
+                    {reply_preview[:200]}...
+                </blockquote>
+                <p><a href="https://wiltordichingwa.vercel.app/writeups/{writeup_id}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+                    View Comment
+                </a></p>
+                <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+                <p style="color: #999; font-size: 12px;">
+                    You're receiving this email because someone replied to your comment. You can manage your preferences in your account settings.
+                </p>
+                """
+            })
+            logger.info(f"Reply notification sent to {recipient_email}")
+        except Exception as e:
+            logger.error(f"Error sending reply notification: {e}")
+
 
 @router.get("/{writeup_id}", response_model=List[CommentSchema])
 async def get_comments(writeup_id: str, db: Session = Depends(get_db)):
@@ -22,7 +61,8 @@ async def get_comments(writeup_id: str, db: Session = Depends(get_db)):
     comments = db.query(Comment).filter(
         Comment.writeup_id == writeup_id,
         Comment.is_approved == True,
-        Comment.is_spam == False
+        Comment.is_spam == False,
+        Comment.reply_to_id == None  # Only get top-level comments
     ).order_by(Comment.created_at.desc()).all()
     return comments
 
@@ -48,20 +88,55 @@ async def create_comment(
     db.commit()
     db.refresh(comment)
     
-    # Also save to Supabase for real-time features
-    try:
-        supabase.table('comments').insert({
-            'writeup_id': comment.writeup_id,
-            'user_name': comment.user_name,
-            'user_email': comment.user_email,
-            'content': comment.content,
-            'is_approved': comment.is_approved,
-            'is_spam': comment.is_spam
-        }).execute()
-    except Exception as e:
-        print(f"Supabase insert failed: {e}")
+    # Supabase integration removed
     
     return comment
+
+@router.post("/{comment_id}/reply", response_model=CommentSchema, status_code=status.HTTP_201_CREATED)
+async def reply_to_comment(
+    comment_id: int,
+    reply_data: CommentReply,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db)
+):
+    """Reply to a specific comment and notify original commenter"""
+    # Get parent comment
+    parent_comment = db.query(Comment).filter(Comment.id == comment_id).first()
+    if not parent_comment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Parent comment not found"
+        )
+    
+    # Check for spam
+    spam_check = is_spam(reply_data.content)
+    
+    # Create reply comment
+    reply_comment = Comment(
+        writeup_id=reply_data.writeup_id,
+        user_name=reply_data.user_name,
+        user_email=reply_data.user_email,
+        content=reply_data.content,
+        reply_to_id=comment_id,
+        is_spam=spam_check,
+        is_approved=not spam_check  # Auto-approve if not spam
+    )
+    
+    db.add(reply_comment)
+    db.commit()
+    db.refresh(reply_comment)
+    
+    # Send notification to original commenter
+    if parent_comment.user_email != reply_data.user_email:  # Don't notify if replying to own comment
+        background_tasks.add_task(
+            send_reply_notification,
+            parent_comment.user_email,
+            reply_data.user_name,
+            reply_data.content,
+            reply_data.writeup_id
+        )
+    
+    return reply_comment
 
 @router.get("/admin/pending", response_model=List[CommentSchema])
 async def get_pending_comments(

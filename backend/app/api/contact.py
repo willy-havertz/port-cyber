@@ -1,12 +1,14 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request, BackgroundTasks
 from pydantic import BaseModel, EmailStr, Field
 from datetime import datetime, timedelta
 from collections import defaultdict
 import httpx
 import os
 from app.core.database import SessionLocal
+from app.core.config import settings
 from app.models.contact import ContactMessage, SpamLog
 from sqlalchemy import func
+
 
 router = APIRouter()
 
@@ -21,7 +23,14 @@ class ContactRequest(BaseModel):
     message: str = Field(..., min_length=10, max_length=5000)
     captchaToken: str
 
+
 HCAPTCHA_SECRET = os.getenv("HCAPTCHA_SECRET_KEY")
+RESEND_CLIENT = None
+try:
+    from resend import Resend
+    RESEND_CLIENT = Resend(settings.RESEND_API_KEY) if settings.RESEND_API_KEY else None
+except ImportError:
+    print("Warning: 'resend' package not installed. Email features will be disabled.")
 RATE_LIMIT_PER_IP = 5  # requests per hour
 RATE_LIMIT_PER_EMAIL = 3  # requests per hour
 WINDOW_SECONDS = 3600  # 1 hour
@@ -94,8 +103,42 @@ def log_spam_activity(db, ip: str, email: str, name: str, reason: str, contact_d
         print(f"Error logging spam activity: {e}")
         db.rollback()
 
+async def send_confirmation_email(name: str, email: str):
+    """Send confirmation email via Resend (background task)"""
+    if RESEND_CLIENT:
+        try:
+            RESEND_CLIENT.emails.send({
+                "from": "devhavertz@gmail.com",
+                "to": email,
+                "subject": "We received your message",
+                "html": f"<p>Hi {name},</p><p>Thank you for reaching out! We've received your message and will get back to you shortly.</p><p>Best regards,<br>Wiltord</p>"
+            })
+            print(f"Confirmation email sent to {email}")
+        except Exception as e:
+            print(f"Error sending confirmation email to {email}: {e}")
+
+async def send_admin_notification(name: str, email: str, subject: str, message: str):
+    """Send admin notification email (background task)"""
+    if RESEND_CLIENT and settings.ADMIN_EMAIL:
+        try:
+            RESEND_CLIENT.emails.send({
+                "from": "devhavertz@gmail.com",
+                "to": settings.ADMIN_EMAIL,
+                "subject": f"New contact form submission: {subject}",
+                "html": f"""
+                <p>New contact form submission:</p>
+                <p><strong>From:</strong> {name} ({email})</p>
+                <p><strong>Subject:</strong> {subject}</p>
+                <p><strong>Message:</strong></p>
+                <p>{message}</p>
+                """
+            })
+            print(f"Admin notification sent to {settings.ADMIN_EMAIL}")
+        except Exception as e:
+            print(f"Error sending admin notification: {e}")
+
 @router.post("/api/contact")
-async def submit_contact(request: ContactRequest, req: Request):
+async def submit_contact(request: ContactRequest, req: Request, background_tasks: BackgroundTasks):
     """
     Submit contact form with rate limiting, CAPTCHA verification, and spam detection
     """
@@ -164,6 +207,12 @@ async def submit_contact(request: ContactRequest, req: Request):
         # Update rate limit tracking
         ip_request_times[client_ip].append(datetime.now())
         email_request_times[request.email].append(datetime.now())
+        
+        # Send confirmation email to user (background task)
+        background_tasks.add_task(send_confirmation_email, request.name, request.email)
+        
+        # Send admin notification email (background task)
+        background_tasks.add_task(send_admin_notification, request.name, request.email, request.subject, request.message)
         
         return {
             "success": True,

@@ -14,6 +14,9 @@ services:
       - "3000:80"
     environment:
       - NODE_ENV=production
+      - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-""}
+      - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-""}
+      - VITE_RESEND_API_KEY=re_iwyjy99W_262gBwTeM2ptRmLC3cWeqkfU
     restart: unless-stopped
     networks:
       - portfolio-network

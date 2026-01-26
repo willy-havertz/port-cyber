@@ -7,7 +7,7 @@ from collections import defaultdict
 from time import time
 import os
 
-from app.api import auth, writeups, comments, scanner, contact
+from app.api import auth, writeups, comments, scanner, contact, newsletter
 from app.core.config import settings
 
 # Load environment variables
@@ -92,6 +92,7 @@ app.include_router(writeups.router, prefix="/api/writeups", tags=["Writeups"])
 app.include_router(comments.router, prefix="/api/comments", tags=["Comments"])
 app.include_router(scanner.router, prefix="/api/scanner", tags=["Security Scanner"])
 app.include_router(contact.router, tags=["Contact"])
+app.include_router(newsletter.router, tags=["Newsletter"])
 
 @app.get("/")
 async def root():
@@ -105,7 +106,10 @@ async def root():
 async def health_check():
     return {"status": "healthy"}
 
+print("Starting main.py")
+
 if __name__ == "__main__":
+    print("Running as __main__")
     import uvicorn
     port = int(os.getenv("PORT", 8000))
     uvicorn.run(

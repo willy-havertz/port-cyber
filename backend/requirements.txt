@@ -25,6 +25,9 @@ pdfplumber==0.10.4
 # Cloud Storage
 cloudinary==1.36.0
 
+# Email
+resend==2.21.0
+
 # NLP for tag extraction
 scikit-learn==1.4.0
 nltk==3.8.1

@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     # Admin
     ADMIN_PASSWORD: str = Field(default="")
     ADMIN_USERNAME: str = Field(default="admin")
+    ADMIN_EMAIL: str = Field(default="devhavertz@gmail.com")
     
     # Supabase (optional for now)
     SUPABASE_URL: str = "https://example.supabase.co"
@@ -60,6 +61,9 @@ class Settings(BaseSettings):
     SCANNER_ALLOW_PRIVATE: bool = False
     SCANNER_MAX_SCANS_PER_USER: int = 5
     SCANNER_RATE_WINDOW_MINUTES: int = 60
+    
+    # Resend Email
+    RESEND_API_KEY: str = Field(default="")
     
     class Config:
         env_file = ".env"

@@ -52,3 +52,24 @@ pnpm-debug.log*
 .vercel
 .env*.local
 public/writeups/fowsniff_images/
+# Backend specific
+backend/venv/
+backend/.env
+backend/uploads/
+backend/vendor/
+*.pyc
+*.pyo
+*.db
+*.sqlite3
+
+# Docker
+*.tar
+docker-compose.override.yml
+
+# nltk data
+nltk_data/
+
+# Test artifacts
+.pytest_cache/
+.coverage
+htmlcov/
