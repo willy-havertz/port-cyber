@@ -37,23 +37,26 @@ export default function AdminDashboard() {
         }
         setComments(allComments);
 
-        // Fetch newsletter subscriber count
-        try {
-          const apiUrl =
-            import.meta.env.VITE_API_URL || "http://localhost:8000/api";
-          const token = localStorage.getItem("auth_token");
-          const response = await fetch(
-            `${apiUrl}/newsletter/subscribers/count`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
-          if (response.ok) {
-            const data = await response.json();
-            setSubscriberCount(data.active_subscribers || 0);
+        // Fetch newsletter subscriber count (only if authenticated)
+        const token = localStorage.getItem("auth_token");
+        if (token) {
+          try {
+            const apiUrl =
+              import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+            const response = await fetch(
+              `${apiUrl}/newsletter/subscribers/count`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              },
+            );
+            if (response.ok) {
+              const data = await response.json();
+              setSubscriberCount(data.active_subscribers || 0);
+            }
+            // Silently ignore 401/403 - user may not be authenticated
+          } catch {
+            // Silently fail - subscriber count is not critical
           }
-        } catch (err) {
-          console.error("Failed to fetch subscriber count:", err);
         }
       } catch (err) {
         console.error("Failed to load dashboard data:", err);

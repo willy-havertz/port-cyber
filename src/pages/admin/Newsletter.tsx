@@ -36,15 +36,26 @@ export default function AdminNewsletter() {
   const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000/api";
 
   const fetchStats = useCallback(async () => {
+    const token = localStorage.getItem("auth_token");
+    if (!token) {
+      setLoading(false);
+      return; // Don't attempt fetch without token
+    }
+    
     setLoading(true);
     setError(null);
     try {
-      const token = localStorage.getItem("auth_token");
       const response = await fetch(`${apiUrl}/newsletter/subscribers/count`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      if (response.status === 401 || response.status === 403) {
+        // Token invalid or expired - don't show error, just set empty stats
+        setStats({ active_subscribers: 0 });
+        return;
+      }
 
       if (!response.ok) {
         throw new Error("Failed to fetch subscriber stats");
@@ -52,9 +63,9 @@ export default function AdminNewsletter() {
 
       const data = await response.json();
       setStats(data);
-    } catch (err) {
-      console.error("Error fetching newsletter stats:", err);
-      setError("Failed to load newsletter statistics");
+    } catch {
+      // Silently fail for auth errors
+      setStats({ active_subscribers: 0 });
     } finally {
       setLoading(false);
     }
