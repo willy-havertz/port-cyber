@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, MessageSquare, Eye } from "lucide-react";
+import { FileText, MessageSquare, Eye, Users } from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
@@ -12,6 +12,7 @@ import {
 export default function AdminDashboard() {
   const [writeups, setWriteups] = useState<Writeup[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
+  const [subscriberCount, setSubscriberCount] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,11 +31,30 @@ export default function AdminDashboard() {
           } catch (err) {
             console.error(
               `Failed to fetch comments for writeup ${writeup.id}:`,
-              err
+              err,
             );
           }
         }
         setComments(allComments);
+
+        // Fetch newsletter subscriber count
+        try {
+          const apiUrl =
+            import.meta.env.VITE_API_URL || "http://localhost:8000/api";
+          const token = localStorage.getItem("auth_token");
+          const response = await fetch(
+            `${apiUrl}/newsletter/subscribers/count`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+          if (response.ok) {
+            const data = await response.json();
+            setSubscriberCount(data.active_subscribers || 0);
+          }
+        } catch (err) {
+          console.error("Failed to fetch subscriber count:", err);
+        }
       } catch (err) {
         console.error("Failed to load dashboard data:", err);
       } finally {
@@ -66,6 +86,13 @@ export default function AdminDashboard() {
       color:
         "bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400",
     },
+    {
+      icon: Users,
+      label: "Newsletter Subscribers",
+      value: subscriberCount,
+      color:
+        "bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400",
+    },
   ];
 
   return (
@@ -79,7 +106,7 @@ export default function AdminDashboard() {
       ) : (
         <div className="space-y-6 lg:space-y-8">
           {/* Stats Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}

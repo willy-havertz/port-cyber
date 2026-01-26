@@ -7,6 +7,7 @@ import os
 from app.core.database import SessionLocal
 from app.core.config import settings
 from app.models.contact import ContactMessage, SpamLog
+from app.utils.email_templates import contact_confirmation_email, admin_notification_email
 from sqlalchemy import func
 
 
@@ -112,8 +113,8 @@ async def send_confirmation_email(name: str, email: str):
             RESEND_CLIENT.Emails.send({
                 "from": "notifications@resend.dev",
                 "to": email,
-                "subject": "We received your message",
-                "html": f"<p>Hi {name},</p><p>Thank you for reaching out! We've received your message and will get back to you shortly.</p><p>Best regards,<br>Wiltord</p>"
+                "subject": "We received your message ✓",
+                "html": contact_confirmation_email(name)
             })
             print(f"Confirmation email sent to {email}")
         except Exception as e:
@@ -126,14 +127,8 @@ async def send_admin_notification(name: str, email: str, subject: str, message: 
             RESEND_CLIENT.Emails.send({
                 "from": "notifications@resend.dev",
                 "to": settings.ADMIN_EMAIL,
-                "subject": f"New contact form submission: {subject}",
-                "html": f"""
-                <p>New contact form submission:</p>
-                <p><strong>From:</strong> {name} ({email})</p>
-                <p><strong>Subject:</strong> {subject}</p>
-                <p><strong>Message:</strong></p>
-                <p>{message}</p>
-                """
+                "subject": f"📬 New message from {name}: {subject}",
+                "html": admin_notification_email(name, email, subject, message)
             })
             print(f"Admin notification sent to {settings.ADMIN_EMAIL}")
         except Exception as e:

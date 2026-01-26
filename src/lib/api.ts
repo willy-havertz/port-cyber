@@ -84,7 +84,7 @@ api.interceptors.response.use(
       }
     }
     return Promise.reject(error);
-  }
+  },
 );
 
 export interface Writeup {
@@ -118,6 +118,8 @@ export interface Comment {
   is_approved?: boolean;
   is_spam?: boolean;
   updated_at?: string;
+  reply_to_id?: number | null;
+  replies?: Comment[];
 }
 
 export interface CreateCommentPayload {
@@ -158,7 +160,7 @@ export const fetchWriteups = async (opts?: { refresh?: boolean }) => {
           "Failed to fetch writeups after",
           maxRetries,
           "attempts:",
-          error
+          error,
         );
         throw error;
       }
@@ -172,7 +174,7 @@ export const fetchWriteups = async (opts?: { refresh?: boolean }) => {
 
 export const fetchWriteup = async (
   id: string | number,
-  opts?: { refresh?: boolean }
+  opts?: { refresh?: boolean },
 ) => {
   const cacheKey = `writeup_${id}`;
 
@@ -213,13 +215,21 @@ export const fetchComments = async (writeupId: string | number) => {
 
 export const postComment = async (
   writeupId: string | number,
-  payload: CreateCommentPayload
+  payload: CreateCommentPayload,
 ) => {
   const { data } = await api.post("/comments/", {
     writeup_id: String(writeupId),
     ...payload,
   });
   return data;
+};
+
+export const replyToComment = async (
+  commentId: number,
+  payload: CreateCommentPayload & { writeup_id: string },
+) => {
+  const { data } = await api.post(`/comments/${commentId}/reply`, payload);
+  return data as Comment;
 };
 
 // Admin API functions
@@ -252,7 +262,7 @@ export interface UpdateWriteupPayload {
 export const uploadWriteupFile = async (
   payload: CreateWriteupPayload,
   file: File,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
 ) => {
   const formData = new FormData();
   formData.append("title", payload.title);
@@ -286,7 +296,7 @@ export const createWriteup = async (payload: CreateWriteupPayload) => {
 
 export const updateWriteup = async (
   id: number,
-  payload: UpdateWriteupPayload
+  payload: UpdateWriteupPayload,
 ) => {
   const { data } = await api.put(`/writeups/${id}`, payload);
   // Clear cache so polling fetches fresh data
@@ -312,7 +322,7 @@ export const updateWriteupWithFile = async (
   id: number,
   payload: UpdateWriteupPayload,
   file: File,
-  onProgress?: (progress: number) => void
+  onProgress?: (progress: number) => void,
 ) => {
   const formData = new FormData();
   if (payload.title) formData.append("title", payload.title);

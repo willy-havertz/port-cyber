@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { CheckCircle, Trash2, AlertCircle } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CheckCircle, Trash2, AlertCircle, Reply, Send, X } from "lucide-react";
 import AdminLayout from "../../components/AdminLayout";
 import {
   fetchWriteups,
   fetchComments,
   approveComment,
   deleteComment,
+  replyToComment,
   type Comment,
 } from "../../lib/api";
 
@@ -16,10 +17,13 @@ export default function AdminComments() {
   >([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "pending" | "approved">(
-    "pending"
+    "pending",
   );
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<number | null>(null);
+  const [replyContent, setReplyContent] = useState("");
+  const [submittingReply, setSubmittingReply] = useState(false);
 
   useEffect(() => {
     load();
@@ -43,7 +47,7 @@ export default function AdminComments() {
         } catch (err) {
           console.error(
             `Failed to fetch comments for writeup ${writeup.id}:`,
-            err
+            err,
           );
         }
       }
@@ -69,8 +73,8 @@ export default function AdminComments() {
       // Update comment immediately (optimistic update)
       setComments((prev) =>
         prev.map((comment) =>
-          comment.id === id ? { ...comment, is_approved: true } : comment
-        )
+          comment.id === id ? { ...comment, is_approved: true } : comment,
+        ),
       );
 
       // Approve on backend
@@ -101,6 +105,34 @@ export default function AdminComments() {
       setError("Failed to delete comment");
       // Reload to restore the comment if deletion failed
       await load();
+    }
+  };
+
+  const handleReply = async (comment: Comment & { writeup_title?: string }) => {
+    if (!replyContent.trim()) return;
+
+    try {
+      setSubmittingReply(true);
+      setError(null);
+
+      await replyToComment(comment.id, {
+        writeup_id: String(comment.writeup_id),
+        user_name: "Wiltord (Admin)",
+        user_email: "devhavertz@gmail.com",
+        content: replyContent,
+      });
+
+      setSuccess(`Reply sent! The user will be notified via email.`);
+      setReplyContent("");
+      setReplyingTo(null);
+
+      // Reload comments to show the new reply
+      await load();
+    } catch (err) {
+      console.error(err);
+      setError("Failed to send reply");
+    } finally {
+      setSubmittingReply(false);
     }
   };
 
@@ -169,8 +201,8 @@ export default function AdminComments() {
               {filter === "pending"
                 ? "No pending comments"
                 : filter === "approved"
-                ? "No approved comments"
-                : "No comments"}
+                  ? "No approved comments"
+                  : "No comments"}
             </p>
           </div>
         ) : (
@@ -209,6 +241,52 @@ export default function AdminComments() {
                   {comment.content}
                 </p>
 
+                {/* Reply Form */}
+                <AnimatePresence>
+                  {replyingTo === comment.id && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mb-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                          Reply as Admin
+                        </span>
+                        <button
+                          onClick={() => {
+                            setReplyingTo(null);
+                            setReplyContent("");
+                          }}
+                          className="p-1 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                        >
+                          <X className="h-4 w-4 text-slate-500" />
+                        </button>
+                      </div>
+                      <textarea
+                        value={replyContent}
+                        onChange={(e) => setReplyContent(e.target.value)}
+                        placeholder="Write your reply..."
+                        rows={3}
+                        className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <div className="flex justify-end mt-2">
+                        <motion.button
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => handleReply(comment)}
+                          disabled={submittingReply || !replyContent.trim()}
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                        >
+                          <Send className="h-4 w-4" />
+                          {submittingReply ? "Sending..." : "Send Reply"}
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <div className="flex flex-col sm:flex-row gap-2">
                   {!comment.is_approved && (
                     <motion.button
@@ -221,6 +299,20 @@ export default function AdminComments() {
                       Approve
                     </motion.button>
                   )}
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => {
+                      setReplyingTo(
+                        replyingTo === comment.id ? null : comment.id,
+                      );
+                      setReplyContent("");
+                    }}
+                    className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
+                  >
+                    <Reply className="h-4 w-4" />
+                    Reply
+                  </motion.button>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}

@@ -15,7 +15,7 @@ declare global {
     hcaptcha?: {
       render: (
         element: string | HTMLElement,
-        options: Record<string, unknown>
+        options: Record<string, unknown>,
       ) => void;
       reset: (widgetId?: string) => void;
       remove: (widgetId?: string) => void;
@@ -86,7 +86,7 @@ export default function Contact() {
             message: data.message,
             captchaToken: captchaToken,
           }),
-        }
+        },
       );
 
       if (!response.ok) {
@@ -115,7 +115,7 @@ export default function Contact() {
   React.useEffect(() => {
     const scriptSrc = "https://js.hcaptcha.com/1/api.js?render=explicit";
     const existingScript = document.querySelector(
-      `script[src="${scriptSrc}"]`
+      `script[src="${scriptSrc}"]`,
     ) as HTMLScriptElement | null;
 
     if (existingScript && window.hcaptcha) {

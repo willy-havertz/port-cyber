@@ -21,6 +21,7 @@ import AdminLogin from "./src/pages/admin/Login.tsx";
 import AdminDashboard from "./src/pages/admin/Dashboard.tsx";
 import AdminWriteups from "./src/pages/admin/Writeups.tsx";
 import AdminComments from "./src/pages/admin/Comments.tsx";
+import AdminNewsletter from "./src/pages/admin/Newsletter.tsx";
 import SecurityTools from "./src/pages/admin/SecurityTools.tsx";
 import ProtectedRoute from "./src/components/ProtectedRoute.tsx";
 
@@ -67,6 +68,14 @@ const App: React.FC = () => {
                 element={
                   <ProtectedRoute>
                     <AdminComments />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/admin/newsletter"
+                element={
+                  <ProtectedRoute>
+                    <AdminNewsletter />
                   </ProtectedRoute>
                 }
               />

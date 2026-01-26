@@ -2,7 +2,7 @@ name: Keep Backend Awake
 
 on:
   schedule:
-    - cron: "0 */6 * * *" # Every 6 hours to prevent Render from sleeping
+    - cron: "*/14 * * * *" # Every 14 minutes to prevent Render from sleeping (sleeps after 15 min)
   workflow_dispatch:
 
 jobs:

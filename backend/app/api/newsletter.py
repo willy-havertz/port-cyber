@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 import logging
@@ -9,6 +9,7 @@ from ..models.newsletter import Newsletter
 from ..models.user import User
 from ..schemas.newsletter import NewsletterCreate, NewsletterResponse, NewsletterSendRequest
 from ..core.security import get_current_admin_user
+from ..utils.email_templates import newsletter_welcome_email, newsletter_email
 
 router = APIRouter(prefix="/api/newsletter", tags=["newsletter"])
 logger = logging.getLogger(__name__)
@@ -23,8 +24,23 @@ except Exception as e:
     RESEND_CLIENT = None
 
 
+async def send_welcome_email(email: str):
+    """Send welcome email when someone subscribes to newsletter"""
+    if RESEND_CLIENT:
+        try:
+            RESEND_CLIENT.Emails.send({
+                "from": "notifications@resend.dev",
+                "to": email,
+                "subject": "🎉 Welcome to my Cybersecurity Newsletter!",
+                "html": newsletter_welcome_email(email)
+            })
+            logger.info(f"Welcome email sent to {email}")
+        except Exception as e:
+            logger.error(f"Error sending welcome email to {email}: {e}")
+
+
 @router.post("/subscribe", response_model=NewsletterResponse, status_code=status.HTTP_201_CREATED)
-async def subscribe_newsletter(request: NewsletterCreate, db: Session = Depends(get_db)):
+async def subscribe_newsletter(request: NewsletterCreate, background_tasks: BackgroundTasks, db: Session = Depends(get_db)):
     """Subscribe email to newsletter"""
     try:
         # Check if already subscribed
@@ -39,6 +55,8 @@ async def subscribe_newsletter(request: NewsletterCreate, db: Session = Depends(
             existing.is_active = True
             existing.unsubscribed_at = None
             db.commit()
+            # Send welcome email for reactivation
+            background_tasks.add_task(send_welcome_email, request.email)
             return existing
 
         # Create new subscription
@@ -46,6 +64,9 @@ async def subscribe_newsletter(request: NewsletterCreate, db: Session = Depends(
         db.add(newsletter)
         db.commit()
         db.refresh(newsletter)
+        
+        # Send welcome email
+        background_tasks.add_task(send_welcome_email, request.email)
         
         return newsletter
     except IntegrityError:
@@ -118,7 +139,7 @@ async def send_newsletter(request: NewsletterSendRequest, db: Session = Depends(
                     "from": "notifications@resend.dev",
                     "to": subscriber.email,
                     "subject": request.subject,
-                    "html": request.html_content,
+                    "html": newsletter_email(request.subject, request.html_content, subscriber.email),
                 })
                 sent_count += 1
             except Exception as e:

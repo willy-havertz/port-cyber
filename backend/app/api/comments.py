@@ -11,6 +11,7 @@ from app.models.comment import Comment
 from app.models.user import User
 from app.schemas.comment import CommentCreate, CommentReply, Comment as CommentSchema, CommentUpdate
 from app.utils.spam_filter import is_spam
+from app.utils.email_templates import reply_notification_email
 
 router = APIRouter()
 logger = logging.getLogger(__name__)
@@ -35,37 +36,42 @@ async def send_reply_notification(recipient_email: str, commenter_name: str, rep
             RESEND_CLIENT.Emails.send({
                 "from": "notifications@resend.dev",
                 "to": recipient_email,
-                "subject": f"New reply from {commenter_name}",
-                "html": f"""
-                <h2>Someone replied to your comment!</h2>
-                <p><strong>{commenter_name}</strong> replied to your comment on the writeup.</p>
-                <blockquote style="border-left: 3px solid #ddd; padding-left: 15px; color: #666;">
-                    {reply_preview[:200]}...
-                </blockquote>
-                <p><a href="https://wiltordichingwa.vercel.app/writeups/{writeup_id}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
-                    View Comment
-                </a></p>
-                <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
-                <p style="color: #999; font-size: 12px;">
-                    You're receiving this email because someone replied to your comment. You can manage your preferences in your account settings.
-                </p>
-                """
+                "subject": f"💬 {commenter_name} replied to your comment",
+                "html": reply_notification_email(commenter_name, reply_preview, writeup_id)
             })
             logger.info(f"Reply notification sent to {recipient_email}")
         except Exception as e:
             logger.error(f"Error sending reply notification: {e}")
 
 
+def build_comment_tree(comments: list, parent_id: int = None) -> list:
+    """Build nested comment tree structure"""
+    tree = []
+    for comment in comments:
+        if comment.reply_to_id == parent_id:
+            # Find all replies to this comment
+            comment.replies = build_comment_tree(comments, comment.id)
+            tree.append(comment)
+    return tree
+
+
 @router.get("/{writeup_id}", response_model=List[CommentSchema])
 async def get_comments(writeup_id: str, db: Session = Depends(get_db)):
-    """Get all approved comments for a writeup"""
-    comments = db.query(Comment).filter(
+    """Get all approved comments for a writeup with nested replies"""
+    # Get all approved comments for this writeup (including replies)
+    all_comments = db.query(Comment).filter(
         Comment.writeup_id == writeup_id,
         Comment.is_approved == True,
         Comment.is_spam == False,
-        Comment.reply_to_id == None  # Only get top-level comments
-    ).order_by(Comment.created_at.desc()).all()
-    return comments
+    ).order_by(Comment.created_at.asc()).all()
+    
+    # Build nested tree structure - only return top-level comments with their replies
+    top_level_comments = build_comment_tree(all_comments, None)
+    
+    # Reverse to show newest first
+    top_level_comments.reverse()
+    
+    return top_level_comments
 
 @router.post("/", response_model=CommentSchema, status_code=status.HTTP_201_CREATED)
 async def create_comment(

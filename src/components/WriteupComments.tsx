@@ -1,11 +1,92 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import { Send, MessageCircle } from "lucide-react";
+import { Send, MessageCircle, Reply, User } from "lucide-react";
 import { fetchComments, postComment, type Comment } from "../lib/api";
 
 interface WriteupCommentsProps {
   writeupId: string;
 }
+
+// Component to render a single comment with its replies
+const CommentItem: React.FC<{
+  comment: Comment;
+  index: number;
+  depth?: number;
+}> = ({ comment, index, depth = 0 }) => {
+  const isAdminReply =
+    comment.user_name.toLowerCase().includes("admin") ||
+    comment.user_name.toLowerCase().includes("wiltord");
+
+  return (
+    <div className={depth > 0 ? "ml-6 sm:ml-10 mt-3" : ""}>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: index * 0.05 }}
+        className={`rounded-lg p-4 border ${
+          isAdminReply
+            ? "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800"
+            : "bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700"
+        }`}
+      >
+        <div className="flex justify-between items-start mb-2">
+          <div className="flex items-center gap-2">
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                isAdminReply
+                  ? "bg-blue-500 text-white"
+                  : "bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-200"
+              }`}
+            >
+              {isAdminReply ? "A" : <User className="h-4 w-4" />}
+            </div>
+            <div>
+              <h4 className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                {comment.user_name}
+                {isAdminReply && (
+                  <span className="text-xs bg-blue-500 text-white px-2 py-0.5 rounded-full">
+                    Admin
+                  </span>
+                )}
+              </h4>
+              {depth > 0 && (
+                <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
+                  <Reply className="h-3 w-3" /> Reply
+                </span>
+              )}
+            </div>
+          </div>
+          <span className="text-xs text-slate-500 dark:text-slate-400">
+            {new Date(comment.created_at).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </span>
+        </div>
+        <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap pl-10">
+          {comment.content}
+        </p>
+      </motion.div>
+
+      {/* Render nested replies */}
+      {comment.replies && comment.replies.length > 0 && (
+        <div className="border-l-2 border-slate-200 dark:border-slate-700">
+          {comment.replies.map((reply, replyIndex) => (
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              index={index + replyIndex + 1}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
   const [comments, setComments] = useState<Comment[]>([]);
@@ -87,8 +168,8 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
                   created_at:
                     postedComment.created_at || new Date().toISOString(),
                 }
-              : c
-          )
+              : c,
+          ),
         );
       }
     } catch (err) {
@@ -189,31 +270,7 @@ const WriteupComments: React.FC<WriteupCommentsProps> = ({ writeupId }) => {
           </p>
         ) : (
           comments.map((comment, index) => (
-            <motion.div
-              key={comment.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.05 }}
-              className="bg-white dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700"
-            >
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-semibold text-slate-900 dark:text-white">
-                  {comment.user_name}
-                </h4>
-                <span className="text-xs text-slate-500 dark:text-slate-400">
-                  {new Date(comment.created_at).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "short",
-                    day: "numeric",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                  })}
-                </span>
-              </div>
-              <p className="text-slate-700 dark:text-slate-300 whitespace-pre-wrap">
-                {comment.content}
-              </p>
-            </motion.div>
+            <CommentItem key={comment.id} comment={comment} index={index} />
           ))
         )}
       </div>

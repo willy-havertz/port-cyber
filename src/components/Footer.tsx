@@ -1,12 +1,13 @@
 import React from "react";
 import { Github, Linkedin, Mail } from "lucide-react";
 import { motion } from "framer-motion";
+import NewsletterSubscribe from "./NewsletterSubscribe";
 
 const Footer = () => {
   return (
     <footer className="bg-slate-900 text-slate-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -78,6 +79,16 @@ const Footer = () => {
                 </a>
               </li>
             </ul>
+          </motion.div>
+
+          {/* Newsletter Subscription */}
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
+            <NewsletterSubscribe variant="footer" />
           </motion.div>
 
           <motion.div
