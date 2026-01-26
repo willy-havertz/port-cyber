@@ -113,7 +113,7 @@ export default function AdminDashboard() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="bg-white dark:bg-slate-800 rounded-lg shadow p-4 sm:p-6"
+                className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 p-4 sm:p-6 border border-slate-200/50 dark:border-slate-700/50 hover:shadow-xl transition-shadow"
               >
                 <div className="flex items-center justify-between">
                   <div>
@@ -137,18 +137,18 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow"
+            className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-700/50"
           >
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-700">
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200/50 dark:border-slate-700/50">
+              <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
                 Recent Writeups
               </h3>
             </div>
-            <div className="divide-y divide-slate-200 dark:divide-slate-700">
+            <div className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
               {writeups.slice(0, 5).map((writeup) => (
                 <div
                   key={writeup.id}
-                  className="px-4 sm:px-6 py-3 sm:py-4 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                  className="px-4 sm:px-6 py-3 sm:py-4 hover:bg-green-50/50 dark:hover:bg-green-900/10 transition-colors"
                 >
                   <h4 className="font-medium text-sm sm:text-base text-slate-900 dark:text-white">
                     {writeup.title}
@@ -166,18 +166,18 @@ export default function AdminDashboard() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow"
+            className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-700/50"
           >
-            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200 dark:border-slate-700">
-              <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">
+            <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-200/50 dark:border-slate-700/50">
+              <h3 className="text-base sm:text-lg font-semibold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
                 Recent Comments
               </h3>
             </div>
-            <div className="divide-y divide-slate-200 dark:divide-slate-700">
+            <div className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
               {comments.slice(0, 5).map((comment) => (
                 <div
                   key={comment.id}
-                  className="px-4 sm:px-6 py-3 sm:py-4 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+                  className="px-4 sm:px-6 py-3 sm:py-4 hover:bg-green-50/50 dark:hover:bg-green-900/10 transition-colors"
                 >
                   <div className="flex items-start justify-between gap-2 sm:gap-4">
                     <div className="flex-1 min-w-0">

@@ -299,7 +299,7 @@ export default function AdminWriteups() {
       <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
             Manage Writeups
           </h1>
           {!showForm && (
@@ -310,7 +310,7 @@ export default function AdminWriteups() {
                 setShowForm(true);
                 setEditingId(null);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors text-sm sm:text-base w-full sm:w-auto justify-center"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-xl transition-all text-sm sm:text-base w-full sm:w-auto justify-center shadow-lg hover:shadow-green-500/25"
             >
               <Plus className="h-4 w-4 sm:h-5 sm:w-5" />
               New Writeup
@@ -323,7 +323,7 @@ export default function AdminWriteups() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg"
+            className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800/50"
           >
             <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <p className="text-red-600 dark:text-red-400">{error}</p>
@@ -334,7 +334,7 @@ export default function AdminWriteups() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg"
+            className="flex items-center justify-between gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800/50"
           >
             <p className="text-green-600 dark:text-green-400">{success}</p>
             <button
@@ -343,7 +343,7 @@ export default function AdminWriteups() {
                 setSuccess(null);
                 await load();
               }}
-              className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-600 text-white rounded-md hover:bg-green-700 dark:bg-green-500 dark:hover:bg-green-600"
+              className="inline-flex items-center gap-2 px-3 py-1.5 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg transition-all shadow-lg hover:shadow-green-500/25"
               title="Refresh list"
             >
               <RefreshCw className="h-4 w-4" />
@@ -357,9 +357,9 @@ export default function AdminWriteups() {
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white dark:bg-slate-800 rounded-lg shadow p-4 sm:p-6"
+            className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 p-4 sm:p-6 border border-slate-200/50 dark:border-slate-700/50"
           >
-            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-white mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent mb-4">
               {editingId ? "Edit Writeup" : "Create New Writeup"}
             </h2>
             <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
@@ -371,7 +371,7 @@ export default function AdminWriteups() {
                   onChange={(e) =>
                     setFormData({ ...formData, title: e.target.value })
                   }
-                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                   required
                 />
                 <select
@@ -379,7 +379,7 @@ export default function AdminWriteups() {
                   onChange={(e) =>
                     setFormData({ ...formData, platform: e.target.value })
                   }
-                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 >
                   <option>Hack The Box</option>
                   <option>Try Hack Me</option>
@@ -389,7 +389,7 @@ export default function AdminWriteups() {
                   onChange={(e) =>
                     setFormData({ ...formData, difficulty: e.target.value })
                   }
-                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 >
                   <option>Easy</option>
                   <option>Medium</option>
@@ -403,7 +403,7 @@ export default function AdminWriteups() {
                   onChange={(e) =>
                     setFormData({ ...formData, category: e.target.value })
                   }
-                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                   required
                 />
                 <input
@@ -412,7 +412,7 @@ export default function AdminWriteups() {
                   onChange={(e) =>
                     setFormData({ ...formData, date: e.target.value })
                   }
-                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 />
                 <input
                   type="text"
@@ -421,7 +421,7 @@ export default function AdminWriteups() {
                   onChange={(e) =>
                     setFormData({ ...formData, time_spent: e.target.value })
                   }
-                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 />
               </div>
               <textarea
@@ -431,11 +431,11 @@ export default function AdminWriteups() {
                   setFormData({ ...formData, summary: e.target.value })
                 }
                 rows={3}
-                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
               />
 
               {/* Methodology Section */}
-              <div className="pt-2 pb-2 border-t border-slate-300 dark:border-slate-600">
+              <div className="pt-2 pb-2 border-t border-slate-300/50 dark:border-slate-600/50">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                   Methodology
                 </label>
@@ -448,12 +448,12 @@ export default function AdminWriteups() {
                     setFormData({ ...formData, methodology: e.target.value })
                   }
                   rows={3}
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 />
               </div>
 
               {/* Tools Used Section */}
-              <div className="pt-2 pb-2 border-t border-slate-300 dark:border-slate-600">
+              <div className="pt-2 pb-2 border-t border-slate-300/50 dark:border-slate-600/50">
                 <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">
                   Tools Used
                 </label>
@@ -464,7 +464,7 @@ export default function AdminWriteups() {
                     setFormData({ ...formData, tools_used: e.target.value })
                   }
                   rows={2}
-                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                  className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 />
               </div>
 
@@ -490,7 +490,7 @@ export default function AdminWriteups() {
                   />
                   <label
                     htmlFor="pdf-input"
-                    className="flex items-center justify-center w-full px-4 py-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex items-center justify-center w-full px-4 py-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl bg-slate-50 dark:bg-slate-700 cursor-pointer hover:bg-green-50/50 dark:hover:bg-green-900/10 hover:border-green-400 dark:hover:border-green-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <span className="text-slate-600 dark:text-slate-400">
                       {selectedFile
@@ -504,7 +504,7 @@ export default function AdminWriteups() {
 
                 {/* File info and progress */}
                 {selectedFile && (
-                  <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800/50">
                     <div className="text-sm text-slate-700 dark:text-slate-300">
                       <p className="font-medium">{selectedFile.name}</p>
                       <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -539,7 +539,7 @@ export default function AdminWriteups() {
                     </div>
                     <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                       <div
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-300"
                         style={{ width: `${uploadProgress}%` }}
                       />
                     </div>
@@ -559,7 +559,7 @@ export default function AdminWriteups() {
                     onChange={(e) =>
                       setFormData({ ...formData, writeup_url: e.target.value })
                     }
-                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
+                    className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                     placeholder="Writeup URL (leave empty for markdown)"
                   />
                   <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -573,7 +573,7 @@ export default function AdminWriteups() {
                 <button
                   type="submit"
                   disabled={isUploading}
-                  className="px-4 py-2 bg-black dark:bg-slate-800 text-white font-medium rounded-lg hover:bg-slate-900 dark:hover:bg-slate-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base shadow-lg hover:shadow-green-500/25"
                 >
                   {isUploading
                     ? "Uploading..."
@@ -585,7 +585,7 @@ export default function AdminWriteups() {
                   type="button"
                   disabled={isUploading}
                   onClick={resetForm}
-                  className="px-4 py-2 bg-slate-300 dark:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-lg hover:bg-slate-400 dark:hover:bg-slate-500 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+                  className="px-4 py-2 bg-slate-300 dark:bg-slate-600 text-slate-900 dark:text-white font-medium rounded-xl hover:bg-slate-400 dark:hover:bg-slate-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   Cancel
                 </button>
@@ -602,9 +602,9 @@ export default function AdminWriteups() {
             </p>
           </div>
         ) : (
-          <div className="bg-white dark:bg-slate-800 rounded-lg shadow overflow-x-auto">
+          <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 overflow-x-auto border border-slate-200/50 dark:border-slate-700/50">
             <table className="w-full min-w-[640px]">
-              <thead className="bg-slate-50 dark:bg-slate-700">
+              <thead className="bg-slate-50/80 dark:bg-slate-700/80">
                 <tr>
                   <th className="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs sm:text-sm font-semibold text-slate-900 dark:text-white">
                     Title
@@ -623,11 +623,11 @@ export default function AdminWriteups() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+              <tbody className="divide-y divide-slate-200/50 dark:divide-slate-700/50">
                 {writeups.map((writeup) => (
                   <tr
                     key={writeup.id}
-                    className="hover:bg-slate-50 dark:hover:bg-slate-700"
+                    className="hover:bg-green-50/50 dark:hover:bg-green-900/10 transition-colors"
                   >
                     <td className="px-3 sm:px-6 py-3 sm:py-4 text-sm sm:text-base text-slate-900 dark:text-white">
                       {writeup.title}
@@ -684,7 +684,7 @@ export default function AdminWriteups() {
                     <td className="px-3 sm:px-6 py-3 sm:py-4 flex gap-1 sm:gap-2">
                       <button
                         onClick={() => handleEdit(writeup)}
-                        className="p-1.5 sm:p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded"
+                        className="p-1.5 sm:p-2 text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-green-900/20 rounded-lg transition-colors"
                         title="Edit writeup"
                       >
                         <Edit2 className="h-4 w-4" />
@@ -692,7 +692,7 @@ export default function AdminWriteups() {
                       <button
                         onClick={() => handleGenerateAI(writeup.id)}
                         disabled={generatingAI === writeup.id}
-                        className="p-1.5 sm:p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="p-1.5 sm:p-2 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         title="Generate AI content"
                       >
                         <Sparkles
@@ -703,7 +703,7 @@ export default function AdminWriteups() {
                       </button>
                       <button
                         onClick={() => handleDelete(writeup.id)}
-                        className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded"
+                        className="p-1.5 sm:p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                         title="Delete writeup"
                       >
                         <Trash2 className="h-4 w-4" />

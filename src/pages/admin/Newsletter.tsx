@@ -112,7 +112,7 @@ export default function AdminNewsletter() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
               Newsletter
             </h1>
             <p className="text-slate-600 dark:text-slate-400 mt-1">
@@ -122,7 +122,7 @@ export default function AdminNewsletter() {
           <button
             onClick={fetchStats}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-700 dark:text-slate-300 rounded-xl hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 border border-slate-200/50 dark:border-slate-700/50 transition-all"
           >
             <RefreshCw className={`h-4 w-4 ${loading ? "animate-spin" : ""}`} />
             Refresh
@@ -133,11 +133,11 @@ export default function AdminNewsletter() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white dark:bg-slate-800 rounded-lg shadow p-6"
+          className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 p-6 border border-slate-200/50 dark:border-slate-700/50"
         >
           <div className="flex items-center gap-4">
-            <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-lg">
-              <Users className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <div className="p-3 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl shadow-lg shadow-green-500/25">
+              <Users className="h-6 w-6 text-white" />
             </div>
             <div>
               <p className="text-sm text-slate-600 dark:text-slate-400">
@@ -197,11 +197,11 @@ export default function AdminNewsletter() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-white dark:bg-slate-800 rounded-lg shadow"
+          className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-700/50"
         >
-          <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700">
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2">
-              <Mail className="h-5 w-5" />
+          <div className="px-6 py-4 border-b border-slate-200/50 dark:border-slate-700/50">
+            <h2 className="text-lg font-semibold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent flex items-center gap-2">
+              <Mail className="h-5 w-5 text-green-500" />
               Compose Newsletter
             </h2>
           </div>
@@ -221,7 +221,7 @@ export default function AdminNewsletter() {
                 value={subject}
                 onChange={(e) => setSubject(e.target.value)}
                 placeholder="Enter newsletter subject..."
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
               />
             </div>
 
@@ -239,7 +239,7 @@ export default function AdminNewsletter() {
                 onChange={(e) => setHtmlContent(e.target.value)}
                 placeholder="Write your newsletter content here... You can use HTML for formatting."
                 rows={12}
-                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent font-mono text-sm"
+                className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent font-mono text-sm transition-all"
               />
               <p className="mt-2 text-xs text-slate-500 dark:text-slate-400">
                 Tip: Your content will be wrapped in a professional email
@@ -253,7 +253,7 @@ export default function AdminNewsletter() {
                 <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                   Preview
                 </label>
-                <div className="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg">
+                <div className="p-4 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl">
                   <div
                     className="prose prose-sm dark:prose-invert max-w-none"
                     dangerouslySetInnerHTML={{ __html: htmlContent }}
@@ -263,7 +263,7 @@ export default function AdminNewsletter() {
             )}
 
             {/* Submit Button */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-700">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-200/50 dark:border-slate-700/50">
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 Will be sent to{" "}
                 <strong className="text-slate-700 dark:text-slate-300">
@@ -274,7 +274,7 @@ export default function AdminNewsletter() {
               <button
                 type="submit"
                 disabled={sending || !subject.trim() || !htmlContent.trim()}
-                className="flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all shadow-lg hover:shadow-green-500/25"
               >
                 {sending ? (
                   <>

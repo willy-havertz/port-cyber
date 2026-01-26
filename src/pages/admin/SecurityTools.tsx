@@ -265,17 +265,17 @@ export default function SecurityTools() {
       <div className="space-y-6 lg:space-y-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
               Security Tools
             </h1>
             <p className="text-sm text-slate-600 dark:text-slate-400">
               Advanced web scan, API audit, and CVE intelligence (auth required)
             </p>
           </div>
-          <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
+          <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-4 py-2 rounded-xl border border-slate-200/50 dark:border-slate-700/50">
             <input
               type="checkbox"
-              className="h-4 w-4"
+              className="h-4 w-4 accent-green-500"
               checked={useMock}
               onChange={(e) => setUseMock(e.target.checked)}
             />
@@ -284,9 +284,9 @@ export default function SecurityTools() {
         </div>
 
         {/* Advanced Web Scan */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700">
-          <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
-            <div className="p-2 rounded bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-300">
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-700/50">
+          <div className="p-4 sm:p-6 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25">
               <Shield className="h-5 w-5" />
             </div>
             <div>
@@ -300,7 +300,7 @@ export default function SecurityTools() {
           </div>
           <div className="p-4 sm:p-6 space-y-4">
             {advError && (
-              <div className="flex items-start gap-2 p-3 rounded bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200">
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-800/50">
                 <AlertCircle className="h-4 w-4 mt-0.5" />
                 <p className="text-sm">{advError}</p>
               </div>
@@ -314,13 +314,13 @@ export default function SecurityTools() {
                   value={advTarget}
                   onChange={(e) => setAdvTarget(e.target.value)}
                   placeholder="https://example.com"
-                  className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 />
               </div>
               <div className="flex items-center gap-2 mt-6 md:mt-auto">
                 <input
                   type="checkbox"
-                  className="h-4 w-4"
+                  className="h-4 w-4 accent-green-500"
                   checked={includePortScan}
                   onChange={(e) => setIncludePortScan(e.target.checked)}
                 />
@@ -332,7 +332,7 @@ export default function SecurityTools() {
             <button
               onClick={handleRunAdvanced}
               disabled={advLoading}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-black text-white dark:bg-slate-900 dark:text-white hover:bg-slate-800 disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white disabled:opacity-60 shadow-lg hover:shadow-green-500/25 transition-all"
             >
               {advLoading ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -413,7 +413,7 @@ export default function SecurityTools() {
                     onClick={() =>
                       downloadJson(advResult, "advanced-scan.json")
                     }
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white dark:bg-slate-700 hover:bg-black"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white dark:bg-slate-700 hover:bg-slate-900 transition-colors"
                   >
                     <Download className="h-4 w-4" /> Download JSON
                   </button>
@@ -424,9 +424,9 @@ export default function SecurityTools() {
         </div>
 
         {/* API Security Audit */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700">
-          <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
-            <div className="p-2 rounded bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-300">
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-700/50">
+          <div className="p-4 sm:p-6 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-purple-500 to-violet-600 text-white shadow-lg shadow-purple-500/25">
               <Server className="h-5 w-5" />
             </div>
             <div>
@@ -440,7 +440,7 @@ export default function SecurityTools() {
           </div>
           <div className="p-4 sm:p-6 space-y-4">
             {apiError && (
-              <div className="flex items-start gap-2 p-3 rounded bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200">
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-800/50">
                 <AlertCircle className="h-4 w-4 mt-0.5" />
                 <p className="text-sm">{apiError}</p>
               </div>
@@ -454,13 +454,13 @@ export default function SecurityTools() {
                   value={baseUrl}
                   onChange={(e) => setBaseUrl(e.target.value)}
                   placeholder="https://api.example.com"
-                  className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 />
               </div>
               <div className="flex items-center justify-end md:items-end">
                 <button
                   onClick={addEndpoint}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 hover:border-green-400 dark:hover:border-green-600 transition-all"
                 >
                   <Plus className="h-4 w-4" /> Add Endpoint
                 </button>
@@ -478,7 +478,7 @@ export default function SecurityTools() {
                     onChange={(e) =>
                       updateEndpoint(idx, "method", e.target.value)
                     }
-                    className="md:col-span-2 px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="md:col-span-2 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                   >
                     {[
                       "GET",
@@ -500,11 +500,11 @@ export default function SecurityTools() {
                       updateEndpoint(idx, "path", e.target.value)
                     }
                     placeholder="/path"
-                    className="md:col-span-9 px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                    className="md:col-span-9 px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                   />
                   <button
                     onClick={() => removeEndpoint(idx)}
-                    className="md:col-span-1 text-sm text-slate-500 hover:text-red-600"
+                    className="md:col-span-1 text-sm text-slate-500 hover:text-red-600 transition-colors"
                   >
                     Remove
                   </button>
@@ -515,7 +515,7 @@ export default function SecurityTools() {
             <button
               onClick={handleRunAudit}
               disabled={apiLoading}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-60"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-violet-600 hover:from-purple-600 hover:to-violet-700 text-white disabled:opacity-60 shadow-lg hover:shadow-purple-500/25 transition-all"
             >
               {apiLoading ? (
                 <RefreshCw className="h-4 w-4 animate-spin" />
@@ -590,7 +590,7 @@ export default function SecurityTools() {
                   </div>
                   <button
                     onClick={() => downloadJson(apiResult, "api-audit.json")}
-                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-slate-900 text-white dark:bg-slate-700 hover:bg-black"
+                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-white dark:bg-slate-700 hover:bg-slate-900 transition-colors"
                   >
                     <Download className="h-4 w-4" /> Download JSON
                   </button>
@@ -601,9 +601,9 @@ export default function SecurityTools() {
         </div>
 
         {/* CVE Intelligence */}
-        <div className="bg-white dark:bg-slate-800 rounded-lg shadow border border-slate-200 dark:border-slate-700">
-          <div className="p-4 sm:p-6 border-b border-slate-200 dark:border-slate-700 flex items-center gap-3">
-            <div className="p-2 rounded bg-emerald-100 dark:bg-emerald-900 text-emerald-600 dark:text-emerald-300">
+        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 border border-slate-200/50 dark:border-slate-700/50">
+          <div className="p-4 sm:p-6 border-b border-slate-200/50 dark:border-slate-700/50 flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-lg shadow-emerald-500/25">
               <Bug className="h-5 w-5" />
             </div>
             <div>
@@ -617,7 +617,7 @@ export default function SecurityTools() {
           </div>
           <div className="p-4 sm:p-6 space-y-4">
             {cveError && (
-              <div className="flex items-start gap-2 p-3 rounded bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200">
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-800/50">
                 <AlertCircle className="h-4 w-4 mt-0.5" />
                 <p className="text-sm">{cveError}</p>
               </div>
@@ -631,14 +631,14 @@ export default function SecurityTools() {
                   value={cveQuery}
                   onChange={(e) => setCveQuery(e.target.value)}
                   placeholder="e.g., openssl, CVE-2024-12345"
-                  className="w-full px-3 py-2 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white"
+                  className="w-full px-3 py-2 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-green-500 focus:outline-none transition-all"
                 />
               </div>
               <div className="flex items-end">
                 <button
                   onClick={handleSearchCves}
                   disabled={cveLoading}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white hover:bg-emerald-700 disabled:opacity-60 w-full"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white disabled:opacity-60 w-full shadow-lg hover:shadow-emerald-500/25 transition-all"
                 >
                   {cveLoading ? (
                     <RefreshCw className="h-4 w-4 animate-spin" />

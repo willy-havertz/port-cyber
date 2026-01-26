@@ -141,7 +141,7 @@ export default function AdminComments() {
       <div className="space-y-4 sm:space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-green-500 to-emerald-600 bg-clip-text text-transparent">
             Moderate Comments
           </h1>
           <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 mt-2">
@@ -154,7 +154,7 @@ export default function AdminComments() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-lg"
+            className="flex items-start gap-3 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800/50"
           >
             <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
             <p className="text-red-600 dark:text-red-400">{error}</p>
@@ -165,7 +165,7 @@ export default function AdminComments() {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-lg"
+            className="flex items-start gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800/50"
           >
             <p className="text-green-600 dark:text-green-400">{success}</p>
           </motion.div>
@@ -177,10 +177,10 @@ export default function AdminComments() {
             <button
               key={f}
               onClick={() => setFilter(f)}
-              className={`px-3 sm:px-4 py-2 rounded-lg font-medium transition-colors capitalize text-sm sm:text-base ${
+              className={`px-3 sm:px-4 py-2 rounded-xl font-medium transition-all capitalize text-sm sm:text-base ${
                 filter === f
-                  ? "bg-black dark:bg-slate-800 text-white"
-                  : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
+                  ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg shadow-green-500/25"
+                  : "bg-white/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-green-50 dark:hover:bg-green-900/20 hover:text-green-600 dark:hover:text-green-400 border border-slate-200/50 dark:border-slate-700/50"
               }`}
             >
               {f}
@@ -196,7 +196,7 @@ export default function AdminComments() {
             </p>
           </div>
         ) : filteredComments.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-lg">
+          <div className="text-center py-12 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
             <p className="text-slate-600 dark:text-slate-400">
               {filter === "pending"
                 ? "No pending comments"
@@ -212,7 +212,7 @@ export default function AdminComments() {
                 key={comment.id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-white dark:bg-slate-800 rounded-lg shadow p-4 sm:p-6"
+                className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg shadow-slate-200/50 dark:shadow-slate-900/50 p-4 sm:p-6 border border-slate-200/50 dark:border-slate-700/50"
               >
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 sm:gap-4 mb-3 sm:mb-4">
                   <div className="flex-1 min-w-0">
@@ -241,14 +241,13 @@ export default function AdminComments() {
                   {comment.content}
                 </p>
 
-                {/* Reply Form */}
                 <AnimatePresence>
                   {replyingTo === comment.id && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="mb-4 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg"
+                      className="mb-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
@@ -259,7 +258,7 @@ export default function AdminComments() {
                             setReplyingTo(null);
                             setReplyContent("");
                           }}
-                          className="p-1 hover:bg-slate-200 dark:hover:bg-slate-600 rounded"
+                          className="p-1 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg transition-colors"
                         >
                           <X className="h-4 w-4 text-slate-500" />
                         </button>
@@ -269,7 +268,7 @@ export default function AdminComments() {
                         onChange={(e) => setReplyContent(e.target.value)}
                         placeholder="Write your reply..."
                         rows={3}
-                        className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-3 py-2 text-sm border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
                       />
                       <div className="flex justify-end mt-2">
                         <motion.button
@@ -277,7 +276,7 @@ export default function AdminComments() {
                           whileTap={{ scale: 0.98 }}
                           onClick={() => handleReply(comment)}
                           disabled={submittingReply || !replyContent.trim()}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                          className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white text-sm font-medium rounded-xl disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-green-500/25"
                         >
                           <Send className="h-4 w-4" />
                           {submittingReply ? "Sending..." : "Send Reply"}
@@ -293,7 +292,7 @@ export default function AdminComments() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       onClick={() => handleApprove(comment.id)}
-                      className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors text-sm sm:text-base"
+                      className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-medium rounded-xl transition-all text-sm sm:text-base shadow-lg hover:shadow-green-500/25"
                     >
                       <CheckCircle className="h-4 w-4" />
                       Approve
@@ -308,7 +307,7 @@ export default function AdminComments() {
                       );
                       setReplyContent("");
                     }}
-                    className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
+                    className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-xl transition-all text-sm sm:text-base"
                   >
                     <Reply className="h-4 w-4" />
                     Reply
@@ -317,7 +316,7 @@ export default function AdminComments() {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => handleDelete(comment.id)}
-                    className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors text-sm sm:text-base"
+                    className="inline-flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-xl transition-all text-sm sm:text-base"
                   >
                     <Trash2 className="h-4 w-4" />
                     Delete
