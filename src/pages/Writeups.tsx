@@ -67,7 +67,7 @@ export default function Writeups() {
 
   const allCategories = useMemo(
     () => [...new Set(writeups.map((w) => w.category).filter(Boolean))].sort(),
-    [writeups]
+    [writeups],
   );
 
   const filteredWriteups = useMemo(() => {
@@ -75,8 +75,11 @@ export default function Writeups() {
       const searchMatch =
         searchQuery === "" ||
         writeup.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (writeup.summary && writeup.summary.toLowerCase().includes(searchQuery.toLowerCase())) ||
-        writeup.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+        (writeup.summary &&
+          writeup.summary.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        writeup.tags.some((tag) =>
+          tag.toLowerCase().includes(searchQuery.toLowerCase()),
+        );
       const platformMatch =
         selectedPlatform === "All" || writeup.platform === selectedPlatform;
       const categoryMatch =
@@ -88,13 +91,19 @@ export default function Writeups() {
 
       return searchMatch && platformMatch && categoryMatch && tagMatch;
     });
-  }, [writeups, searchQuery, selectedPlatform, selectedCategories, selectedTags]);
+  }, [
+    writeups,
+    searchQuery,
+    selectedPlatform,
+    selectedCategories,
+    selectedTags,
+  ]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
-        : [...prev, category]
+        : [...prev, category],
     );
   };
 
@@ -127,7 +136,9 @@ export default function Writeups() {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 CTF{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">

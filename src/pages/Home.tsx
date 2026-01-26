@@ -174,7 +174,9 @@ export default function Home() {
               className="text-center mb-16"
             >
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                <span
+                  className={theme === "dark" ? "text-white" : "text-gray-900"}
+                >
                   Security{" "}
                 </span>
                 <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -227,7 +229,9 @@ export default function Home() {
               className="text-center mb-12"
             >
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                <span
+                  className={theme === "dark" ? "text-white" : "text-gray-900"}
+                >
                   CTF{" "}
                 </span>
                 <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -262,7 +266,11 @@ export default function Home() {
                 viewport={{ once: true }}
               >
                 <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-                  <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                  <span
+                    className={
+                      theme === "dark" ? "text-white" : "text-gray-900"
+                    }
+                  >
                     Core{" "}
                   </span>
                   <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -327,7 +335,9 @@ export default function Home() {
               className="text-center mb-12"
             >
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">
-                <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                <span
+                  className={theme === "dark" ? "text-white" : "text-gray-900"}
+                >
                   Featured{" "}
                 </span>
                 <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -369,11 +379,13 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className={`py-20 ${
-          theme === "dark"
-            ? "bg-gradient-to-r from-slate-900 via-green-950/20 to-slate-900"
-            : "bg-gradient-to-r from-gray-50 via-green-50 to-gray-50"
-        }`}>
+        <section
+          className={`py-20 ${
+            theme === "dark"
+              ? "bg-gradient-to-r from-slate-900 via-green-950/20 to-slate-900"
+              : "bg-gradient-to-r from-gray-50 via-green-50 to-gray-50"
+          }`}
+        >
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -382,7 +394,9 @@ export default function Home() {
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
           >
             <h2 className="text-3xl sm:text-4xl font-bold mb-6">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Ready to Secure Your{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">

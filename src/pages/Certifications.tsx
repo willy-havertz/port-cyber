@@ -96,11 +96,13 @@ export default function Certifications() {
   });
 
   return (
-    <div className={`min-h-screen transition-colors duration-300 ${
-      theme === "dark"
-        ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
-        : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
-    }`}>
+    <div
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+      }`}
+    >
       <Header />
 
       <main className="py-12 pt-32 md:pt-24">
@@ -113,7 +115,9 @@ export default function Certifications() {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Certifications &{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -135,7 +139,9 @@ export default function Certifications() {
             className="mb-16"
           >
             <h2 className="text-3xl font-bold mb-8 text-center">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Digital{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -171,7 +177,9 @@ export default function Certifications() {
             transition={{ duration: 0.6, delay: 0.2 }}
           >
             <h2 className="text-3xl font-bold mb-8 text-center">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Professional{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">

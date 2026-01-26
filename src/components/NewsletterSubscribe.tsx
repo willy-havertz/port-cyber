@@ -107,7 +107,7 @@ const NewsletterSubscribe: React.FC<NewsletterSubscribeProps> = ({
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="px-4 py-2 bg-gray-900 hover:bg-black disabled:bg-gray-800 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 disabled:from-gray-600 disabled:to-gray-700 text-white text-sm font-semibold rounded-lg transition-all shadow-lg hover:shadow-green-500/25 flex items-center gap-2"
                 >
                   {status === "loading" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

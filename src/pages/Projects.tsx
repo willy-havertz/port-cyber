@@ -157,7 +157,7 @@ export default function Projects() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>(
-    []
+    [],
   );
 
   const [projects, setProjects] = useState<Project[]>(() => {
@@ -222,7 +222,7 @@ export default function Projects() {
             } catch {
               return p;
             }
-          })
+          }),
         );
 
         if (!cancelled) {
@@ -230,7 +230,7 @@ export default function Projects() {
           try {
             localStorage.setItem(
               CACHE_KEY,
-              JSON.stringify({ ts: Date.now(), data: updated })
+              JSON.stringify({ ts: Date.now(), data: updated }),
             );
           } catch {
             // ignore localStorage errors
@@ -253,7 +253,7 @@ export default function Projects() {
             : [];
           const lengthMismatch = cached.length < defaultProjects.length;
           const hasScanner = cached.some(
-            (p) => p.title === "Automated Vulnerability Scanner"
+            (p) => p.title === "Automated Vulnerability Scanner",
           );
           return !fresh || lengthMismatch || !hasScanner;
         } catch {
@@ -272,7 +272,7 @@ export default function Projects() {
 
   const allCategories = useMemo(
     () => [...new Set(projects.map((p) => p.category).filter(Boolean))],
-    [projects]
+    [projects],
   );
 
   const filteredProjects = useMemo(() => {
@@ -282,7 +282,7 @@ export default function Projects() {
         project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         project.technologies.some((tech) =>
-          tech.toLowerCase().includes(searchQuery.toLowerCase())
+          tech.toLowerCase().includes(searchQuery.toLowerCase()),
         );
       const categoryMatch =
         selectedCategories.length === 0 ||
@@ -290,7 +290,7 @@ export default function Projects() {
       const techMatch =
         selectedTechnologies.length === 0 ||
         selectedTechnologies.some((tech) =>
-          project.technologies.includes(tech)
+          project.technologies.includes(tech),
         );
       return searchMatch && categoryMatch && techMatch;
     });
@@ -302,7 +302,7 @@ export default function Projects() {
     setSelectedCategories((prev) =>
       prev.includes(category)
         ? prev.filter((c) => c !== category)
-        : [...prev, category]
+        : [...prev, category],
     );
   };
 
@@ -333,7 +333,9 @@ export default function Projects() {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Security{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">

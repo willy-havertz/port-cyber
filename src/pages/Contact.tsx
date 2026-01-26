@@ -234,7 +234,9 @@ export default function Contact() {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Get In{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">

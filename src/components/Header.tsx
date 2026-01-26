@@ -88,12 +88,11 @@ const Header = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`px-3 py-2 text-sm font-medium will-change-auto ${
+                className={`px-3 py-2 text-sm font-medium ${
                   isActive(item.href)
-                    ? "text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400"
-                    : "text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400"
+                    ? "text-green-600 dark:text-green-400 border-b-2 border-green-600 dark:border-green-400"
+                    : "text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400"
                 }`}
-                style={{ contain: "layout" }}
               >
                 {item.name}
               </Link>
@@ -104,7 +103,7 @@ const Header = () => {
           <div className="flex items-center space-x-2">
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-md text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              className="p-2 rounded-md text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
               aria-label="Toggle theme"
             >
               <AnimatePresence mode="wait">
@@ -133,7 +132,7 @@ const Header = () => {
             </button>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-2 rounded-md text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              className="md:hidden p-2 rounded-md text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 hover:bg-slate-50 dark:hover:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-green-500 transition-colors"
               aria-expanded={isMenuOpen}
               aria-label="Toggle navigation menu"
             >
@@ -198,8 +197,8 @@ const Header = () => {
                         onClick={() => setIsMenuOpen(false)}
                         className={`px-3 py-2 text-base font-medium rounded-md transition-colors ${
                           isActive(item.href)
-                            ? "text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20"
-                            : "text-slate-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-slate-50 dark:hover:bg-slate-800"
+                            ? "text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20"
+                            : "text-slate-700 dark:text-slate-300 hover:text-green-600 dark:hover:text-green-400 hover:bg-slate-50 dark:hover:bg-slate-800"
                         }`}
                       >
                         {item.name}

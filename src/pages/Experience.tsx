@@ -148,7 +148,9 @@ export default function Experience() {
             className="text-center mb-12"
           >
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Professional{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -171,7 +173,9 @@ export default function Experience() {
               viewport={{ once: true }}
               className="text-2xl font-bold mb-8"
             >
-              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+              <span
+                className={theme === "dark" ? "text-white" : "text-gray-900"}
+              >
                 Work{" "}
               </span>
               <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
@@ -206,11 +210,13 @@ export default function Experience() {
                   Certifications
                 </span>
               </h2>
-              <div className={`rounded-2xl border p-6 ${
-                theme === "dark"
-                  ? "bg-slate-900/50 border-slate-800"
-                  : "bg-white border-gray-200"
-              }`}>
+              <div
+                className={`rounded-2xl border p-6 ${
+                  theme === "dark"
+                    ? "bg-slate-900/50 border-slate-800"
+                    : "bg-white border-gray-200"
+                }`}
+              >
                 <ul className="space-y-3">
                   {certifications.map((cert, index) => (
                     <li
