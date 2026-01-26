@@ -23,34 +23,34 @@ type Project = {
 const CACHE_KEY = "pc_projects_cache_v4"; // bump to invalidate stale caches
 const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
-// Context-aware project images - each image conveys what the project does
+// Context-aware project images - each image conveys what the project does (all unique)
 const PROJECT_IMAGES = {
-  // Network/Infrastructure - server rooms, network cables, network diagrams
+  // Network/Infrastructure - ethernet cables and network switch
   network:
-    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80",
-  // Vulnerability/Bug hunting - magnifying glass on code, bug icons
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
+  // Vulnerability/Bug hunting - security code analysis
   vulnerability:
     "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
-  // Incident/Emergency response - red alert, emergency operations
+  // Incident/Emergency response - emergency alert screens
   incident:
     "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80",
-  // Threat Intelligence - world map, global monitoring, dashboards
+  // Threat Intelligence - data analytics dashboard
   threat:
     "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
-  // Code Review - IDE, code on screen, programming
+  // Code Review - developer coding on laptop
   code: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
-  // Phishing/Email - email icons, fishing hook, warning signs
+  // Phishing/Email - email security warning
   phishing:
     "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
-  // API - connected nodes, endpoints, data flow
-  api: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
-  // Certificates/Encryption - padlock, keys, secure connections
+  // API - server rack with lights
+  api: "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80",
+  // Certificates/Encryption - digital padlock security
   certificate:
     "https://images.unsplash.com/photo-1633265486064-086b219458ec?auto=format&fit=crop&w=800&q=80",
-  // Password/Authentication - lock screen, login, keys
+  // Password/Authentication - fingerprint biometric
   password:
     "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80",
-  // Security Suite/Tools - toolbox, multiple screens, SOC
+  // Security Suite/Tools - cybersecurity operations center
   suite:
     "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
 };
