@@ -111,7 +111,7 @@ async def send_confirmation_email(name: str, email: str):
     if RESEND_CLIENT:
         try:
             RESEND_CLIENT.Emails.send({
-                "from": "notifications@resend.dev",
+                "from": "Wiltord Ichingwa <wiltord@wiltordichingwa.dev>",
                 "to": email,
                 "subject": "We received your message ✓",
                 "html": contact_confirmation_email(name)
@@ -125,7 +125,7 @@ async def send_admin_notification(name: str, email: str, subject: str, message: 
     if RESEND_CLIENT and settings.ADMIN_EMAIL:
         try:
             RESEND_CLIENT.Emails.send({
-                "from": "notifications@resend.dev",
+                "from": "Wiltord Ichingwa <wiltord@wiltordichingwa.dev>",
                 "to": settings.ADMIN_EMAIL,
                 "subject": f"📬 New message from {name}: {subject}",
                 "html": admin_notification_email(name, email, subject, message)

@@ -29,7 +29,7 @@ async def send_welcome_email(email: str):
     if RESEND_CLIENT:
         try:
             RESEND_CLIENT.Emails.send({
-                "from": "notifications@resend.dev",
+                "from": "Wiltord Ichingwa <wiltord@wiltordichingwa.dev>",
                 "to": email,
                 "subject": "🎉 Welcome to my Cybersecurity Newsletter!",
                 "html": newsletter_welcome_email(email)
@@ -136,7 +136,7 @@ async def send_newsletter(request: NewsletterSendRequest, db: Session = Depends(
         for subscriber in subscribers:
             try:
                 RESEND_CLIENT.Emails.send({
-                    "from": "notifications@resend.dev",
+                    "from": "Wiltord Ichingwa <wiltord@wiltordichingwa.dev>",
                     "to": subscriber.email,
                     "subject": request.subject,
                     "html": newsletter_email(request.subject, request.html_content, subscriber.email),

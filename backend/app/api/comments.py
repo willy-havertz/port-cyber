@@ -34,7 +34,7 @@ async def send_reply_notification(recipient_email: str, commenter_name: str, rep
     if RESEND_CLIENT and settings.ADMIN_EMAIL:
         try:
             RESEND_CLIENT.Emails.send({
-                "from": "notifications@resend.dev",
+                "from": "Wiltord Ichingwa <wiltord@wiltordichingwa.dev>",
                 "to": recipient_email,
                 "subject": f"💬 {commenter_name} replied to your comment",
                 "html": reply_notification_email(commenter_name, reply_preview, writeup_id)
