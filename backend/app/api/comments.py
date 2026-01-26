@@ -20,8 +20,9 @@ supabase = None
 
 # Initialize Resend client
 try:
-    from resend import Resend
-    RESEND_CLIENT = Resend(api_key=settings.RESEND_API_KEY)
+    import resend
+    resend.api_key = settings.RESEND_API_KEY
+    RESEND_CLIENT = resend
 except Exception as e:
     logger.warning(f"Resend client initialization failed: {e}")
     RESEND_CLIENT = None
@@ -31,8 +32,8 @@ async def send_reply_notification(recipient_email: str, commenter_name: str, rep
     """Send email notification when someone replies to a comment"""
     if RESEND_CLIENT and settings.ADMIN_EMAIL:
         try:
-            RESEND_CLIENT.emails.send({
-                "from": "devhavertz@gmail.com",
+            RESEND_CLIENT.Emails.send({
+                "from": "notifications@resend.dev",
                 "to": recipient_email,
                 "subject": f"New reply from {commenter_name}",
                 "html": f"""

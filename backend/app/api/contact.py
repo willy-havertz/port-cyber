@@ -27,8 +27,10 @@ class ContactRequest(BaseModel):
 HCAPTCHA_SECRET = os.getenv("HCAPTCHA_SECRET_KEY")
 RESEND_CLIENT = None
 try:
-    from resend import Resend
-    RESEND_CLIENT = Resend(settings.RESEND_API_KEY) if settings.RESEND_API_KEY else None
+    import resend
+    if settings.RESEND_API_KEY:
+        resend.api_key = settings.RESEND_API_KEY
+        RESEND_CLIENT = resend
 except ImportError:
     print("Warning: 'resend' package not installed. Email features will be disabled.")
 RATE_LIMIT_PER_IP = 5  # requests per hour
@@ -107,8 +109,8 @@ async def send_confirmation_email(name: str, email: str):
     """Send confirmation email via Resend (background task)"""
     if RESEND_CLIENT:
         try:
-            RESEND_CLIENT.emails.send({
-                "from": "devhavertz@gmail.com",
+            RESEND_CLIENT.Emails.send({
+                "from": "notifications@resend.dev",
                 "to": email,
                 "subject": "We received your message",
                 "html": f"<p>Hi {name},</p><p>Thank you for reaching out! We've received your message and will get back to you shortly.</p><p>Best regards,<br>Wiltord</p>"
@@ -121,8 +123,8 @@ async def send_admin_notification(name: str, email: str, subject: str, message: 
     """Send admin notification email (background task)"""
     if RESEND_CLIENT and settings.ADMIN_EMAIL:
         try:
-            RESEND_CLIENT.emails.send({
-                "from": "devhavertz@gmail.com",
+            RESEND_CLIENT.Emails.send({
+                "from": "notifications@resend.dev",
                 "to": settings.ADMIN_EMAIL,
                 "subject": f"New contact form submission: {subject}",
                 "html": f"""

@@ -12,7 +12,7 @@ RUN apt-get update && apt-get install -y \
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
 # Use default PyPI index to avoid 404 errors for some packages
-RUN pip install --no-cache-dir --default-timeout=60 --retries 5 -r requirements.txt
+RUN pip install --no-cache-dir --default-timeout=60 --retries 5 --root-user-action=ignore -r requirements.txt
 
 # Copy application code
 COPY . .

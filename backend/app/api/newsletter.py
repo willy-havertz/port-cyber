@@ -6,16 +6,18 @@ import logging
 from ..core.database import get_db
 from ..core.config import settings
 from ..models.newsletter import Newsletter
+from ..models.user import User
 from ..schemas.newsletter import NewsletterCreate, NewsletterResponse, NewsletterSendRequest
-from ..core.security import verify_token
+from ..core.security import get_current_admin_user
 
 router = APIRouter(prefix="/api/newsletter", tags=["newsletter"])
 logger = logging.getLogger(__name__)
 
 # Initialize Resend client
 try:
-    from resend import Resend
-    RESEND_CLIENT = Resend(api_key=settings.RESEND_API_KEY)
+    import resend
+    resend.api_key = settings.RESEND_API_KEY
+    RESEND_CLIENT = resend
 except Exception as e:
     logger.warning(f"Resend client initialization failed: {e}")
     RESEND_CLIENT = None
@@ -88,13 +90,8 @@ async def unsubscribe_newsletter(email: str, db: Session = Depends(get_db)):
 
 
 @router.post("/send")
-async def send_newsletter(request: NewsletterSendRequest, db: Session = Depends(get_db), token: str = Depends(verify_token)):
+async def send_newsletter(request: NewsletterSendRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_admin_user)):
     """Send newsletter to all subscribers (admin only)"""
-    # Verify admin access
-    user_id = token  # From verify_token
-    # In a real app, check if user is admin
-    # For now, we'll just verify token exists
-
     if not RESEND_CLIENT:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -117,8 +114,8 @@ async def send_newsletter(request: NewsletterSendRequest, db: Session = Depends(
         # Send to each subscriber
         for subscriber in subscribers:
             try:
-                RESEND_CLIENT.emails.send({
-                    "from": "devhavertz@gmail.com",
+                RESEND_CLIENT.Emails.send({
+                    "from": "notifications@resend.dev",
                     "to": subscriber.email,
                     "subject": request.subject,
                     "html": request.html_content,
@@ -143,14 +140,4 @@ async def send_newsletter(request: NewsletterSendRequest, db: Session = Depends(
 
 
 @router.get("/subscribers/count")
-async def get_subscriber_count(db: Session = Depends(get_db), token: str = Depends(verify_token)):
-    """Get active subscriber count (admin only)"""
-    try:
-        count = db.query(Newsletter).filter(Newsletter.is_active == True).count()
-        return {"active_subscribers": count}
-    except Exception as e:
-        logger.error(f"Error getting subscriber count: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Failed to get subscriber count"
-        )
+async def get_subscriber_count(db: Session = Depends(get_db), current_user: User = Depends(get_current_admin_user)):
