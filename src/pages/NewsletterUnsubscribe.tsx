@@ -5,14 +5,17 @@ import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { Mail, CheckCircle, XCircle, Loader2 } from "lucide-react";
 
-const API_URL = import.meta.env.VITE_API_URL || "https://port-cyber-backend.onrender.com";
+const API_URL =
+  import.meta.env.VITE_API_URL || "https://port-cyber-backend.onrender.com";
 
 const NewsletterUnsubscribe: React.FC = () => {
   const { theme } = useTheme();
   const [searchParams] = useSearchParams();
   const email = searchParams.get("email");
-  
-  const [status, setStatus] = useState<"loading" | "success" | "error" | "no-email">("loading");
+
+  const [status, setStatus] = useState<
+    "loading" | "success" | "error" | "no-email"
+  >("loading");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
@@ -24,15 +27,20 @@ const NewsletterUnsubscribe: React.FC = () => {
       }
 
       try {
-        const response = await fetch(`${API_URL}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}`, {
-          method: "POST",
-        });
+        const response = await fetch(
+          `${API_URL}/api/newsletter/unsubscribe?email=${encodeURIComponent(email)}`,
+          {
+            method: "POST",
+          },
+        );
 
         const data = await response.json();
 
         if (response.ok) {
           setStatus("success");
-          setMessage("You have been successfully unsubscribed from the newsletter.");
+          setMessage(
+            "You have been successfully unsubscribed from the newsletter.",
+          );
         } else {
           setStatus("error");
           setMessage(data.detail || "Failed to unsubscribe. Please try again.");
@@ -71,8 +79,8 @@ const NewsletterUnsubscribe: React.FC = () => {
                 status === "loading"
                   ? "bg-blue-500/10"
                   : status === "success"
-                  ? "bg-green-500/10"
-                  : "bg-red-500/10"
+                    ? "bg-green-500/10"
+                    : "bg-red-500/10"
               }`}
             >
               {status === "loading" && (

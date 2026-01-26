@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="32" fill="#00ff88"/>
+  
+  <!-- W letter -->
+  <path d="M12 16 L16 16 L20 42 L24 16 L28 16 L32 42 L36 16 L40 16 L33 48 L29 48 L25 24 L21 48 L17 48 Z" fill="#0a0a0a"/>
+  
+  <!-- I letter -->
+  <rect x="44" y="16" width="8" height="32" fill="#0a0a0a"/>
+</svg>

@@ -15,7 +15,7 @@ import WriteupDetail from "./src/pages/WriteupDetail";
 import Contact from "./src/pages/Contact";
 import Certifications from "./src/pages/Certifications";
 import NotFound from "./src/pages/NotFound";
-import Blog from "./src/pages/Blog";
+import Blog from "./src/pages/Blog.tsx";
 import BlogDetail from "./src/pages/BlogDetail";
 import NewsletterUnsubscribe from "./src/pages/NewsletterUnsubscribe";
 import AdminLogin from "./src/pages/admin/Login.tsx";
@@ -47,7 +47,10 @@ const App: React.FC = () => {
               <Route path="/blog/:id" element={<BlogDetail />} />
 
               {/* Newsletter Routes */}
-              <Route path="/newsletter/unsubscribe" element={<NewsletterUnsubscribe />} />
+              <Route
+                path="/newsletter/unsubscribe"
+                element={<NewsletterUnsubscribe />}
+              />
 
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />

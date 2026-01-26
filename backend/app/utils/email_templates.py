@@ -3,6 +3,9 @@ Professional HTML email templates for the portfolio
 Cybersecurity-themed design with dark/green color scheme
 """
 
+# Logo hosted on the website for email visibility
+LOGO_URL = "https://wiltordichingwa.dev/favicon.svg"
+
 def get_base_template(content: str, preview_text: str = "") -> str:
     """Base email template wrapper with consistent styling"""
     return f'''
@@ -44,27 +47,30 @@ def get_base_template(content: str, preview_text: str = "") -> str:
                 <!-- Main container -->
                 <table role="presentation" width="600" cellspacing="0" cellpadding="0" border="0" style="max-width: 600px; width: 100%;">
                     
-                    <!-- Header -->
+                    <!-- Header with prominent logo like LinkedIn -->
                     <tr>
                         <td style="background: linear-gradient(135deg, #0f1419 0%, #1a1f2e 100%); border-radius: 16px 16px 0 0; padding: 32px 40px; text-align: center; border-bottom: 2px solid #00ff88;">
                             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
                                 <tr>
                                     <td align="center">
-                                        <!-- WI Logo -->
-                                        <div style="width: 60px; height: 40px; margin: 0 auto 16px;">
-                                            <svg viewBox="0 0 48 32" xmlns="http://www.w3.org/2000/svg" style="width: 60px; height: 40px;">
-                                                <!-- W - Geometric with heavy strokes -->
-                                                <g>
-                                                    <path d="M2 4 L6 4 L10 24 L14 4 L18 4 L22 24 L26 4 L30 4 L24 28 L20 28 L16 10 L12 28 L8 28 Z" fill="#00ff88"/>
-                                                    <path d="M4 6 L8 6 L11 22 L14 6 L18 6 L21 22 L24 6 L28 6 L23 26 L19 26 L16 12 L13 26 L9 26 Z" fill="#0f1419"/>
-                                                </g>
-                                                <!-- I - Solid bar -->
-                                                <g>
-                                                    <rect x="36" y="4" width="6" height="24" fill="#00ff88"/>
-                                                    <rect x="37" y="6" width="4" height="20" fill="#0f1419"/>
-                                                </g>
-                                            </svg>
-                                        </div>
+                                        <!-- WI Logo - Prominent like LinkedIn -->
+                                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin: 0 auto 20px;">
+                                            <tr>
+                                                <td style="background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%); border-radius: 16px; padding: 16px 24px;">
+                                                    <!-- WI Initials as image-safe text -->
+                                                    <table role="presentation" cellspacing="0" cellpadding="0" border="0">
+                                                        <tr>
+                                                            <td style="font-size: 32px; font-weight: 800; color: #0a0a0a; letter-spacing: -2px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif;">
+                                                                W
+                                                            </td>
+                                                            <td style="font-size: 32px; font-weight: 800; color: #0a0a0a; letter-spacing: -2px; font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif; padding-left: 4px;">
+                                                                I
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
                                         <h1 style="margin: 0; color: #ffffff; font-size: 24px; font-weight: 700; letter-spacing: -0.5px;">
                                             Wiltord Ichingwa
                                         </h1>
