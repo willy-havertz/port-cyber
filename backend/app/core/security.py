@@ -48,6 +48,18 @@ async def get_current_user(
     except JWTError:
         raise credentials_exception
     
+    # Handle special admin user (hardcoded credentials from settings)
+    if username == "admin":
+        # Return a virtual admin user object
+        admin_user = User(
+            id=0,
+            username="admin",
+            email="admin@example.com",
+            is_admin=True,
+            is_active=True
+        )
+        return admin_user
+    
     user = db.query(User).filter(User.username == username).first()
     if user is None:
         raise credentials_exception
