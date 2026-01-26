@@ -139,7 +139,7 @@ async def send_admin_notification(name: str, email: str, subject: str, message: 
         except Exception as e:
             print(f"Error sending admin notification: {e}")
 
-@router.post("/api/contact")
+@router.post("/contact")
 async def submit_contact(request: ContactRequest, req: Request, background_tasks: BackgroundTasks):
     """
     Submit contact form with rate limiting, CAPTCHA verification, and spam detection

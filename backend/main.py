@@ -91,7 +91,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(writeups.router, prefix="/api/writeups", tags=["Writeups"])
 app.include_router(comments.router, prefix="/api/comments", tags=["Comments"])
 app.include_router(scanner.router, prefix="/api/scanner", tags=["Security Scanner"])
-app.include_router(contact.router, tags=["Contact"])
+app.include_router(contact.router, prefix="/api", tags=["Contact"])
 app.include_router(newsletter.router, tags=["Newsletter"])
 
 @app.get("/")
