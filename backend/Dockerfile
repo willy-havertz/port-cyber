@@ -11,10 +11,8 @@ RUN apt-get update && apt-get install -y \
 
 # Copy requirements and install Python dependencies
 COPY requirements.txt .
-# Use explicit index URL, higher timeout/retries, and trusted hosts to avoid transient network/SSL issues
-RUN pip install --no-cache-dir --default-timeout=60 --retries 5 \
-    --trusted-host pypi.tuna.tsinghua.edu.cn \
-    -i https://pypi.tuna.tsinghua.edu.cn/simple -r requirements.txt
+# Use default PyPI index to avoid 404 errors for some packages
+RUN pip install --no-cache-dir --default-timeout=60 --retries 5 -r requirements.txt
 
 # Copy application code
 COPY . .
