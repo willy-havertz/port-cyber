@@ -23,14 +23,46 @@ type Project = {
 const CACHE_KEY = "pc_projects_cache_v4"; // bump to invalidate stale caches
 const CACHE_TTL_MS = 1000 * 60 * 60 * 24; // 24 hours
 
+// Context-aware project images - each image conveys what the project does
+const PROJECT_IMAGES = {
+  // Network/Infrastructure - server rooms, network cables, network diagrams
+  network:
+    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80",
+  // Vulnerability/Bug hunting - magnifying glass on code, bug icons
+  vulnerability:
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80",
+  // Incident/Emergency response - red alert, emergency operations
+  incident:
+    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80",
+  // Threat Intelligence - world map, global monitoring, dashboards
+  threat:
+    "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
+  // Code Review - IDE, code on screen, programming
+  code:
+    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
+  // Phishing/Email - email icons, fishing hook, warning signs
+  phishing:
+    "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
+  // API - connected nodes, endpoints, data flow
+  api: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80",
+  // Certificates/Encryption - padlock, keys, secure connections
+  certificate:
+    "https://images.unsplash.com/photo-1633265486064-086b219458ec?auto=format&fit=crop&w=800&q=80",
+  // Password/Authentication - lock screen, login, keys
+  password:
+    "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80",
+  // Security Suite/Tools - toolbox, multiple screens, SOC
+  suite:
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80",
+};
+
 const defaultProjects: Project[] = [
   {
     title: "Enterprise Network Security Assessment",
     description:
       "Comprehensive security assessment of a Fortune 500 company's network infrastructure, identifying critical vulnerabilities and providing remediation strategies.",
     technologies: ["Nmap", "Metasploit", "Burp Suite", "Wireshark", "Python"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.network,
     githubUrl: "https://github.com/willy-havertz/port-cyber-network-security",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=network",
     date: "Dec 2025",
@@ -41,8 +73,7 @@ const defaultProjects: Project[] = [
     description:
       "Production-ready FastAPI scanner with SSRF-safe IP validation, security header audits, XSS/SQLi detection, CORS analysis, per-user rate limiting, and Docker deployment.",
     technologies: ["Python", "FastAPI", "Docker", "JWT", "SQLAlchemy"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1555949963-aa79dcee981c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.vulnerability,
     githubUrl: "https://github.com/willy-havertz/port-cyber-scanner",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=scanner",
     date: "Dec 2025",
@@ -53,8 +84,7 @@ const defaultProjects: Project[] = [
     description:
       "Comprehensive incident response framework and playbook for handling various types of security incidents, including malware infections and data breaches.",
     technologies: ["MITRE ATT&CK", "NIST Framework", "PowerShell", "Splunk"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.incident,
     githubUrl: "https://github.com/willy-havertz/port-cyber-incident-response",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=incident",
     date: "Dec 2025",
@@ -65,8 +95,7 @@ const defaultProjects: Project[] = [
     description:
       "Real-time CVE monitoring and alerting with severity breakdowns and quick drill-down into affected products; aggregates latest CVEs for actionable remediation.",
     technologies: ["NVD API", "React", "TypeScript", "Elasticsearch", "Docker"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.threat,
     githubUrl: "https://github.com/willy-havertz/port-cyber-threat-intel",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=threat",
     date: "Dec 2025",
@@ -77,8 +106,7 @@ const defaultProjects: Project[] = [
     description:
       "Automated static code analysis framework for identifying security vulnerabilities in web applications during the development lifecycle.",
     technologies: ["SonarQube", "OWASP ZAP", "Jenkins", "Python", "JavaScript"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.code,
     githubUrl: "https://github.com/willy-havertz/port-cyber-code-review",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=code",
     date: "Dec 2025",
@@ -95,8 +123,7 @@ const defaultProjects: Project[] = [
       "NLTK",
       "PostgreSQL",
     ],
-    imageUrl:
-      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.phishing,
     githubUrl: "https://github.com/willy-havertz/port-cyber-phishing-detection",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=phishing",
     date: "Dec 2025",
@@ -107,8 +134,7 @@ const defaultProjects: Project[] = [
     description:
       "Lightweight API security audit platform for testing endpoint authentication, HTTP/HTTPS enforcement, CORS configuration, excessive HTTP methods, and stack trace leakage detection.",
     technologies: ["FastAPI", "Python", "HTTP Methods", "CORS", "React"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.api,
     githubUrl: "https://github.com/willy-havertz/port-cyber-api-audit",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=api-audit",
     date: "Dec 2025",
@@ -119,8 +145,7 @@ const defaultProjects: Project[] = [
     description:
       "Deep inspection tool for SSL/TLS certificate validation, chain analysis, expiration tracking, signature verification, and modern protocol enforcement (TLS 1.2+).",
     technologies: ["Python", "OpenSSL", "FastAPI", "React", "Cryptography"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.certificate,
     githubUrl: "https://github.com/willy-havertz/port-cyber-cert-analyzer",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=certificate",
     date: "Dec 2025",
@@ -131,8 +156,7 @@ const defaultProjects: Project[] = [
     description:
       "Advanced password security assessment tool with entropy calculation, pattern detection, breach database checking, policy compliance validation, and NIST guidelines alignment.",
     technologies: ["Python", "FastAPI", "Regex", "ZXCVBN", "React"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.password,
     githubUrl: "https://github.com/willy-havertz/port-cyber-password-analyzer",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=password",
     date: "Dec 2025",
@@ -143,8 +167,7 @@ const defaultProjects: Project[] = [
     description:
       "Comprehensive suite with 3 integrated tools: Advanced Web Scan (TLS/headers/cookies), API Security Audit (endpoint testing), and CVE Intelligence (NVD integration). All tools with mock data fallback.",
     technologies: ["Python", "FastAPI", "OpenSSL", "NVD API", "React"],
-    imageUrl:
-      "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    imageUrl: PROJECT_IMAGES.suite,
     githubUrl: "https://github.com/willy-havertz/port-cyber",
     liveUrl: "https://port-cyber-experiments.vercel.app?tab=security-tools",
     date: "Dec 2025",
