@@ -38,8 +38,7 @@ const PROJECT_IMAGES = {
   threat:
     "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80",
   // Code Review - IDE, code on screen, programming
-  code:
-    "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
+  code: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80",
   // Phishing/Email - email icons, fishing hook, warning signs
   phishing:
     "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80",
