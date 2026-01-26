@@ -73,7 +73,14 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401) {
+    // Skip auto-logout for endpoints that handle auth errors gracefully
+    const skipLogoutEndpoints = ["/newsletter/subscribers/count"];
+    const requestUrl = error.config?.url || "";
+    const shouldSkipLogout = skipLogoutEndpoints.some((endpoint) =>
+      requestUrl.includes(endpoint),
+    );
+
+    if (error.response?.status === 401 && !shouldSkipLogout) {
       // Token expired or invalid - redirect to login
       localStorage.removeItem("auth_token");
       if (
