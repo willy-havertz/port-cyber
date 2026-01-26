@@ -134,38 +134,97 @@ function getSourceFromLink(link: string): string {
 // Get topic-based image that represents the content
 function getTopicImage(title: string, excerpt: string): string {
   const text = (title + " " + excerpt).toLowerCase();
-  
+
   // Determine the best topic based on content
   let topic = "generic";
-  
+
   if (text.includes("ransomware") || text.includes("ransom")) {
     topic = "ransomware";
-  } else if (text.includes("phishing") || text.includes("scam") || text.includes("fraud")) {
+  } else if (
+    text.includes("phishing") ||
+    text.includes("scam") ||
+    text.includes("fraud")
+  ) {
     topic = "phishing";
-  } else if (text.includes("malware") || text.includes("virus") || text.includes("trojan") || text.includes("botnet")) {
+  } else if (
+    text.includes("malware") ||
+    text.includes("virus") ||
+    text.includes("trojan") ||
+    text.includes("botnet")
+  ) {
     topic = "malware";
-  } else if (text.includes("vulnerability") || text.includes("cve") || text.includes("zero-day") || text.includes("exploit") || text.includes("patch")) {
+  } else if (
+    text.includes("vulnerability") ||
+    text.includes("cve") ||
+    text.includes("zero-day") ||
+    text.includes("exploit") ||
+    text.includes("patch")
+  ) {
     topic = "vulnerability";
-  } else if (text.includes("breach") || text.includes("leak") || text.includes("stolen") || text.includes("exposed")) {
+  } else if (
+    text.includes("breach") ||
+    text.includes("leak") ||
+    text.includes("stolen") ||
+    text.includes("exposed")
+  ) {
     topic = "breach";
-  } else if (text.includes("hacker") || text.includes("attack") || text.includes("apt") || text.includes("threat actor")) {
+  } else if (
+    text.includes("hacker") ||
+    text.includes("attack") ||
+    text.includes("apt") ||
+    text.includes("threat actor")
+  ) {
     topic = "hacker";
-  } else if (text.includes("password") || text.includes("credential") || text.includes("authentication") || text.includes("2fa") || text.includes("mfa")) {
+  } else if (
+    text.includes("password") ||
+    text.includes("credential") ||
+    text.includes("authentication") ||
+    text.includes("2fa") ||
+    text.includes("mfa")
+  ) {
     topic = "password";
-  } else if (text.includes("encrypt") || text.includes("crypto") || text.includes("ssl") || text.includes("tls")) {
+  } else if (
+    text.includes("encrypt") ||
+    text.includes("crypto") ||
+    text.includes("ssl") ||
+    text.includes("tls")
+  ) {
     topic = "encryption";
-  } else if (text.includes("network") || text.includes("firewall") || text.includes("vpn") || text.includes("router")) {
+  } else if (
+    text.includes("network") ||
+    text.includes("firewall") ||
+    text.includes("vpn") ||
+    text.includes("router")
+  ) {
     topic = "network";
-  } else if (text.includes("cloud") || text.includes("aws") || text.includes("azure") || text.includes("saas")) {
+  } else if (
+    text.includes("cloud") ||
+    text.includes("aws") ||
+    text.includes("azure") ||
+    text.includes("saas")
+  ) {
     topic = "cloud";
-  } else if (text.includes("ai") || text.includes("artificial intelligence") || text.includes("machine learning") || text.includes("chatgpt") || text.includes("llm")) {
+  } else if (
+    text.includes("ai") ||
+    text.includes("artificial intelligence") ||
+    text.includes("machine learning") ||
+    text.includes("chatgpt") ||
+    text.includes("llm")
+  ) {
     topic = "ai";
-  } else if (text.includes("government") || text.includes("fbi") || text.includes("cisa") || text.includes("nsa") || text.includes("federal") || text.includes("state-sponsored")) {
+  } else if (
+    text.includes("government") ||
+    text.includes("fbi") ||
+    text.includes("cisa") ||
+    text.includes("nsa") ||
+    text.includes("federal") ||
+    text.includes("state-sponsored")
+  ) {
     topic = "government";
   }
-  
+
   const pool = imagesByTopic[topic] || imagesByTopic.generic;
-  
+
   // Find an unused image from the pool
   for (const img of pool) {
     if (!usedImageUrls.has(img)) {
@@ -173,7 +232,7 @@ function getTopicImage(title: string, excerpt: string): string {
       return img;
     }
   }
-  
+
   // If all images in topic are used, try generic pool
   for (const img of imagesByTopic.generic) {
     if (!usedImageUrls.has(img)) {
@@ -181,7 +240,7 @@ function getTopicImage(title: string, excerpt: string): string {
       return img;
     }
   }
-  
+
   // If everything is used, just return a random one from the topic
   return pool[Math.floor(Math.random() * pool.length)];
 }
@@ -502,7 +561,8 @@ export default function Blog() {
                         loading="lazy"
                         onError={(e) => {
                           // Fallback to a default cybersecurity image if loading fails
-                          e.currentTarget.src = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80";
+                          e.currentTarget.src =
+                            "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80";
                         }}
                       />
                       {/* Lighter gradient overlay for better image visibility */}

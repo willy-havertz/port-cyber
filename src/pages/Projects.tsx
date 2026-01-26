@@ -1,9 +1,11 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Search, X } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ProjectCard from "../components/ProjectCard";
 import FilterBar from "../components/FilterBar";
+import { useTheme } from "../contexts/useTheme";
 
 type Project = {
   title: string;
@@ -151,6 +153,8 @@ const defaultProjects: Project[] = [
 ];
 
 export default function Projects() {
+  const { theme } = useTheme();
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedTechnologies, setSelectedTechnologies] = useState<string[]>(
     []
@@ -273,6 +277,13 @@ export default function Projects() {
 
   const filteredProjects = useMemo(() => {
     const filtered = projects.filter((project) => {
+      const searchMatch =
+        searchQuery === "" ||
+        project.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        project.technologies.some((tech) =>
+          tech.toLowerCase().includes(searchQuery.toLowerCase())
+        );
       const categoryMatch =
         selectedCategories.length === 0 ||
         (project.category && selectedCategories.includes(project.category));
@@ -281,11 +292,11 @@ export default function Projects() {
         selectedTechnologies.some((tech) =>
           project.technologies.includes(tech)
         );
-      return categoryMatch && techMatch;
+      return searchMatch && categoryMatch && techMatch;
     });
     // Reverse to show newest projects first
     return filtered.reverse();
-  }, [projects, selectedCategories, selectedTechnologies]);
+  }, [projects, searchQuery, selectedCategories, selectedTechnologies]);
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategories((prev) =>
@@ -305,11 +316,15 @@ export default function Projects() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors"
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+      }`}
     >
       <Header />
 
-      <main className="py-12">
+      <main className="py-12 pt-32 md:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
@@ -317,14 +332,58 @@ export default function Projects() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Security Projects
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Security{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Projects
+              </span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
               A collection of cybersecurity projects showcasing expertise in
               penetration testing, tool development, incident response, and
               security research.
             </p>
+          </motion.div>
+
+          {/* Search Bar */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="mb-8"
+          >
+            <div className="relative w-full md:w-96 mx-auto">
+              <Search
+                className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${
+                  theme === "dark" ? "text-gray-500" : "text-gray-400"
+                }`}
+              />
+              <input
+                type="text"
+                placeholder="Search projects..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all ${
+                  theme === "dark"
+                    ? "bg-slate-900/50 border-slate-700 text-white placeholder-gray-500 focus:border-green-500"
+                    : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-green-500"
+                } focus:outline-none focus:ring-2 focus:ring-green-500/20`}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className={`absolute right-4 top-1/2 -translate-y-1/2 ${
+                    theme === "dark"
+                      ? "text-gray-500 hover:text-gray-300"
+                      : "text-gray-400 hover:text-gray-600"
+                  }`}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
           </motion.div>
 
           <motion.div

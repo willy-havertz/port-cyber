@@ -8,6 +8,7 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import XIcon from "../components/XIcon";
+import { useTheme } from "../contexts/useTheme";
 
 // Type declaration for hCaptcha window object
 declare global {
@@ -47,6 +48,7 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
+  const { theme } = useTheme();
   const siteKey = import.meta.env.VITE_HCAPTCHA_SITE_KEY as string | undefined;
   const [captchaToken, setCaptchaToken] = React.useState<string | null>(null);
   const [hcaptchaReady, setHcaptchaReady] = React.useState(false);
@@ -215,11 +217,15 @@ export default function Contact() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors"
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+      }`}
     >
       <Header />
 
-      <main className="py-12 pt-16 md:pt-12">
+      <main className="py-12 pt-32 md:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
@@ -227,8 +233,13 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Get In Touch
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Get In{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Touch
+              </span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
               Ready to discuss your cybersecurity needs? Let's connect and
@@ -243,10 +254,16 @@ export default function Contact() {
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8"
+              className={`rounded-2xl border p-8 ${
+                theme === "dark"
+                  ? "bg-slate-900/50 border-slate-800"
+                  : "bg-white border-gray-200"
+              }`}
             >
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                Send a Message
+              <h2 className="text-2xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                  Send a Message
+                </span>
               </h2>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
@@ -390,10 +407,16 @@ export default function Contact() {
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
-                className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8"
+                className={`rounded-2xl border p-8 ${
+                  theme === "dark"
+                    ? "bg-slate-900/50 border-slate-800"
+                    : "bg-white border-gray-200"
+                }`}
               >
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                  Contact Information
+                <h2 className="text-2xl font-bold mb-6">
+                  <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                    Contact Information
+                  </span>
                 </h2>
 
                 <div className="space-y-6">
@@ -407,7 +430,10 @@ export default function Contact() {
                         >
                           <item.icon className="h-6 w-6 group-hover:scale-110 transition-transform" />
                           {/* Pulsing ring animation for clickable items */}
-                          <span className="absolute inset-0 rounded-lg animate-ping bg-green-400/30 opacity-0 group-hover:opacity-100" style={{ animationDuration: '1.5s' }} />
+                          <span
+                            className="absolute inset-0 rounded-lg animate-ping bg-green-400/30 opacity-0 group-hover:opacity-100"
+                            style={{ animationDuration: "1.5s" }}
+                          />
                           <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
                         </a>
                       ) : (
@@ -442,10 +468,16 @@ export default function Contact() {
                 whileInView={{ x: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
                 viewport={{ once: true }}
-                className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-8"
+                className={`rounded-2xl border p-8 ${
+                  theme === "dark"
+                    ? "bg-slate-900/50 border-slate-800"
+                    : "bg-white border-gray-200"
+                }`}
               >
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                  Follow Me
+                <h2 className="text-2xl font-bold mb-6">
+                  <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                    Follow Me
+                  </span>
                 </h2>
 
                 <div className="flex space-x-4">
@@ -455,7 +487,7 @@ export default function Contact() {
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center justify-center w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-400 hover:bg-gray-900 dark:hover:bg-white hover:text-white dark:hover:text-gray-900 transition-colors"
+                      className="flex items-center justify-center w-12 h-12 bg-slate-100 dark:bg-slate-700 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-gradient-to-r hover:from-green-500 hover:to-emerald-600 hover:text-white transition-all"
                       aria-label={social.label}
                     >
                       <social.icon className="h-6 w-6" />
@@ -469,12 +501,12 @@ export default function Contact() {
                 whileInView={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
                 viewport={{ once: true }}
-                className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-8"
+                className="bg-gradient-to-r from-green-500/10 to-emerald-500/10 rounded-2xl border border-green-500/20 p-8"
               >
-                <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-3">
+                <h3 className="text-lg font-semibold text-green-600 dark:text-green-400 mb-3">
                   Response Time
                 </h3>
-                <p className="text-blue-700 dark:text-blue-300">
+                <p className="text-slate-600 dark:text-slate-300">
                   I typically respond to all inquiries within 24 hours during
                   business days. For urgent security matters, please call
                   directly.

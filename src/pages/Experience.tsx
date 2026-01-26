@@ -3,8 +3,10 @@ import { motion } from "framer-motion";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import ExperienceCard from "../components/ExperienceCard";
+import { useTheme } from "../contexts/useTheme";
 
 export default function Experience() {
+  const { theme } = useTheme();
   const experiences = [
     {
       title: "Senior Security Consultant",
@@ -129,11 +131,15 @@ export default function Experience() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors"
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+      }`}
     >
       <Header />
 
-      <main className="py-12 pt-16 md:pt-12">
+      <main className="py-12 pt-32 md:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ y: 50, opacity: 0 }}
@@ -141,8 +147,13 @@ export default function Experience() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Professional Experience
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Professional{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Experience
+              </span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
               Over 8 years of experience in cybersecurity, from junior analyst
@@ -158,9 +169,14 @@ export default function Experience() {
               whileInView={{ x: 0, opacity: 1 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
-              className="text-2xl font-bold text-slate-900 dark:text-white mb-8"
+              className="text-2xl font-bold mb-8"
             >
-              Work Experience
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Work{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Experience
+              </span>
             </motion.h2>
             <div className="space-y-8">
               {experiences.map((experience, index) => (
@@ -185,17 +201,23 @@ export default function Experience() {
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                Certifications
+              <h2 className="text-2xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                  Certifications
+                </span>
               </h2>
-              <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6">
+              <div className={`rounded-2xl border p-6 ${
+                theme === "dark"
+                  ? "bg-slate-900/50 border-slate-800"
+                  : "bg-white border-gray-200"
+              }`}>
                 <ul className="space-y-3">
                   {certifications.map((cert, index) => (
                     <li
                       key={index}
                       className="flex items-center text-slate-700 dark:text-slate-300"
                     >
-                      <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 flex-shrink-0"></div>
+                      <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mr-3 flex-shrink-0"></div>
                       {cert}
                     </li>
                   ))}
@@ -210,19 +232,25 @@ export default function Experience() {
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: true }}
             >
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6">
-                Education
+              <h2 className="text-2xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                  Education
+                </span>
               </h2>
               <div className="space-y-4">
                 {education.map((edu, index) => (
                   <div
                     key={index}
-                    className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6"
+                    className={`rounded-2xl border p-6 transition-all hover:scale-[1.02] ${
+                      theme === "dark"
+                        ? "bg-slate-900/50 border-slate-800 hover:border-green-500/50"
+                        : "bg-white border-gray-200 hover:border-green-500"
+                    }`}
                   >
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-1">
                       {edu.degree}
                     </h3>
-                    <p className="text-blue-600 dark:text-blue-400 font-medium mb-1">
+                    <p className="text-green-600 dark:text-green-400 font-medium mb-1">
                       {edu.school}
                     </p>
                     <p className="text-slate-500 dark:text-slate-400">

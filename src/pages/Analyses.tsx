@@ -1,9 +1,14 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Search, X } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import AnalysisCard from "../components/AnalysisCard";
+import { useTheme } from "../contexts/useTheme";
 
 export default function Analyses() {
+  const { theme } = useTheme();
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [visibleCount, setVisibleCount] = useState(6);
 
@@ -157,58 +162,134 @@ export default function Analyses() {
     "Mobile Security",
   ];
 
-  const filteredAnalyses =
-    selectedCategory === "All"
-      ? analyses
-      : analyses.filter((analysis) => analysis.category === selectedCategory);
+  const filteredAnalyses = analyses.filter((analysis) => {
+    const searchMatch =
+      searchQuery === "" ||
+      analysis.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      analysis.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      analysis.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+    const categoryMatch =
+      selectedCategory === "All" || analysis.category === selectedCategory;
+    return searchMatch && categoryMatch;
+  });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+      }`}
+    >
       <Header />
 
-      <main className="py-12 pt-16 md:pt-12">
+      <main className="py-12 pt-32 md:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Security Analyses
+          <motion.div
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Security{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Analyses
+              </span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
               In-depth security research, threat analysis, and incident
               investigations. Sharing knowledge and insights from real-world
               cybersecurity scenarios.
             </p>
-          </div>
+          </motion.div>
+
+          {/* Search Bar */}
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="mb-8"
+          >
+            <div className="relative w-full md:w-96 mx-auto">
+              <Search
+                className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 ${
+                  theme === "dark" ? "text-gray-500" : "text-gray-400"
+                }`}
+              />
+              <input
+                type="text"
+                placeholder="Search analyses..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all ${
+                  theme === "dark"
+                    ? "bg-slate-900/50 border-slate-700 text-white placeholder-gray-500 focus:border-green-500"
+                    : "bg-white border-gray-200 text-gray-900 placeholder-gray-400 focus:border-green-500"
+                } focus:outline-none focus:ring-2 focus:ring-green-500/20`}
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery("")}
+                  className={`absolute right-4 top-1/2 -translate-y-1/2 ${
+                    theme === "dark"
+                      ? "text-gray-500 hover:text-gray-300"
+                      : "text-gray-400 hover:text-gray-600"
+                  }`}
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </motion.div>
 
           {/* Filter/Category Section */}
-          <div className="mb-8">
+          <motion.div
+            initial={{ y: 20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-8"
+          >
             <div className="flex flex-wrap gap-2 justify-center">
               {categories.map((category) => (
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
                     selectedCategory === category
-                      ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900"
-                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+                      ? "bg-gradient-to-r from-green-500 to-emerald-600 text-white shadow-lg"
+                      : theme === "dark"
+                        ? "bg-slate-800 text-slate-300 hover:bg-slate-700"
+                        : "bg-white text-slate-700 border border-gray-200 hover:bg-gray-50"
                   }`}
                 >
                   {category}
                 </button>
               ))}
             </div>
-          </div>
+          </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             {filteredAnalyses.slice(0, visibleCount).map((analysis, index) => (
               <AnalysisCard key={index} {...analysis} />
             ))}
-          </div>
+          </motion.div>
 
           {visibleCount < filteredAnalyses.length && (
             <div className="text-center mt-12">
               <button
                 onClick={() => setVisibleCount(visibleCount + 6)}
-                className="px-6 py-3 bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors"
+                className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-green-500/25"
               >
                 Load More Analyses
               </button>
@@ -218,6 +299,6 @@ export default function Analyses() {
       </main>
 
       <Footer />
-    </div>
+    </motion.div>
   );
 }

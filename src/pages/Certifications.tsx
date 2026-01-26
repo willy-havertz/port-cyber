@@ -4,6 +4,7 @@ import { Award, Eye, Shield } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import CertificateModal from "../components/CertificateModal";
+import { useTheme } from "../contexts/useTheme";
 
 // Import certificate images
 
@@ -13,6 +14,7 @@ import mernStackCert1 from "../assets/mern_stack_cert-1.png";
 import virtualAssistantCert from "../assets/virtual-assistant-certificate-wiltord-ichingwa.png";
 
 export default function Certifications() {
+  const { theme } = useTheme();
   const [selectedCertificate, setSelectedCertificate] = useState<{
     urls: string[];
     title: string;
@@ -94,10 +96,14 @@ export default function Certifications() {
   });
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors">
+    <div className={`min-h-screen transition-colors duration-300 ${
+      theme === "dark"
+        ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+        : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+    }`}>
       <Header />
 
-      <main className="py-12 pt-16 md:pt-12">
+      <main className="py-12 pt-32 md:pt-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
           <motion.div
@@ -106,8 +112,13 @@ export default function Certifications() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white mb-4">
-              Certifications & Badges
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Certifications &{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Badges
+              </span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
               Professional certifications, training programs, and
@@ -123,14 +134,23 @@ export default function Certifications() {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="mb-16"
           >
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8 text-center">
-              Digital Badges
+            <h2 className="text-3xl font-bold mb-8 text-center">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Digital{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Badges
+              </span>
             </h2>
             <div className="flex justify-center">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
-                className="bg-white dark:bg-white rounded-lg shadow-lg p-8 border border-slate-200 dark:border-slate-300"
+                className={`rounded-2xl shadow-lg p-8 border ${
+                  theme === "dark"
+                    ? "bg-white border-slate-300"
+                    : "bg-white border-gray-200"
+                }`}
                 onContextMenu={(e) => e.preventDefault()}
               >
                 <div
@@ -150,8 +170,13 @@ export default function Certifications() {
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-8 text-center">
-              Professional Certificates
+            <h2 className="text-3xl font-bold mb-8 text-center">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Professional{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Certificates
+              </span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {certificates.map((cert, index) => {
@@ -164,7 +189,11 @@ export default function Certifications() {
                     transition={{ duration: 0.6, delay: index * 0.1 }}
                     viewport={{ once: true }}
                     whileHover={{ y: -5 }}
-                    className="bg-white dark:bg-slate-800 rounded-lg shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700"
+                    className={`rounded-2xl shadow-lg overflow-hidden border transition-all ${
+                      theme === "dark"
+                        ? "bg-slate-900/50 border-slate-800 hover:border-green-500/50"
+                        : "bg-white border-gray-200 hover:border-green-500"
+                    }`}
                   >
                     {/* Gradient Header */}
                     <div

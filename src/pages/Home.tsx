@@ -8,10 +8,12 @@ import FeaturedCarousel from "../components/FeaturedCarousel";
 import { Link } from "react-router-dom";
 import CTFStatsDashboard from "../components/CTFStatsDashboard";
 import { fetchWriteups, type Writeup } from "../lib/api";
+import { useTheme } from "../contexts/useTheme";
 
 export default function Home() {
+  const { theme } = useTheme();
   const [isCVModalOpen, setIsCVModalOpen] = useState(false);
-  const [featuredWriteups, setFeaturedWriteups] = useState<any[]>([]);
+  const [featuredWriteups, setFeaturedWriteups] = useState<any[]>();
 
   useEffect(() => {
     const loadFeaturedWriteups = async () => {
@@ -82,13 +84,17 @@ export default function Home() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors"
+      className={`min-h-screen transition-colors duration-300 ${
+        theme === "dark"
+          ? "bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950"
+          : "bg-gradient-to-br from-gray-50 via-white to-gray-100"
+      }`}
     >
       <Header />
 
       <main className="pt-16 md:pt-0">
         {/* Hero Section */}
-        <section className="relative bg-white dark:bg-slate-900 text-slate-900 dark:text-white py-20">
+        <section className="relative py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <motion.div
@@ -101,7 +107,7 @@ export default function Home() {
                   style={{ fontFamily: "'Dancing Script', cursive" }}
                 >
                   Ethical Hacking and
-                  <span className="block text-black dark:text-white">
+                  <span className="block bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
                     Penetration Testing
                   </span>
                 </h1>
@@ -158,7 +164,7 @@ export default function Home() {
         </section>
 
         {/* Services Section */}
-        <section className="py-20 bg-white dark:bg-slate-800 transition-colors">
+        <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ y: 50, opacity: 0 }}
@@ -167,8 +173,13 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center mb-16"
             >
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-                Security Services
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                  Security{" "}
+                </span>
+                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                  Services
+                </span>
               </h2>
               <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
                 Comprehensive cybersecurity solutions tailored to protect your
@@ -184,9 +195,13 @@ export default function Home() {
                   whileInView={{ y: 0, opacity: 1 }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   viewport={{ once: true }}
-                  className="text-center p-6 rounded-lg border border-slate-200 dark:border-slate-700 hover:shadow-lg transition-shadow"
+                  className={`text-center p-6 rounded-2xl border transition-all hover:scale-105 hover:shadow-xl ${
+                    theme === "dark"
+                      ? "bg-slate-900/50 border-slate-800 hover:border-green-500/50"
+                      : "bg-white border-gray-200 hover:border-green-500"
+                  }`}
                 >
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 rounded-lg mb-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-400 to-emerald-600 text-white rounded-2xl mb-4">
                     <service.icon className="h-8 w-8" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-900 dark:text-white mb-3">
@@ -202,7 +217,7 @@ export default function Home() {
         </section>
 
         {/* CTF Statistics Dashboard */}
-        <section className="py-20 bg-white dark:bg-slate-800 transition-colors">
+        <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ y: 50, opacity: 0 }}
@@ -211,8 +226,13 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-                CTF Statistics
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                  CTF{" "}
+                </span>
+                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                  Statistics
+                </span>
               </h2>
               <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
                 Live statistics from Hack The Box and Try Hack Me platforms,
@@ -232,7 +252,7 @@ export default function Home() {
         </section>
 
         {/* Skills Section */}
-        <section className="py-20 bg-slate-50 dark:bg-slate-900 transition-colors">
+        <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <motion.div
@@ -241,8 +261,13 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-6">
-                  Core Expertise
+                <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+                  <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                    Core{" "}
+                  </span>
+                  <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                    Expertise
+                  </span>
                 </h2>
                 <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
                   Years of experience in cybersecurity have equipped me with a
@@ -267,7 +292,7 @@ export default function Home() {
                         </span>
                       </div>
                       <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
-                        <div className="bg-blue-600 h-2 rounded-full"></div>
+                        <div className="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full"></div>
                       </div>
                     </motion.div>
                   ))}
@@ -292,7 +317,7 @@ export default function Home() {
         </section>
 
         {/* Featured Writeups Carousel */}
-        <section className="py-20 bg-slate-50 dark:bg-slate-900 transition-colors">
+        <section className="py-20">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <motion.div
               initial={{ y: 50, opacity: 0 }}
@@ -301,8 +326,13 @@ export default function Home() {
               viewport={{ once: true }}
               className="text-center mb-12"
             >
-              <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-4">
-                Featured Writeups
+              <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+                <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                  Featured{" "}
+                </span>
+                <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                  Writeups
+                </span>
               </h2>
               <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
                 Explore my latest CTF challenges, security research, and
@@ -317,7 +347,7 @@ export default function Home() {
               transition={{ duration: 0.6, delay: 0.1 }}
               viewport={{ once: true }}
             >
-              <FeaturedCarousel writeups={featuredWriteups} />
+              <FeaturedCarousel writeups={featuredWriteups || []} />
             </motion.div>
 
             <motion.div
@@ -329,7 +359,7 @@ export default function Home() {
             >
               <Link
                 to="/writeups"
-                className="inline-flex items-center px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold rounded-lg hover:bg-black dark:hover:bg-gray-100 transition-colors"
+                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-green-500/25"
               >
                 View All Writeups
                 <ExternalLink className="ml-2 h-5 w-5" />
@@ -339,7 +369,11 @@ export default function Home() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-white dark:bg-slate-800 transition-colors">
+        <section className={`py-20 ${
+          theme === "dark"
+            ? "bg-gradient-to-r from-slate-900 via-green-950/20 to-slate-900"
+            : "bg-gradient-to-r from-gray-50 via-green-50 to-gray-50"
+        }`}>
           <motion.div
             initial={{ y: 50, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -347,8 +381,13 @@ export default function Home() {
             viewport={{ once: true }}
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center"
           >
-            <h2 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-6">
-              Ready to Secure Your Digital Assets?
+            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+              <span className={theme === "dark" ? "text-white" : "text-gray-900"}>
+                Ready to Secure Your{" "}
+              </span>
+              <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">
+                Digital Assets?
+              </span>
             </h2>
             <p className="text-xl text-slate-600 dark:text-slate-400 mb-8 max-w-3xl mx-auto">
               Let's discuss how we can strengthen your security posture and
@@ -356,7 +395,7 @@ export default function Home() {
             </p>
             <Link
               to="/contact"
-              className="inline-flex items-center px-8 py-4 bg-gray-900 text-white dark:bg-black dark:text-white font-semibold rounded-lg hover:bg-black dark:hover:bg-gray-800 transition-colors text-lg"
+              className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all shadow-lg hover:shadow-green-500/25 text-lg"
             >
               Get In Touch
               <ExternalLink className="ml-2 h-5 w-5" />
