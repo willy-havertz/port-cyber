@@ -38,41 +38,87 @@ const SOURCES: Record<
     color: "bg-purple-500",
     textColor: "text-purple-500",
   },
-  "securityweek.com": {
-    name: "SecurityWeek",
+  "darkreading.com": {
+    name: "Dark Reading",
     color: "bg-blue-500",
     textColor: "text-blue-500",
   },
 };
 
-// Image pools for each topic
-const pools: Record<string, string[]> = {
+// Cybersecurity-themed images that clearly represent each topic
+// Using high-quality, relevant images that are visible and distinctive
+const imagesByTopic: Record<string, string[]> = {
   ransomware: [
-    "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80", // Lock on laptop
+    "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80", // Cyber lock
+    "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=800&q=80", // Code screen
   ],
   phishing: [
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", // Matrix code
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80", // Cyber security
+    "https://images.unsplash.com/photo-1633265486064-086b219458ec?auto=format&fit=crop&w=800&q=80", // Phishing hook
   ],
   malware: [
-    "https://images.unsplash.com/photo-1463438690606-f6778b8c1d10?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", // Matrix
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80", // Server room
+    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80", // Code
   ],
-  encryption: [
-    "https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=800&q=80",
-    "https://cdn.pixabay.com/photo/2017/01/10/19/05/abstract-1975041_1280.jpg",
+  vulnerability: [
+    "https://images.unsplash.com/photo-1555949963-aa79dcee981c?auto=format&fit=crop&w=800&q=80", // Programming
+    "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80", // Tech
+    "https://images.unsplash.com/photo-1603899122634-f086ca5f5ddd?auto=format&fit=crop&w=800&q=80", // Bug
+  ],
+  breach: [
+    "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&w=800&q=80", // Building
+    "https://images.unsplash.com/photo-1551808525-51a94da548ce?auto=format&fit=crop&w=800&q=80", // Hacker
+    "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80", // Data
   ],
   hacker: [
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
-    "https://cdn.pixabay.com/photo/2017/01/10/19/05/abstract-1975041_1280.jpg",
+    "https://images.unsplash.com/photo-1551808525-51a94da548ce?auto=format&fit=crop&w=800&q=80", // Hooded hacker
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", // Matrix
+    "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=800&q=80", // Code
+  ],
+  password: [
+    "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?auto=format&fit=crop&w=800&q=80", // Lock
+    "https://images.unsplash.com/photo-1633265486064-086b219458ec?auto=format&fit=crop&w=800&q=80", // Security
+    "https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=800&q=80", // Laptop lock
+  ],
+  encryption: [
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80", // Server
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", // Matrix
+    "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80", // Code
+  ],
+  network: [
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80", // Server room
+    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80", // Network cables
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80", // Globe network
+  ],
+  cloud: [
+    "https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=800&q=80", // Cloud
+    "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&w=800&q=80", // Globe
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80", // Server
+  ],
+  ai: [
+    "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=800&q=80", // AI brain
+    "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=800&q=80", // Robot
+    "https://images.unsplash.com/photo-1555255707-c07966088b7b?auto=format&fit=crop&w=800&q=80", // Tech
+  ],
+  government: [
+    "https://images.unsplash.com/photo-1555848962-6e79363ec58f?auto=format&fit=crop&w=800&q=80", // Government building
+    "https://images.unsplash.com/photo-1560179707-f14e90ef3623?auto=format&fit=crop&w=800&q=80", // Office building
+    "https://images.unsplash.com/photo-1541872703-74c5e44368f9?auto=format&fit=crop&w=800&q=80", // Capitol
   ],
   generic: [
-    "https://cdn.pixabay.com/photo/2017/01/10/19/05/abstract-1975041_1280.jpg",
-    "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",
-    "https://images.unsplash.com/photo-1508780709619-79562169bc64?auto=format&fit=crop&w=800&q=80",
+    "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80", // Cyber security shield
+    "https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?auto=format&fit=crop&w=800&q=80", // Code on screen
+    "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80", // Data center
+    "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80", // Matrix code
+    "https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80", // Security
   ],
 };
+
+// Track used images to avoid duplicates across articles
+const usedImageUrls = new Set<string>();
 
 // Get source from URL
 function getSourceFromLink(link: string): string {
@@ -85,28 +131,59 @@ function getSourceFromLink(link: string): string {
   }
 }
 
-// Get topic-based image
+// Get topic-based image that represents the content
 function getTopicImage(title: string, excerpt: string): string {
   const text = (title + " " + excerpt).toLowerCase();
-  if (text.includes("ransomware"))
-    return pools.ransomware[
-      Math.floor(Math.random() * pools.ransomware.length)
-    ];
-  if (text.includes("phishing"))
-    return pools.phishing[Math.floor(Math.random() * pools.phishing.length)];
-  if (text.includes("malware"))
-    return pools.malware[Math.floor(Math.random() * pools.malware.length)];
-  if (text.includes("encryption") || text.includes("crypto"))
-    return pools.encryption[
-      Math.floor(Math.random() * pools.encryption.length)
-    ];
-  if (
-    text.includes("hacker") ||
-    text.includes("breach") ||
-    text.includes("attack")
-  )
-    return pools.hacker[Math.floor(Math.random() * pools.hacker.length)];
-  return pools.generic[Math.floor(Math.random() * pools.generic.length)];
+  
+  // Determine the best topic based on content
+  let topic = "generic";
+  
+  if (text.includes("ransomware") || text.includes("ransom")) {
+    topic = "ransomware";
+  } else if (text.includes("phishing") || text.includes("scam") || text.includes("fraud")) {
+    topic = "phishing";
+  } else if (text.includes("malware") || text.includes("virus") || text.includes("trojan") || text.includes("botnet")) {
+    topic = "malware";
+  } else if (text.includes("vulnerability") || text.includes("cve") || text.includes("zero-day") || text.includes("exploit") || text.includes("patch")) {
+    topic = "vulnerability";
+  } else if (text.includes("breach") || text.includes("leak") || text.includes("stolen") || text.includes("exposed")) {
+    topic = "breach";
+  } else if (text.includes("hacker") || text.includes("attack") || text.includes("apt") || text.includes("threat actor")) {
+    topic = "hacker";
+  } else if (text.includes("password") || text.includes("credential") || text.includes("authentication") || text.includes("2fa") || text.includes("mfa")) {
+    topic = "password";
+  } else if (text.includes("encrypt") || text.includes("crypto") || text.includes("ssl") || text.includes("tls")) {
+    topic = "encryption";
+  } else if (text.includes("network") || text.includes("firewall") || text.includes("vpn") || text.includes("router")) {
+    topic = "network";
+  } else if (text.includes("cloud") || text.includes("aws") || text.includes("azure") || text.includes("saas")) {
+    topic = "cloud";
+  } else if (text.includes("ai") || text.includes("artificial intelligence") || text.includes("machine learning") || text.includes("chatgpt") || text.includes("llm")) {
+    topic = "ai";
+  } else if (text.includes("government") || text.includes("fbi") || text.includes("cisa") || text.includes("nsa") || text.includes("federal") || text.includes("state-sponsored")) {
+    topic = "government";
+  }
+  
+  const pool = imagesByTopic[topic] || imagesByTopic.generic;
+  
+  // Find an unused image from the pool
+  for (const img of pool) {
+    if (!usedImageUrls.has(img)) {
+      usedImageUrls.add(img);
+      return img;
+    }
+  }
+  
+  // If all images in topic are used, try generic pool
+  for (const img of imagesByTopic.generic) {
+    if (!usedImageUrls.has(img)) {
+      usedImageUrls.add(img);
+      return img;
+    }
+  }
+  
+  // If everything is used, just return a random one from the topic
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 // Loading skeleton component
@@ -167,7 +244,7 @@ export default function Blog() {
     "https://feeds.feedburner.com/TheHackersNews",
     "https://www.bleepingcomputer.com/feed/",
     "https://krebsonsecurity.com/feed/",
-    "https://www.securityweek.com/feed/",
+    "https://www.darkreading.com/rss.xml",
   ];
 
   useEffect(() => {
@@ -416,19 +493,25 @@ export default function Blog() {
                         : "bg-white border-gray-200 hover:border-green-500/50 hover:shadow-xl"
                     }`}
                   >
-                    {/* Image */}
-                    <div className="relative h-48 overflow-hidden">
+                    {/* Image - Made taller for better visibility */}
+                    <div className="relative h-52 overflow-hidden">
                       <img
                         src={post.coverImage}
                         alt={post.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                        onError={(e) => {
+                          // Fallback to a default cybersecurity image if loading fails
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80";
+                        }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                      {/* Lighter gradient overlay for better image visibility */}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
 
                       {/* Source Badge */}
                       {sourceInfo && (
                         <div
-                          className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white ${sourceInfo.color}`}
+                          className={`absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold text-white ${sourceInfo.color} shadow-lg`}
                         >
                           {sourceInfo.name}
                         </div>

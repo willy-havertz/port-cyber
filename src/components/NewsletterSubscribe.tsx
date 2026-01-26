@@ -107,7 +107,7 @@ const NewsletterSubscribe: React.FC<NewsletterSubscribeProps> = ({
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+                  className="px-4 py-2 bg-gray-900 hover:bg-black disabled:bg-gray-800 text-white text-sm font-semibold rounded-lg transition-colors flex items-center gap-2"
                 >
                   {status === "loading" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -192,7 +192,7 @@ const NewsletterSubscribe: React.FC<NewsletterSubscribeProps> = ({
                 <button
                   type="submit"
                   disabled={status === "loading"}
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 text-white text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex items-center justify-center gap-2"
+                  className="px-6 py-2 bg-gray-900 hover:bg-black disabled:bg-gray-800 text-white text-sm font-semibold rounded-lg transition-colors whitespace-nowrap flex items-center justify-center gap-2"
                 >
                   {status === "loading" ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

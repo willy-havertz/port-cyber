@@ -402,10 +402,13 @@ export default function Contact() {
                       {item.href ? (
                         <a
                           href={item.href}
-                          className="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 rounded-lg flex items-center justify-center hover:bg-gray-900 dark:hover:bg-white hover:text-white dark:hover:text-gray-900 transition-colors cursor-pointer"
+                          className="group relative flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 rounded-lg flex items-center justify-center hover:bg-gray-900 dark:hover:bg-white hover:text-white dark:hover:text-gray-900 transition-all cursor-pointer"
                           aria-label={item.label}
                         >
-                          <item.icon className="h-6 w-6" />
+                          <item.icon className="h-6 w-6 group-hover:scale-110 transition-transform" />
+                          {/* Pulsing ring animation for clickable items */}
+                          <span className="absolute inset-0 rounded-lg animate-ping bg-green-400/30 opacity-0 group-hover:opacity-100" style={{ animationDuration: '1.5s' }} />
+                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse" />
                         </a>
                       ) : (
                         <div className="flex-shrink-0 w-12 h-12 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 rounded-lg flex items-center justify-center">
@@ -419,7 +422,7 @@ export default function Contact() {
                         {item.href ? (
                           <a
                             href={item.href}
-                            className="text-lg text-slate-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
+                            className="text-lg text-slate-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 transition-colors underline-offset-2 hover:underline"
                           >
                             {item.value}
                           </a>
