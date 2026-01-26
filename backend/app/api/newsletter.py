@@ -141,3 +141,13 @@ async def send_newsletter(request: NewsletterSendRequest, db: Session = Depends(
 
 @router.get("/subscribers/count")
 async def get_subscriber_count(db: Session = Depends(get_db), current_user: User = Depends(get_current_admin_user)):
+    """Get active subscriber count (admin only)"""
+    try:
+        count = db.query(Newsletter).filter(Newsletter.is_active == True).count()
+        return {"active_subscribers": count}
+    except Exception as e:
+        logger.error(f"Error getting subscriber count: {e}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to get subscriber count"
+        )
