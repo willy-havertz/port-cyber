@@ -17,6 +17,7 @@ import Certifications from "./src/pages/Certifications";
 import NotFound from "./src/pages/NotFound";
 import Blog from "./src/pages/Blog";
 import BlogDetail from "./src/pages/BlogDetail";
+import NewsletterUnsubscribe from "./src/pages/NewsletterUnsubscribe";
 import AdminLogin from "./src/pages/admin/Login.tsx";
 import AdminDashboard from "./src/pages/admin/Dashboard.tsx";
 import AdminWriteups from "./src/pages/admin/Writeups.tsx";
@@ -44,6 +45,9 @@ const App: React.FC = () => {
               {/* Blog Routes */}
               <Route path="/blog" element={<Blog />} />
               <Route path="/blog/:id" element={<BlogDetail />} />
+
+              {/* Newsletter Routes */}
+              <Route path="/newsletter/unsubscribe" element={<NewsletterUnsubscribe />} />
 
               {/* Admin Routes */}
               <Route path="/admin/login" element={<AdminLogin />} />

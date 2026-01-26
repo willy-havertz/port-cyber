@@ -88,6 +88,7 @@ async def subscribe_newsletter(request: NewsletterCreate, background_tasks: Back
 
 
 @router.post("/unsubscribe")
+@router.get("/unsubscribe")
 async def unsubscribe_newsletter(email: str, db: Session = Depends(get_db)):
     """Unsubscribe email from newsletter"""
     try:
@@ -98,12 +99,17 @@ async def unsubscribe_newsletter(email: str, db: Session = Depends(get_db)):
                 detail="Email not found in newsletter"
             )
 
+        if not newsletter.is_active:
+            return {"success": True, "message": "Already unsubscribed from newsletter"}
+
         from datetime import datetime
         newsletter.is_active = False
         newsletter.unsubscribed_at = datetime.utcnow()
         db.commit()
 
         return {"success": True, "message": "Unsubscribed from newsletter"}
+    except HTTPException:
+        raise
     except Exception as e:
         db.rollback()
         logger.error(f"Error unsubscribing from newsletter: {e}")
