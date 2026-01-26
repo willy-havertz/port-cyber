@@ -16,7 +16,7 @@ services:
       - NODE_ENV=production
       - VITE_SUPABASE_URL=${VITE_SUPABASE_URL:-""}
       - VITE_SUPABASE_ANON_KEY=${VITE_SUPABASE_ANON_KEY:-""}
-      - VITE_RESEND_API_KEY=re_iwyjy99W_262gBwTeM2ptRmLC3cWeqkfU
+      - VITE_RESEND_API_KEY=${VITE_RESEND_API_KEY:-""}
     restart: unless-stopped
     networks:
       - portfolio-network
