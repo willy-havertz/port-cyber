@@ -72,8 +72,8 @@ export default function Contact() {
       // Call backend endpoint instead of direct Supabase insert
       const response = await fetch(
         `${
-          import.meta.env.VITE_API_URL || "http://localhost:8000"
-        }/api/contact`,
+          import.meta.env.VITE_API_URL || "http://localhost:8000/api"
+        }/contact`,
         {
           method: "POST",
           headers: {
