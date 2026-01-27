@@ -164,7 +164,7 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
           {/* Tools Used - Displayed without # */}
           {tools_used && tools_used.length > 0 && (
             <div className="flex flex-wrap gap-1.5 mb-4">
-              {tools_used.slice(0, 3).map((tool) => (
+              {tools_used.map((tool) => (
                 <span
                   key={tool}
                   className={`px-2 py-0.5 text-xs rounded ${
@@ -176,17 +176,6 @@ const WriteupCard: React.FC<WriteupCardProps> = ({
                   {tool}
                 </span>
               ))}
-              {tools_used.length > 3 && (
-                <span
-                  className={`px-2 py-0.5 text-xs rounded ${
-                    theme === "dark"
-                      ? "bg-slate-700 text-slate-400"
-                      : "bg-gray-100 text-gray-500"
-                  }`}
-                >
-                  +{tools_used.length - 3}
-                </span>
-              )}
             </div>
           )}
 
