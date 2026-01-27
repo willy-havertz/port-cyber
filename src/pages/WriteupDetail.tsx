@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import WriteupComments from "../components/WriteupComments";
+import PDFViewerModal from "../components/PDFViewerModal";
 import { fetchWriteup, type Writeup } from "../lib/api";
 import { Link } from "react-router-dom";
 
@@ -14,6 +15,7 @@ export default function WriteupDetail() {
   const [writeup, setWriteup] = useState<Writeup | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPdfModalOpen, setIsPdfModalOpen] = useState(false);
 
   useEffect(() => {
     if (!id) {
@@ -216,7 +218,7 @@ export default function WriteupDetail() {
 
     if (category.toLowerCase().includes("linux")) {
       findings.push(
-        "Vulnerable SUID binaries found allowing privilege escalation"
+        "Vulnerable SUID binaries found allowing privilege escalation",
       );
       findings.push("Kernel vulnerability present in system configuration");
     } else if (category.toLowerCase().includes("web")) {
@@ -322,7 +324,7 @@ export default function WriteupDetail() {
           <div className="flex flex-wrap gap-3 mb-6">
             <span
               className={`px-4 py-2 rounded-lg font-medium ${getDifficultyColor(
-                writeup.difficulty
+                writeup.difficulty,
               )}`}
             >
               {writeup.difficulty}
@@ -391,7 +393,7 @@ export default function WriteupDetail() {
                     {step}
                   </span>
                 </li>
-              )
+              ),
             )}
           </ol>
         </motion.div>
@@ -418,7 +420,7 @@ export default function WriteupDetail() {
                     {finding}
                   </span>
                 </li>
-              )
+              ),
             )}
           </ul>
         </motion.div>
@@ -447,7 +449,7 @@ export default function WriteupDetail() {
                     {tool}
                   </span>
                 </div>
-              )
+              ),
             )}
           </div>
         </motion.div>
@@ -551,7 +553,7 @@ export default function WriteupDetail() {
                   ),
                   code: ({ children, node }: any) => {
                     const match = (node?.data?.meta || "")?.match(
-                      /language-(\w+)/
+                      /language-(\w+)/,
                     );
                     const isInline = !match;
                     return isInline ? (
@@ -612,7 +614,7 @@ export default function WriteupDetail() {
                               backendBaseUrl +
                               `/uploads/writeups/${writeup.title.replace(
                                 / /g,
-                                "_"
+                                "_",
                               )}/${alt || ""}`;
                           }
                         }}
@@ -649,17 +651,25 @@ export default function WriteupDetail() {
               <h3 className="text-xl font-bold text-white dark:text-gray-900 mb-4">
                 Full Writeup with Screenshots
               </h3>
-              <a
-                href={writeup.writeup_url}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => setIsPdfModalOpen(true)}
                 className="inline-flex items-center px-8 py-3 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-semibold rounded-lg hover:shadow-lg transition-shadow"
               >
                 <FileText className="h-5 w-5 mr-2" />
                 View PDF Writeup
-              </a>
+              </button>
             </motion.div>
           )}
+
+        {/* PDF Viewer Modal */}
+        {writeup.writeup_url && (
+          <PDFViewerModal
+            isOpen={isPdfModalOpen}
+            onClose={() => setIsPdfModalOpen(false)}
+            pdfUrl={writeup.writeup_url}
+            title={writeup.title}
+          />
+        )}
 
         {/* Comments Section */}
         <WriteupComments writeupId={String(writeup.id)} />

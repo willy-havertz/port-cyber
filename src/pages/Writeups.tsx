@@ -20,6 +20,7 @@ interface UiWriteup {
   thumbnailUrl?: string;
   summary?: string;
   tags: string[];
+  tools_used?: string[];
 }
 
 export default function Writeups() {
@@ -51,6 +52,7 @@ export default function Writeups() {
           thumbnailUrl: w.thumbnail_url,
           summary: w.summary,
           tags: (w.tags || []).map((t) => t.name),
+          tools_used: w.tools_used,
         }));
         setWriteups(normalized);
       } catch (err) {
