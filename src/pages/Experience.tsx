@@ -182,14 +182,13 @@ export default function Experience() {
                 Experience
               </span>
             </motion.h2>
-            <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {experiences.map((experience, index) => (
                 <motion.div
                   key={index}
-                  initial={{ x: -50, opacity: 0 }}
-                  whileInView={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
-                  viewport={{ once: true }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
                   <ExperienceCard {...experience} />
                 </motion.div>

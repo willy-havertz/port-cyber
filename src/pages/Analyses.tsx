@@ -278,16 +278,30 @@ export default function Analyses() {
             </div>
           </motion.div>
 
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          {/* Results Count */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className={`mb-6 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}
           >
+            {filteredAnalyses.length}{" "}
+            {filteredAnalyses.length === 1 ? "analysis" : "analyses"} found
+            {selectedCategory !== "All" && ` in ${selectedCategory}`}
+            {searchQuery && ` matching "${searchQuery}"`}
+          </motion.p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredAnalyses.slice(0, visibleCount).map((analysis, index) => (
-              <AnalysisCard key={index} {...analysis} />
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: index * 0.05 }}
+              >
+                <AnalysisCard {...analysis} />
+              </motion.div>
             ))}
-          </motion.div>
+          </div>
 
           {visibleCount < filteredAnalyses.length && (
             <div className="text-center mt-12">
