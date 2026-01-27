@@ -186,44 +186,82 @@ export default function Certifications() {
                 Certificates
               </span>
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            {/* Results Count */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className={`text-center mb-6 ${theme === "dark" ? "text-gray-400" : "text-gray-600"}`}
+            >
+              {certificates.length}{" "}
+              {certificates.length === 1 ? "certificate" : "certificates"}{" "}
+              earned
+            </motion.p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {certificates.map((cert, index) => {
                 const IconComponent = cert.icon;
                 return (
                   <motion.article
                     key={index}
-                    initial={{ y: 50, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 0.6, delay: index * 0.1 }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -5 }}
-                    className={`rounded-2xl shadow-lg overflow-hidden border transition-all ${
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                    className={`group rounded-2xl overflow-hidden border transition-all duration-300 ${
                       theme === "dark"
-                        ? "bg-slate-900/50 border-slate-800 hover:border-green-500/50"
-                        : "bg-white border-gray-200 hover:border-green-500"
+                        ? "bg-slate-900/50 border-slate-800 hover:border-green-500/50 hover:shadow-xl hover:shadow-green-500/10"
+                        : "bg-white border-gray-200 hover:border-green-500/50 hover:shadow-xl"
                     }`}
                   >
-                    {/* Gradient Header */}
-                    <div
-                      className={`bg-gradient-to-r ${cert.color} p-6 text-white`}
-                    >
-                      <div className="flex items-center justify-between mb-4">
-                        <IconComponent className="h-12 w-12" />
-                        <span className="text-sm font-medium bg-white/20 px-3 py-1 rounded-full">
-                          {cert.date}
-                        </span>
+                    {/* Certificate Image Preview */}
+                    <div className="relative h-48 overflow-hidden">
+                      <img
+                        src={cert.imageUrls[0]}
+                        alt={cert.title}
+                        className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-110"
+                        loading="lazy"
+                      />
+                      {/* Gradient overlay */}
+                      <div
+                        className={`absolute inset-0 bg-gradient-to-t ${cert.color} opacity-60`}
+                      />
+
+                      {/* Issuer Badge */}
+                      <div className="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-semibold shadow-lg bg-white/90 text-gray-900 flex items-center gap-1">
+                        <IconComponent className="w-3 h-3" />
+                        {cert.issuer}
                       </div>
-                      <h3 className="text-2xl font-bold mb-2">{cert.title}</h3>
-                      <p className="text-white/90 font-medium">{cert.issuer}</p>
+
+                      {/* Date Badge */}
+                      <div className="absolute top-3 right-3 px-3 py-1 rounded-full text-xs font-semibold shadow-lg bg-black/50 text-white">
+                        {cert.date}
+                      </div>
+
+                      {/* View Icon on Hover */}
+                      <div className="absolute bottom-3 right-3 w-10 h-10 rounded-full bg-white/90 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                        <Eye className="w-5 h-5 text-gray-900" />
+                      </div>
+
+                      {/* Title on Image */}
+                      <div className="absolute bottom-3 left-3 right-14">
+                        <h3 className="text-lg font-bold text-white drop-shadow-lg line-clamp-1">
+                          {cert.title}
+                        </h3>
+                      </div>
                     </div>
 
                     {/* Content */}
-                    <div className="p-6">
-                      <p className="text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                    <div className="p-5">
+                      <p
+                        className={`text-sm mb-4 line-clamp-3 ${
+                          theme === "dark" ? "text-gray-400" : "text-gray-600"
+                        }`}
+                      >
                         {cert.description}
                       </p>
 
-                      {/* Actions */}
+                      {/* Action Button */}
                       <button
                         onClick={() =>
                           setSelectedCertificate({
@@ -231,7 +269,7 @@ export default function Certifications() {
                             title: cert.title,
                           })
                         }
-                        className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-lg hover:bg-slate-800 dark:hover:bg-slate-100 transition-colors"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg hover:from-green-600 hover:to-emerald-700 transition-all shadow-md hover:shadow-lg"
                       >
                         <Eye className="h-4 w-4" />
                         View Certificate
