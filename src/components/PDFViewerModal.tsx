@@ -4,10 +4,9 @@ import { ChevronLeft, ChevronRight, X, Download } from "lucide-react";
 import { motion } from "framer-motion";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
-import * as pdfjsWorker from "pdfjs-dist/build/pdf.worker.mjs";
 
-// Set up the PDF worker
-pdfjs.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+// Set up the PDF worker using CDN
+pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.mjs`;
 
 interface PDFViewerModalProps {
   isOpen: boolean;
