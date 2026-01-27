@@ -121,7 +121,7 @@ const ProjectCard: React.FC<ProjectCardProps> = ({
                   : "bg-gray-100 text-gray-500"
               }`}
             >
-              +{technologies.length - 4}
+              {/* Removed +N, show all below */}
             </span>
           )}
         </div>

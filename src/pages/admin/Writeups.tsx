@@ -663,11 +663,6 @@ export default function AdminWriteups() {
                                 {i + 1}. {step}
                               </div>
                             ))}
-                            {writeup.methodology.length > 2 && (
-                              <div className="text-slate-500 dark:text-slate-500 italic">
-                                +{writeup.methodology.length - 2} more...
-                              </div>
-                            )}
                           </div>
                         </div>
                       ) : writeup.methodology &&

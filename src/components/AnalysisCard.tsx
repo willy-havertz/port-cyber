@@ -148,10 +148,10 @@ const AnalysisCard: React.FC<AnalysisCardProps> = ({
           {summary}
         </p>
 
-        {/* Tags - Compact with overflow indicator */}
+        {/* Tags - Display all */}
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1.5 mb-4">
-            {tags.slice(0, 3).map((tag) => (
+            {tags.map((tag) => (
               <span
                 key={tag}
                 className={`px-2 py-0.5 text-xs rounded ${
@@ -160,20 +160,9 @@ const AnalysisCard: React.FC<AnalysisCardProps> = ({
                     : "bg-green-50 text-green-600"
                 }`}
               >
-                #{tag}
+                {tag.replace(/^#/, "")}
               </span>
             ))}
-            {tags.length > 3 && (
-              <span
-                className={`px-2 py-0.5 text-xs rounded ${
-                  theme === "dark"
-                    ? "bg-slate-700 text-slate-400"
-                    : "bg-gray-100 text-gray-500"
-                }`}
-              >
-                +{tags.length - 3}
-              </span>
-            )}
           </div>
         )}
 

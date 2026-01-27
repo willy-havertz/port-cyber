@@ -117,12 +117,12 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ writeups }) => {
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2 mb-6">
-            {current.tags.slice(0, 4).map((tag) => (
+            {current.tags.map((tag) => (
               <span
                 key={tag}
                 className="px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded"
               >
-                #{tag}
+                {tag.replace(/^#/, "")}
               </span>
             ))}
           </div>

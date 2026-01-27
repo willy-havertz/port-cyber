@@ -118,15 +118,6 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
               <span className="line-clamp-2">{item}</span>
             </li>
           ))}
-          {description.length > 2 && (
-            <li
-              className={`text-xs ${
-                theme === "dark" ? "text-gray-500" : "text-gray-400"
-              }`}
-            >
-              +{description.length - 2} more accomplishments
-            </li>
-          )}
         </ul>
 
         {/* Technologies - Compact with overflow indicator */}
@@ -143,17 +134,6 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
               {tech}
             </span>
           ))}
-          {technologies.length > 4 && (
-            <span
-              className={`px-2 py-0.5 text-xs rounded ${
-                theme === "dark"
-                  ? "bg-slate-700 text-slate-400"
-                  : "bg-gray-100 text-gray-500"
-              }`}
-            >
-              +{technologies.length - 4}
-            </span>
-          )}
         </div>
       </div>
     </motion.article>
