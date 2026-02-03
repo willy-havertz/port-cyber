@@ -25,19 +25,28 @@ const getCompanyColor = (company: string): { bg: string; text: string } => {
   return colors[index];
 };
 
-// Role-based images
-const getRoleImage = (title: string): string => {
+// Role-based images - unique for each CTF/writeup type
+const getRoleImage = (title: string, company: string): string => {
   const titleLower = title.toLowerCase();
-  if (titleLower.includes("senior") || titleLower.includes("lead")) {
-    return "https://images.unsplash.com/photo-1553877522-43269d4ea984?auto=format&fit=crop&w=800&q=80";
-  } else if (titleLower.includes("consultant")) {
-    return "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80";
-  } else if (titleLower.includes("analyst")) {
-    return "https://images.unsplash.com/photo-1504639725590-34d0984388bd?auto=format&fit=crop&w=800&q=80";
-  } else if (titleLower.includes("specialist")) {
-    return "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=800&q=80";
+  const companyLower = company.toLowerCase();
+
+  // CTF-specific images
+  if (titleLower.includes("fowsniff")) {
+    return "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=80"; // Matrix code
+  } else if (titleLower.includes("eggsploit") || titleLower.includes("curl")) {
+    return "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80"; // Code on screen
+  } else if (titleLower.includes("malhare") || titleLower.includes("malware")) {
+    return "https://images.unsplash.com/photo-1563206767-5b18f218e8de?auto=format&fit=crop&w=800&q=80"; // Skull/virus
+  } else if (titleLower.includes("race condition")) {
+    return "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80"; // Circuit board
+  } else if (companyLower.includes("tryhackme")) {
+    return "https://images.unsplash.com/photo-1544890225-2f3faec4cd60?auto=format&fit=crop&w=800&q=80"; // Hacker dark
+  } else if (companyLower.includes("hackthebox")) {
+    return "https://images.unsplash.com/photo-1510511459019-5dda7724fd87?auto=format&fit=crop&w=800&q=80"; // Green terminal
+  } else if (titleLower.includes("web") || titleLower.includes("application")) {
+    return "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=800&q=80"; // Web code
   }
-  return "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80";
+  return "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&w=800&q=80"; // Default cybersecurity
 };
 
 const ExperienceCard: React.FC<ExperienceCardProps> = ({
@@ -50,7 +59,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
 }) => {
   const { theme } = useTheme();
   const companyColor = getCompanyColor(company);
-  const imageUrl = getRoleImage(title);
+  const imageUrl = getRoleImage(title, company);
 
   return (
     <motion.article

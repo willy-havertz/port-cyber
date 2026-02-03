@@ -90,7 +90,7 @@ const FeaturedCarousel: React.FC<FeaturedCarouselProps> = ({ writeups }) => {
               </span>
               <span
                 className={`ml-auto px-2 py-1 text-xs font-medium rounded ${getDifficultyColor(
-                  current.difficulty
+                  current.difficulty,
                 )}`}
               >
                 {current.difficulty}

@@ -7,101 +7,114 @@ import { useTheme } from "../contexts/useTheme";
 
 export default function Experience() {
   const { theme } = useTheme();
+
   const experiences = [
     {
-      title: "Senior Security Consultant",
-      company: "CyberGuard Solutions",
-      location: "San Francisco, CA",
-      duration: "Jan 2022 - Present",
+      title: "Hoperation Eggsploit - Web Exploitation with cURL",
+      company: "TryHackMe",
+      location: "Easy",
+      duration: "Dec 2025",
       description: [
-        "Lead penetration testing engagements for Fortune 500 clients, identifying critical vulnerabilities and providing strategic remediation guidance",
-        "Developed custom security tools and frameworks that improved assessment efficiency by 40%",
-        "Mentored junior security analysts and conducted security awareness training for client organizations",
-        "Collaborated with development teams to implement secure coding practices and conduct code reviews",
+        "Exploited a web control panel operated by evil Easter bunnies holding a wormhole open; identified vulnerable API endpoints using reconnaissance techniques.",
+        "Utilized cURL to craft and send HTTP requests, bypassing authentication and exploiting insecure direct object references (IDOR) vulnerabilities.",
+        "Demonstrated proficiency in HTTP methods (GET, POST, PUT, DELETE) and header manipulation to interact with RESTful APIs.",
+        "Successfully shut down the wormhole by exploiting web application logic flaws and documented the complete exploitation methodology.",
       ],
       technologies: [
-        "Metasploit",
+        "cURL",
+        "HTTP Methods",
+        "API Exploitation",
+        "IDOR",
+        "Web Reconnaissance",
+        "Bash",
+      ],
+    },
+    {
+      title: "Malhare.exe - Malware Analysis & Forensics",
+      company: "TryHackMe",
+      location: "Medium",
+      duration: "Dec 2025",
+      description: [
+        "Performed static and dynamic malware analysis on a suspicious HTA file (Malhare.exe) using sandbox environments and reverse engineering tools.",
+        "Analyzed malicious behavior patterns including persistence mechanisms, network communications, and payload delivery techniques.",
+        "Extracted indicators of compromise (IOCs) including file hashes, registry modifications, and C2 server communications.",
+        "Documented forensic findings and remediation strategies, demonstrating proficiency in malware triage and incident response.",
+      ],
+      technologies: [
+        "Malware Analysis",
+        "Sandbox",
+        "Reverse Engineering",
+        "IOC Extraction",
+        "Forensics",
+        "HTA Analysis",
+      ],
+    },
+    {
+      title: "Race Conditions - Toy to The World",
+      company: "TryHackMe",
+      location: "Medium",
+      duration: "Dec 2025",
+      description: [
+        "Exploited race condition vulnerabilities in an e-commerce web application to bypass stock validation and oversell limited-edition items.",
+        "Demonstrated understanding of concurrency bugs, time-of-check to time-of-use (TOCTOU) flaws, and their impact on application integrity.",
+        "Utilized multi-threading techniques and Burp Suite Turbo Intruder to send parallel requests and trigger the race condition reliably.",
+        "Documented exploitation methodology and secure coding practices to prevent race conditions in production applications.",
+      ],
+      technologies: [
         "Burp Suite",
-        "Nessus",
+        "Race Conditions",
+        "TOCTOU",
         "Python",
-        "PowerShell",
-        "Kali Linux",
-        "OWASP Top 10",
+        "Multi-threading",
+        "Web Security",
       ],
     },
     {
-      title: "Cybersecurity Analyst",
-      company: "SecureNet Technologies",
-      location: "Austin, TX",
-      duration: "Mar 2020 - Dec 2021",
+      title: "Fowsniff CTF - Linux Privilege Escalation",
+      company: "TryHackMe",
+      location: "Easy",
+      duration: "Nov 2025",
       description: [
-        "Monitored security events and incidents using SIEM tools, reducing mean time to detection by 35%",
-        "Conducted vulnerability assessments and managed remediation efforts across enterprise infrastructure",
-        "Developed incident response procedures and participated in tabletop exercises",
-        "Implemented security controls and compliance measures for SOC 2 and ISO 27001 certifications",
+        "Conducted reconnaissance using Nmap to identify open services (HTTP, POP3, IMAP) and analyzed breach disclosures to trace exposed social media accounts.",
+        "Retrieved and analyzed leaked credential dumps from public GitHub repositories; cracked MD5 password hashes using online tools.",
+        "Gained access via POP3 using Hydra, extracted emails revealing temporary SSH credentials, and escalated to root by exploiting a misconfigured MOTD script (/opt/cube/cube.sh).",
+        "Captured final flag and documented full penetration testing workflow, showcasing skills in enumeration, credential attacks, and privilege escalation.",
       ],
       technologies: [
-        "Splunk",
-        "QRadar",
         "Nmap",
-        "Wireshark",
-        "Ansible",
-        "AWS Security",
-        "MITRE ATT&CK",
-      ],
-    },
-    {
-      title: "Information Security Specialist",
-      company: "TechCorp Industries",
-      location: "Denver, CO",
-      duration: "Jun 2018 - Feb 2020",
-      description: [
-        "Performed security risk assessments and developed risk mitigation strategies for business operations",
-        "Managed security awareness training programs, achieving 95% employee completion rate",
-        "Coordinated with IT teams to implement security patches and configuration changes",
-        "Maintained security documentation and policies in compliance with industry standards",
-      ],
-      technologies: [
-        "Nessus",
-        "OpenVAS",
-        "Active Directory",
-        "Group Policy",
-        "Firewalls",
-        "VPN",
-        "NIST Framework",
-      ],
-    },
-    {
-      title: "Junior Security Analyst",
-      company: "DataShield Corp",
-      location: "Phoenix, AZ",
-      duration: "Aug 2016 - May 2018",
-      description: [
-        "Assisted in security monitoring and incident response activities within the SOC environment",
-        "Conducted initial triage of security alerts and escalated critical incidents to senior analysts",
-        "Participated in vulnerability management processes and patch deployment coordination",
-        "Supported forensic investigations and evidence collection for security incidents",
-      ],
-      technologies: [
-        "LogRhythm",
-        "Symantec",
-        "McAfee",
-        "Windows Server",
-        "Linux",
-        "TCP/IP",
-        "DNS",
+        "Hydra",
+        "POP3",
+        "SSH",
+        "MD5 Cracking",
+        "MOTD Exploitation",
       ],
     },
   ];
 
   const certifications = [
-    "Certified Ethical Hacker (CEH)",
-    "CISSP - Certified Information Systems Security Professional",
-    "GCIH - GIAC Certified Incident Handler",
-    "OSCP - Offensive Security Certified Professional",
-    "AWS Certified Security - Specialty",
-    "CompTIA Security+",
+    {
+      name: "Advent of Cyber 2025",
+      issuer: "TryHackMe",
+      date: "Dec 2025",
+    },
+    {
+      name: "Ethical Hacker",
+      issuer: "Cisco Networking Academy",
+      date: "Dec 2025",
+    },
+    {
+      name: "Software Engineering (MERN Stack)",
+      issuer: "Power Learn Project",
+      date: "Nov 2025",
+    },
+    {
+      name: "Virtual Assistance",
+      issuer: "ALX Africa",
+      date: "Nov 2024",
+    },
   ];
+
+  const pursuing = ["OSCP", "CEH", "CompTIA Security+"];
 
   const education = [
     {
@@ -158,9 +171,9 @@ export default function Experience() {
               </span>
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-              Over 8 years of experience in cybersecurity, from junior analyst
-              to senior consultant, with expertise spanning multiple domains of
-              information security.
+              Hands-on cybersecurity experience through penetration testing,
+              security research, and real-world security work across multiple
+              platforms.
             </p>
           </motion.div>
 
@@ -216,17 +229,41 @@ export default function Experience() {
                     : "bg-white border-gray-200"
                 }`}
               >
-                <ul className="space-y-3">
+                <ul className="space-y-4">
                   {certifications.map((cert, index) => (
                     <li
                       key={index}
-                      className="flex items-center text-slate-700 dark:text-slate-300"
+                      className="flex items-start text-slate-700 dark:text-slate-300"
                     >
-                      <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mr-3 flex-shrink-0"></div>
-                      {cert}
+                      <div className="w-2 h-2 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full mr-3 mt-2 flex-shrink-0"></div>
+                      <div>
+                        <p className="font-medium">{cert.name}</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
+                          {cert.issuer} • {cert.date}
+                        </p>
+                      </div>
                     </li>
                   ))}
                 </ul>
+                <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-2">
+                    Currently Pursuing:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {pursuing.map((cert, index) => (
+                      <span
+                        key={index}
+                        className={`text-xs px-3 py-1 rounded-full ${
+                          theme === "dark"
+                            ? "bg-slate-800 text-green-400"
+                            : "bg-green-100 text-green-700"
+                        }`}
+                      >
+                        {cert}
+                      </span>
+                    ))}
+                  </div>
+                </div>
               </div>
             </motion.section>
 

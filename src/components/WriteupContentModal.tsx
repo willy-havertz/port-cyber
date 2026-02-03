@@ -77,7 +77,7 @@ const WriteupContentModal: React.FC<WriteupContentModalProps> = ({
               <div className="flex flex-wrap items-center gap-3 mb-4">
                 <span
                   className={`px-3 py-1 text-sm font-medium rounded ${getDifficultyColor(
-                    difficulty
+                    difficulty,
                   )}`}
                 >
                   {difficulty}
@@ -101,13 +101,13 @@ const WriteupContentModal: React.FC<WriteupContentModalProps> = ({
 
               <div className="flex flex-wrap gap-2 mt-4">
                 {tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded"
-                    >
-                      {tag.replace(/^#/, "")}
-                    </span>
-                  ))}
+                  <span
+                    key={tag}
+                    className="px-2 py-1 text-xs bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400 rounded"
+                  >
+                    {tag.replace(/^#/, "")}
+                  </span>
+                ))}
               </div>
             </div>
 
@@ -132,7 +132,7 @@ const WriteupContentModal: React.FC<WriteupContentModalProps> = ({
                     </h3>
                     <p
                       className={`font-medium ${getDifficultyColor(
-                        difficulty
+                        difficulty,
                       )}`}
                     >
                       {difficulty}
@@ -163,13 +163,13 @@ const WriteupContentModal: React.FC<WriteupContentModalProps> = ({
                 </h2>
                 <div className="flex flex-wrap gap-2">
                   {tags.map((tag) => (
-                      <div
-                        key={tag}
-                        className="px-3 py-2 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
-                      >
-                        {tag.replace(/^#/, "")}
-                      </div>
-                    ))}
+                    <div
+                      key={tag}
+                      className="px-3 py-2 bg-blue-50 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full text-sm font-medium"
+                    >
+                      {tag.replace(/^#/, "")}
+                    </div>
+                  ))}
                 </div>
               </div>
 
