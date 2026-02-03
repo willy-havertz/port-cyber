@@ -1,27 +1,40 @@
 name: Keep Backend Awake
 
+# DISABLED - Using UptimeRobot for more reliable pings instead
+# Uncomment the schedule below if you want to re-enable GitHub Actions pings
 on:
-  schedule:
-    - cron: "*/14 * * * *" # Every 14 minutes to prevent Render from sleeping (sleeps after 15 min)
-  workflow_dispatch:
+  # schedule:
+  #   - cron: "*/10 * * * *"
+  workflow_dispatch: # Keep manual trigger for testing
 
 jobs:
   ping:
     runs-on: ubuntu-latest
+    continue-on-error: true # Don't mark workflow as failed even if step fails
     steps:
       - name: Ping Render backend to keep it awake
+        continue-on-error: true # Don't fail the workflow
         run: |
           ENDPOINT="https://port-cyber-backend.onrender.com/health"
-          for i in {1..3}; do
-            echo "Ping attempt $i: $ENDPOINT"
-            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$ENDPOINT" --max-time 30)
+          MAX_ATTEMPTS=3
+          TIMEOUT=90
+
+          for i in $(seq 1 $MAX_ATTEMPTS); do
+            echo "Ping attempt $i of $MAX_ATTEMPTS: $ENDPOINT"
+            
+            RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "$ENDPOINT" --max-time $TIMEOUT 2>/dev/null || echo "000")
             echo "HTTP status: $RESPONSE"
+            
             if [ "$RESPONSE" = "200" ]; then
-              echo "Ping successful - backend is awake."
+              echo "✅ Backend is awake."
               exit 0
             fi
-            echo "Ping failed, retrying in 15 seconds..."
-            sleep 15
+            
+            if [ $i -lt $MAX_ATTEMPTS ]; then
+              echo "Retrying in 30s..."
+              sleep 30
+            fi
           done
-          echo "All ping attempts failed."
-          exit 1
+
+          echo "::notice::Backend ping unsuccessful but this is normal for free tier cold starts."
+          exit 0  # Always exit successfully to avoid failure emails
