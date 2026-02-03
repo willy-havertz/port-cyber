@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { ChevronLeft, ChevronRight, X, Download } from "lucide-react";
+import { X, Download, ZoomIn, ZoomOut } from "lucide-react";
 import { motion } from "framer-motion";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
@@ -22,23 +22,20 @@ const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
   title,
 }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
-  const [pageNumber, setPageNumber] = useState(1);
+  const [scale, setScale] = useState(1.2);
 
   if (!isOpen) return null;
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
-    setPageNumber(1);
   };
 
-  const handlePrevPage = () => {
-    setPageNumber((prev) => Math.max(1, prev - 1));
+  const handleZoomIn = () => {
+    setScale((prev) => Math.min(prev + 0.2, 3));
   };
 
-  const handleNextPage = () => {
-    if (numPages) {
-      setPageNumber((prev) => Math.min(numPages, prev + 1));
-    }
+  const handleZoomOut = () => {
+    setScale((prev) => Math.max(prev - 0.2, 0.5));
   };
 
   return (
@@ -56,7 +53,8 @@ const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
               {title}
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-              Page {pageNumber} {numPages ? `of ${numPages}` : ""}
+              {numPages ? `${numPages} pages` : "Loading..."} • Zoom:{" "}
+              {Math.round(scale * 100)}%
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -77,69 +75,59 @@ const PDFViewerModal: React.FC<PDFViewerModalProps> = ({
           </div>
         </div>
 
-        {/* PDF Content */}
-        <div className="flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 flex items-center justify-center p-4">
+        {/* PDF Content - Continuous Scroll */}
+        <div className="flex-1 overflow-auto bg-slate-100 dark:bg-slate-900 p-4">
           <Document
             file={pdfUrl}
             onLoadSuccess={onDocumentLoadSuccess}
             loading={
-              <div className="text-slate-600 dark:text-slate-400">
+              <div className="flex items-center justify-center h-full text-slate-600 dark:text-slate-400">
                 Loading PDF...
               </div>
             }
             error={
-              <div className="text-red-600 dark:text-red-400">
+              <div className="flex items-center justify-center h-full text-red-600 dark:text-red-400">
                 Failed to load PDF
               </div>
             }
+            className="flex flex-col items-center gap-4"
           >
-            <Page
-              pageNumber={pageNumber}
-              scale={1.5}
-              renderTextLayer={true}
-              renderAnnotationLayer={true}
-              className="bg-white shadow-lg"
-            />
+            {numPages &&
+              Array.from(new Array(numPages), (_, index) => (
+                <Page
+                  key={`page_${index + 1}`}
+                  pageNumber={index + 1}
+                  scale={scale}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                  className="bg-white shadow-lg"
+                />
+              ))}
           </Document>
         </div>
 
-        {/* Navigation Footer */}
-        <div className="flex justify-between items-center p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+        {/* Zoom Controls Footer */}
+        <div className="flex justify-center items-center gap-4 p-4 border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
           <button
-            onClick={handlePrevPage}
-            disabled={pageNumber <= 1}
+            onClick={handleZoomOut}
+            disabled={scale <= 0.5}
             className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-900 dark:bg-white dark:text-gray-900 text-white hover:bg-black dark:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            title="Zoom Out"
           >
-            <ChevronLeft className="h-5 w-5" />
-            <span className="hidden sm:inline">Previous</span>
+            <ZoomOut className="h-5 w-5" />
           </button>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min="1"
-              max={numPages || 1}
-              value={pageNumber}
-              onChange={(e) => {
-                const page = parseInt(e.target.value);
-                if (page >= 1 && page <= (numPages || 1)) {
-                  setPageNumber(page);
-                }
-              }}
-              className="w-16 px-2 py-2 text-center border border-slate-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-slate-900 dark:text-white"
-            />
-            <span className="text-sm text-slate-600 dark:text-slate-400">
-              / {numPages || "?"}
-            </span>
-          </div>
+          <span className="text-sm text-slate-600 dark:text-slate-400 min-w-[60px] text-center">
+            {Math.round(scale * 100)}%
+          </span>
 
           <button
-            onClick={handleNextPage}
-            disabled={!numPages || pageNumber >= numPages}
+            onClick={handleZoomIn}
+            disabled={scale >= 3}
             className="flex items-center gap-2 px-4 py-2 rounded-md bg-gray-900 dark:bg-white dark:text-gray-900 text-white hover:bg-black dark:hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            title="Zoom In"
           >
-            <span className="hidden sm:inline">Next</span>
-            <ChevronRight className="h-5 w-5" />
+            <ZoomIn className="h-5 w-5" />
           </button>
         </div>
       </motion.div>
